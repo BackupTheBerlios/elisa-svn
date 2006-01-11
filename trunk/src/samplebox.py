@@ -1,3 +1,5 @@
+#sample bnx using framework
+
 from framework import render, application
 from plugins import dvd, radio
 
