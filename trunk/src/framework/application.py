@@ -3,11 +3,9 @@ class BoxApplication(object):
     Main box appication class
     """
     
-    def __init__(self, in_renderer = None):
+    def __init__(self):
         """
         constructor
-        @param in_renderer : renderer object used. if None, une default renderer
-        @type in_renderer : L{render.RendererBase}
         """
         
     def AddPlugin(self, in_plugin, in_treelevel = 0):

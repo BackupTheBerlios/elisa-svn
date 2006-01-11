@@ -1,4 +1,4 @@
-class WidgetBase(object):
+class _WidgetBase(object):
    
     """
     Base class of widget
