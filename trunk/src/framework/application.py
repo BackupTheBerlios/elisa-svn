@@ -1,6 +1,6 @@
-class MainWindow(object):
+class BoxApplication(object):
     """
-    Main box window class
+    Main box appication class
     """
     
     def __init__(self, in_renderer = None):
