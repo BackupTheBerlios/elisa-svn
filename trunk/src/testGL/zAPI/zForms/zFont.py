@@ -1,11 +1,5 @@
 from testGL.zAPI.zForms import zPictureBox
-from pygame.locals import *
-from pygame.display import *
-from pygame.event import *
-from pygame.key import *
 from pygame.font import *
-from pygame.image import *
-from pygame.time import *
 from pygame import *
 
 class Font(zPictureBox.PictureBox):

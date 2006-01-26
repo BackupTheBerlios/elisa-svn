@@ -1,6 +1,6 @@
 from framework import plugin, menu
 
-class PluginTreeRadio(plugin.PluginTree):
+class PluginTreeMovies(plugin.PluginTree):
     """
     radio plugin_tree
     """
@@ -13,7 +13,7 @@ class PluginTreeRadio(plugin.PluginTree):
         item21 = menu.MenuItem("play")
         item22 = menu.MenuItem("pause")
         
-        item1.SetPicturePathAndFilename("icons/kmix.png")
+        item1.SetPicturePathAndFilename("icons/movie.png")
         item11.SetPicturePathAndFilename("icons/gnome-mime-audio-ac3.png")
         item12.SetPicturePathAndFilename("icons/gnome-mime-audio-ac3.png")
         item13.SetPicturePathAndFilename("icons/gnome-mime-audio-ac3.png")

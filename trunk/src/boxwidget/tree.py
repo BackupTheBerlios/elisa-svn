@@ -13,7 +13,9 @@ class Tree(surface.Surface):
         _rootlevelsurface = treelevel.TreeLevel(in_rootlevel)
         self._surfaceitems.append(_rootlevelsurface)
         self._currentlevelID = 0
-        _rootlevelsurface.SetSize(300, 40)
+        self.DrawLevel(_rootlevelsurface)
+        #_rootlevelsurface.SetSize(500, 60)
+        #
         
         self.AddSurface(_rootlevelsurface)
 
@@ -42,9 +44,13 @@ class Tree(surface.Surface):
             _nextlevelsurface = treelevel.TreeLevel(_nextleveldata)
             self._currentlevelID += 1
             self._surfaceitems.append(_nextlevelsurface)
-            _nextlevelsurface.SetLocation(0,70 * self._currentlevelID, 3)
-            _nextlevelsurface.SetSize(300, 40)
-            self.AddSurface(_nextlevelsurface)
-        
+            self.DrawLevel(_nextlevelsurface)
+            
+
+    def DrawLevel(self, in_level):
+        in_level.SetLocation(0,130 * self._currentlevelID, 3)
+        in_level.SetSize(300, 40)
+        self.AddSurface(in_level)
+            
     def GetCurrentLevelSurface(self):
         return self._surfaceitems[self._currentlevelID]

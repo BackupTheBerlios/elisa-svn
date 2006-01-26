@@ -1,6 +1,4 @@
 from testGL.common import constants
-import pygame
-from pygame.locals import *
 from testGL.zAPI.zRenderer import zRendererFactory
 from testGL.zAPI.zDrawing import zRectangle3D
 from testGL.zAPI.zDrawing import zPoint3D

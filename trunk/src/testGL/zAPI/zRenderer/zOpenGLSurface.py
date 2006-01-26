@@ -40,6 +40,11 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             self._RefreshTexture = False
         else:    
             self._BackgroundImage = open(FileName)
+            #Alpha is allowed only for png images
+            s = len(FileName)
+            ext = FileName[s-3:s]
+            if ext not in ('PNG','png'): UseAlpha=False
+            
             if UseAlpha == True:
                 self._Format = GL_RGBA
                 self._ImageBuffer = self._BackgroundImage.tostring("raw", "RGBA", 0, -1)

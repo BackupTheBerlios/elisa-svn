@@ -10,9 +10,9 @@ class PluginTreeDvd(plugin.PluginTree):
         item11 = menu.MenuItem("Play")
         item12 = menu.MenuItem("Eject")
         
-        item1.SetPicturePathAndFilename("icons/gnome-dev-dvd.png")
-        item11.SetPicturePathAndFilename("icons/gnome-dev-dvd.png")
-        item12.SetPicturePathAndFilename("icons/gnome-dev-dvd.png")
+        item1.SetPicturePathAndFilename("icons/dvd.png")
+        item11.SetPicturePathAndFilename("icons/dvd.png")
+        item12.SetPicturePathAndFilename("icons/dvd.png")
         
         level1 = menu.MenuLevel("dvd_root_level")
         level1.AddItem(item1)

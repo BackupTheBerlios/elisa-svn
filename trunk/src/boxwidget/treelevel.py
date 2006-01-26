@@ -1,25 +1,29 @@
-import surface, treeitem, event
+import surface, treeitem, event, surface
 
 class TreeLevel(surface.Surface):
 
     def __init__(self, in_menulevel):
         surface.Surface.__init__(self)
-        
-        self.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
             
         self._menuleveldata = in_menulevel
         
         #list composed of sublist [item,surface]
         #rank are the same as visual rank
         self._surfaceitems = []
+        self.SetAlphaLevel(0)
         self._currentrank = 0
+        self._BackImage = surface.Surface()
+        self._BackImage.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
+        self._BackImage.SetSize(500,40)
+        self._BackImage.SetLocation(20,30,2.1)
+        self.AddSurface(self._BackImage)
         
         _i = 10
         for item in in_menulevel.GetItemList():
             s = treeitem.TreeItem(item)
-            s.SetSize(64, 64)
-            s.SetLocation(_i, -12, 2.1)
-            _i += 70
+            s.SetSize(128, 128)
+            s.SetLocation(_i, -12, 2.2)
+            _i += 140
             s.SetBackgroundImage(item.GetPicturePathAndFilename())
             self.AddSurface(s)
             self._surfaceitems.append(s)

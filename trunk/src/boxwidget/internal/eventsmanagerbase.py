@@ -9,7 +9,7 @@ class _EventsManagerBase(object):
     
     def GetEventQueue(self):
         """
-        @return: a list L{eventsmanager.Event} and empty the queue
+        @return: a list of event is queue and empty the queue
         """
         return_value = self._eventqueue
         self._eventqueue = []
