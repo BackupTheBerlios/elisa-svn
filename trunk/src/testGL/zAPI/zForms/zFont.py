@@ -17,7 +17,7 @@ class Font(zPictureBox.PictureBox):
         if not font.get_init():
             print 'Could not render font.'
             sys.exit(0)
-        self._font = font.Font('font.ttf',72)
+        self._font = font.Font('testGL/common/font.ttf',72)
         self._texture = None
         if text != "": self.SetFontText(text)
     

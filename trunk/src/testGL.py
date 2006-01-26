@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+#
+# TEST APPLICATION FOR zForm API
+#
 
 from pygame.locals import *
 from pygame.display import *
@@ -25,30 +28,46 @@ class MyClass(zForm.Form):
         self.SetBackColor(1.0, 1.0, 1.0)
         self.SetBackgroundImage("testGL/themes/mce/COMMON.BACKGROUND.PNG")
         
-        self._font = zFont.Font("Super MediaBox : test de police !!!! longue ligne")
-        self._font.SetSize(500, 80)
-        self._font.SetText("ctl") 
-        self._font.SetLocation(120.0, 480.0, 2.0)
+        #FIXME : FONT + VIDEO IS VERY SLOW
+        #self._font = zFont.Font("very slow with long text !!! to fix")
+        #self._font.SetSize(500, 80)
+        #self._font.SetText("ctl") 
+        #self._font.SetLocation(120.0, 480.0, 2.0)
+        #self.AddControl(self._font)
         
-        self._font2 = zFont.Font("12345TGFDS234TYHKUJYTHRGFDVT5RG")
-        self._font2.SetSize(500, 80)
+        self._font2 = zFont.Font("text test")
+        self._font2.SetSize(200, 80)
         self._font2.SetText("ctl") 
-        self._font2.SetLocation(120.0, 280.0, 2.0)
-        
-      
-        self.AddControl(self._font)
+        self._font2.SetLocation(120.0, 280.0, 2.0)  
         self.AddControl(self._font2)
-    
-        Video = False    
-        if Video == True:
-            self._ctl2 = zVideo.Video()
-            self._ctl2.SetSize(320, 176)
-            self._ctl2.SetText("ctl2")
-            self._ctl2.SetLocation(0.0, 0.0, 0.0)
-            self._ctl2.SetBackColor(255, 255, 255)
-            self._ctl2.SetURI("file:///home/yoyo/temp/nemo-fr.avi")
-            self._ctl2.Play()
-            self.AddControl(self._ctl2)
+
+        self._ctl2 = zVideo.Video()
+        self._ctl2.SetSize(320, 176)
+        self._ctl2.SetText("ctl2")
+        self._ctl2.SetLocation(0.0, 0.0, 0.0)
+        self._ctl2.SetBackColor(255, 255, 255)
+        self._ctl2.SetURI("file:///home/yoyo/temp/nemo-fr.avi")
+        self._ctl2.Play()
+        self.AddControl(self._ctl2)
+        
+        self._ctl = zPictureBox.PictureBox()
+        self._ctl.SetSize(300, 40)
+        self._ctl.SetText("ctl")
+        self._ctl.SetLocation(120.0, 80.0, 2.0)
+        self._ctl.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
+        self.AddControl(self._ctl)
+
+        self._ctl3 = zVideo.Video()
+        self._ctl3.SetSize(640, 352)
+        self._ctl3.SetText("ctl2")
+        self._ctl3.SetLocation(100.0, 100.0, 1.0)
+        self._ctl3.SetBackColor(255, 255, 255)
+        self._ctl3.SetURI("file:///home/yoyo/temp/Le-roi-lion.avi")
+        self._ctl3.SetAlpha(150)
+        self._ctl3.Play()
+        self.AddControl(self._ctl3)
+
+        
            
 if __name__ == '__main__': 
     
