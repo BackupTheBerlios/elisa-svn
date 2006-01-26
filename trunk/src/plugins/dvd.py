@@ -6,6 +6,8 @@ class PluginTreeDvd(plugin.PluginTree):
     """
 
     def __init__(self):
+        plugin.PluginTree.__init__(self)
+        
         item1 = menu.MenuItem("DVD")
         item11 = menu.MenuItem("Play")
         item12 = menu.MenuItem("Eject")
@@ -21,7 +23,6 @@ class PluginTreeDvd(plugin.PluginTree):
         level2.AddItem(item11)
         level2.AddItem(item12)
         
-        tree = menu.MenuTree(level1)
-        tree.AddLevel(level2, level1, item1)
-        
-        self.SetMenuTree(tree)
+        self.SetRootLevel(level1)
+        self.AddLevel(level2, level1, item1)
+       

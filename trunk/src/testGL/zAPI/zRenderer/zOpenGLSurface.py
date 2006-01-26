@@ -132,7 +132,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             self._RefreshTexture = False
             self.LoadTexture()
             
-        if self._TextureID != None :
+        if self._TextureID != None and self._BackgroundImage != None:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self._TextureID)
 
@@ -165,7 +165,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             glTexCoord2f(self._XTextureRatio+XTextureOffset,self._YTextureRatio+YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)            glEnd() 
         
-        if self._TextureID != None :
+        if self._TextureID != None and self._BackgroundImage != None :
             glDisable(GL_TEXTURE_2D)
             
         glPopMatrix()

@@ -9,7 +9,7 @@ class PluginBase(object):
         Constructor
         """
 
-class PluginTree(PluginBase):
+class PluginTree(PluginBase,menu.MenuTree):
     
     "tree navigation Plugin Class"
     
@@ -17,13 +17,8 @@ class PluginTree(PluginBase):
         """
         Constructor
         """
-        self._maintree = None
-        
-    def SetMenuTree(self, in_tree):
-        self._maintree = in_tree
-        
-    def GetMenuTree(self):
-        return self._maintree
+        PluginBase.__init__(self)
+        menu.MenuTree.__init__(self)
 
 class PluginCustom(PluginBase):
     

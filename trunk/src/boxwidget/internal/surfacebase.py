@@ -26,7 +26,7 @@ class _SurfaceBase(object):
         """
         self._alphalevel = in_level
 
-    def SetBackgroundImage(self, in_pathandfilename):
+    def SetBackgroundImage(self, in_pathandfilename=None):
         """
         set widget background image
         """

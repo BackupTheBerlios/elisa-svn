@@ -22,7 +22,7 @@ class zWindow(windowbase._WindowBase):
     def SetBackColor(self, Red, Green, Blue):
         self.GetNativeSurface().SetBackColor(Red, Green, Blue)
 
-    def SetBackgroundImage(self, PathAndFileName):
+    def SetBackgroundImage(self, PathAndFileName=None):
         windowbase._WindowBase.SetBackgroundImage(self, PathAndFileName)
         self.GetNativeSurface().SetBackgroundImage(PathAndFileName)
         
@@ -61,7 +61,7 @@ class zSurface(surfacebase._SurfaceBase):
     def SetBackColor(self, Red, Green, Blue):
         self.GetNativeSurface().SetBackColor(Red, Green, Blue)
 
-    def SetBackgroundImage(self, PathAndFileName):
+    def SetBackgroundImage(self, PathAndFileName=None):
         surfacebase._SurfaceBase.SetBackgroundImage(self, PathAndFileName)
         self.GetNativeSurface().SetBackgroundImage(PathAndFileName, True)
         

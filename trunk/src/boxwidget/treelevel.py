@@ -19,7 +19,7 @@ class TreeLevel(surface.Surface):
         self.AddSurface(self._BackImage)
         
         _i = 10
-        for item in in_menulevel.GetItemList():
+        for item in self._menuleveldata.GetItemList():
             s = treeitem.TreeItem(item)
             s.SetSize(128, 128)
             s.SetLocation(_i, -12, 2.2)
@@ -29,7 +29,11 @@ class TreeLevel(surface.Surface):
             self._surfaceitems.append(s)
             self._currentrank = 0
 
-        self._surfaceitems[self._currentrank].SetStatus(1)
+        current_itemsurface = self._surfaceitems[self._currentrank]
+        current_itemdata = current_itemsurface.GetMenuItemData()
+        current_itemsurface.SetStatus(1)
+        current_itemdata.CallSelectedCallback()
+
 
     def GetMenuLevelData(self):
         return self._menuleveldata
@@ -46,15 +50,29 @@ class TreeLevel(surface.Surface):
         
     def SelectNextItem(self):
         if self._currentrank < len(self._surfaceitems) - 1:
-           self._surfaceitems[self._currentrank].SetStatus(0)
+           itemsurface = self._surfaceitems[self._currentrank]
+           itemdata = itemsurface.GetMenuItemData()
+           itemsurface.SetStatus(0)
+           itemdata.CallUnselectedCallback()
+           
            self._currentrank += 1
-           self._surfaceitems[self._currentrank].SetStatus(1)
+           itemsurface = self._surfaceitems[self._currentrank]
+           itemdata = itemsurface.GetMenuItemData()
+           itemsurface.SetStatus(1)
+           itemdata.CallSelectedCallback()
     
     def SelectPreviousItem(self):
         if self._currentrank > 0:
-           self._surfaceitems[self._currentrank].SetStatus(0)
-           self._currentrank -= 1
-           self._surfaceitems[self._currentrank].SetStatus(1)
+            itemsurface = self._surfaceitems[self._currentrank]
+            itemdata = itemsurface.GetMenuItemData()
+            itemsurface.SetStatus(0)
+            itemdata.CallUnselectedCallback()
+           
+            self._currentrank -= 1
+            itemsurface = self._surfaceitems[self._currentrank]
+            itemdata = itemsurface.GetMenuItemData()
+            itemsurface.SetStatus(1)
+            itemdata.CallSelectedCallback()
 
     def GetSelectedItem(self):
         return self._surfaceitems[self._currentrank]

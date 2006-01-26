@@ -20,7 +20,7 @@ class OpenGLRenderer(zBaseClass.RendererBase):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     	#glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST )
-    	glClearColor(1.0, 1.0, 1.0, 0.0)
+    	glClearColor(0.0, 0.0, 0.0, 0.0)
         if self._height>0:     
             self._AspectRatio = self._width / float(self._height);
     
@@ -69,6 +69,8 @@ class OpenGLRenderer(zBaseClass.RendererBase):
 
     def SetBackColor(self, Red, Green, Blue):
         glClearColor(Red, Green, Blue, 0.0)
+        if self._BackgroundSurface != None:
+            self._BackgroundSurface.SetBackColor(Red, Green, Blue)
         
     def SetBackgroundImage(self, PathAndFileName):
         if self._BackgroundSurface == None:

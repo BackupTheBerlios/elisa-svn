@@ -11,9 +11,9 @@ class Control(object):
         self.SetSize(10, 50)
         self._Text="Control"
         self._BackgroundImagePath = None
-        self._BackColorR = 255.0
-        self._BackColorG = 255.0
-        self._BackColorB = 255.0
+        self._BackColorR = 0.0
+        self._BackColorG = 0.0
+        self._BackColorB = 0.0
         self._Alpha = 255.0
         self._Rotate = zPoint3D.Point3D()
 

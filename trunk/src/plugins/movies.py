@@ -6,7 +6,9 @@ class PluginTreeMovies(plugin.PluginTree):
     """
     
     def __init__(self):
-        item1 = menu.MenuItem("radio")
+        plugin.PluginTree.__init__(self)
+        
+        item1 = menu.MenuItem("movies")
         item11 = menu.MenuItem("NRJ")
         item12 = menu.MenuItem("europe1")
         item13 = menu.MenuItem("France inter")
@@ -32,10 +34,8 @@ class PluginTreeMovies(plugin.PluginTree):
         level3.AddItem(item21)
         level3.AddItem(item22)
         
-        tree = menu.MenuTree(level1)
-        tree.AddLevel(level2, level1, item1)
-        tree.AddLevel(level3, level2, item11)
-        tree.AddLevel(level3, level2, item12)
-        tree.AddLevel(level3, level2, item13)
-        
-        self.SetMenuTree(tree)
+        self.SetRootLevel(level1)
+        self.AddLevel(level2, level1, item1)
+        self.AddLevel(level3, level2, item11)
+        self.AddLevel(level3, level2, item12)
+        self.AddLevel(level3, level2, item13)

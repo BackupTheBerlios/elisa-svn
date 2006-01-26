@@ -14,8 +14,6 @@ class Tree(surface.Surface):
         self._surfaceitems.append(_rootlevelsurface)
         self._currentlevelID = 0
         self.DrawLevel(_rootlevelsurface)
-        #_rootlevelsurface.SetSize(500, 60)
-        #
         
         self.AddSurface(_rootlevelsurface)
 
