@@ -7,7 +7,7 @@ from plugins import dvd, radio, movies, pictures
 if __name__ == '__main__':
     _main = application.BoxApplication()
     #_main.MainWindow().SetBackgroundImage("testGL/themes/mce/COMMON.BACKGROUND.PNG")
-    _main.MainWindow().SetBackColor(0,0,0)
+    _main.SetBackColor(0,0,0)
     
     #_test = surface.Surface()
     #_test.SetSize(300, 40)

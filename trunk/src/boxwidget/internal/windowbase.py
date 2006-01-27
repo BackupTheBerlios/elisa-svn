@@ -1,4 +1,6 @@
+from twisted.internet import reactor, task
 import surfacebase
+
 
 class _WindowBase(surfacebase._SurfaceBase):
     """
@@ -9,10 +11,10 @@ class _WindowBase(surfacebase._SurfaceBase):
     def __init__(self):
         surfacebase._SurfaceBase.__init__(self)
         "native binded widget framework window"
-        self._Closing = False
         self._SetWindow(self)
         self._SurfaceAddedToNativeWindow = []
         self._focusedsurface = None
+        self._Fps = 50
         
     def AddSurfaceToNativeWindow(self, in_surface):
         """
@@ -23,12 +25,23 @@ class _WindowBase(surfacebase._SurfaceBase):
         """
         remove surface to native window
         """
-            
+    
+    def Run(self):
+        """
+        run main application loop
+        """
+         
+        self.OnLoad()
+        self._WidgetLoopingCall =  task.LoopingCall(self.Refresh)
+        self._WidgetLoopingCall.start(1.0 / self._Fps)
+        reactor.run()        
+
     def Refresh(self):
         """
         refresh complete window (draw current frame)
         @return: False if loop stop required, True if noting.
         """
+        
     def GetAddedSurfaceToNativeWindow(self):
         return self._SurfaceAddedToNativeWindow
         
@@ -36,11 +49,8 @@ class _WindowBase(surfacebase._SurfaceBase):
         """
         close window
         """
-        self._Closing = True
-        
-    def Closing(self):
-        return self._Closing
-        
+        reactor.stop()
+  
     def OnLoad(self):
         """
         called just before main loop starting

@@ -1,9 +1,12 @@
-from twisted.internet import reactor, task
 from boxwidget import window, tree
 from boxwidget.internal import factory
 import menu, config, common
 
-class BoxApplication(object):
+_config = config.Config()
+factory._SetRenderer(_config.Get("RenderEngine"))
+
+
+class BoxApplication(window.Window):
     """
     Main box appication class
     """
@@ -15,24 +18,15 @@ class BoxApplication(object):
         @type in_renderer : string
         """
         common._SetApplication(self)
-        self._config = config.Config()
-        
-        factory._SetRenderer(self._config.Get("RenderEngine"))
-        self._Fps = 50
+        window.Window.__init__(self)
+          
         self._plugintreelist = []
         self._rootlevel = menu.MenuLevel("root")
-        self._MainWindow = window.Window()
-        self._WidgetLoopingCall =  task.LoopingCall(self.Refresh)
-        self._WidgetLoopingCall.start(1.0 / self._Fps)
-        
 
     def RestoreBackground(self):
         #FIXME : JUST PUT BACKGROUND TO BLACK
-        self._MainWindow.SetBackgroundImage(None)
-        self._MainWindow.SetBackColor(0,0,0)
-    
-    def MainWindow(self):
-        return self._MainWindow
+        self.SetBackgroundImage(None)
+        self.SetBackColor(0,0,0)
 
     def AddPlugin(self, in_plugin):
         """
@@ -46,22 +40,22 @@ class BoxApplication(object):
         _plugin_root_level = in_plugin.GetTreeList()[0]
         self._rootlevel.AddItem(_plugin_root_level.GetItemList()[0])
         
-    def Refresh(self):
-        if self._MainWindow.Closing():
-            reactor.stop()
-        self._MainWindow.Refresh()
+    def Refresh(self):            
+        window.Window.Refresh(self)
             
     def Run(self):
-        """
-        run main application loop
-        """
-        self._MainWindow.OnLoad()
         
         #Create widget menu
         _treewidget = tree.Tree(self._rootlevel)
         _treewidget.SetSize(500, 100)
         _treewidget.SetLocation(120.0, 150.0, 2.0)
-        self.MainWindow().AddSurface(_treewidget)
+        self.AddSurface(_treewidget)
         
-        reactor.run()
+        window.Window.Run(self)
         
+ 
+    def ToogleMenu(self):
+        if _treewidget.Visible()==True:
+            _treewidget.Hide()
+        else:
+            _treewidget.Show()

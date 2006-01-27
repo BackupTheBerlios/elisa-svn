@@ -109,7 +109,6 @@ class MenuLevel(object):
         self._unselected_callback = None
         self._selected_args = None
         self._unselected_args = None
-        print in_levelname
         
         """
         levelist format is :
