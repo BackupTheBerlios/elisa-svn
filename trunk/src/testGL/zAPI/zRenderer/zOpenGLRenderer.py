@@ -69,12 +69,13 @@ class OpenGLRenderer(zBaseClass.RendererBase):
 
     def SetBackColor(self, Red, Green, Blue):
         glClearColor(Red, Green, Blue, 0.0)
-        if self._BackgroundSurface != None:
-            self._BackgroundSurface.SetBackColor(Red, Green, Blue)
         
     def SetBackgroundImage(self, PathAndFileName):
-        if self._BackgroundSurface == None:
-            self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
-            self._BackgroundSurface.SetSize(2.0, 2.0)
-            self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
-        self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
+        if PathAndFileName == None:
+            self._BackgroundSurface = None
+        else:
+            if self._BackgroundSurface == None:
+                self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
+                self._BackgroundSurface.SetSize(2.0, 2.0)
+                self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
+            self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)

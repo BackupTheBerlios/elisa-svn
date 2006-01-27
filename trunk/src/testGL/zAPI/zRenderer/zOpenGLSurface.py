@@ -61,7 +61,6 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         self._ImageBuffer = buffer
         self._BufferWidth = width
         self._BufferHeight = height
-        
         if buffer == None:
             self._RefreshTexture = False
         else:    
@@ -92,7 +91,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
     def LoadTexture(self):
     
         CreateTexture = False
-                
+               
         if self._TextureID == None:
             self._TextureID = glGenTextures(1)
             CreateTexture = True
@@ -108,7 +107,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
 
         glBindTexture(GL_TEXTURE_2D, self._TextureID)
         
-        if CreateTexture == True:
+        if CreateTexture == True: 
             #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
             #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
             #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -132,7 +131,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             self._RefreshTexture = False
             self.LoadTexture()
             
-        if self._TextureID != None and self._BackgroundImage != None:
+        if self._TextureID != None:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self._TextureID)
 
