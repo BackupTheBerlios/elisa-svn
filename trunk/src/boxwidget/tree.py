@@ -29,11 +29,13 @@ class Tree(surface.Surface):
         return surface.Surface.OnEvent(self, in_event)
         
     def SelectPreviousLevel(self):
-        _treeitemsurface = self.GetCurrentLevelSurface()
+        _treelevelsurface = self.GetCurrentLevelSurface()
+        _treeleveldata = _treelevelsurface.GetMenuLevelData()
         if self._currentlevelID > 0:
             self._currentlevelID -= 1
-            self.RemoveSurface(_treeitemsurface)
-            self._surfaceitems.remove(_treeitemsurface)
+            _treeleveldata.CallUnselectedCallback()
+            self.RemoveSurface(_treelevelsurface)
+            self._surfaceitems.remove(_treelevelsurface)
     
     def SelectNextLevel(self):
         _treeitemsurface = self.GetCurrentLevelSurface().GetSelectedItem()
@@ -43,6 +45,7 @@ class Tree(surface.Surface):
             self._currentlevelID += 1
             self._surfaceitems.append(_nextlevelsurface)
             self.DrawLevel(_nextlevelsurface)
+            _nextleveldata.CallSelectedCallback()
             
 
     def DrawLevel(self, in_level):

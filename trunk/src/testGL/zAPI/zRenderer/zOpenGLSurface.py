@@ -34,6 +34,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         
     def SetBackgroundImageFromFile(self, FileName, UseAlpha=False):
         isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
+        zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, FileName, UseAlpha=False)
    
         if FileName == None:
             self._BackgroundImage = None

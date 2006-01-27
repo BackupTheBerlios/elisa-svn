@@ -1,23 +1,5 @@
 from testGL.zAPI.zDrawing import zRectangle3D
 
-class RendererBase(object):
-        
-    def init(self): pass
-
-    def ClearScreen(self): pass
-    
-    def DrawBackground(self): pass
-    
-    def Blit(self, pyrect) : pass
-
-    def SetBackColor(self, Red, Green, Blue): pass
-        
-    def SetBackgroundImage(self, PathAndFileName): pass
-    
-    def BeforeRender(self): pass
-            
-    def AfterRender(self): pass
-
 class SurfaceBase(object):
         
     def __init__(self):
@@ -67,3 +49,19 @@ class SurfaceBase(object):
         
     def ApplyRotation(self, Rotate): pass
 
+class RendererBase(SurfaceBase):
+
+    def __init__(self):
+        Surface.__init__(self)
+        
+    def init(self): pass
+
+    def ClearScreen(self): pass
+    
+    def DrawBackground(self): pass
+    
+    def Blit(self, pyrect) : pass
+    
+    def BeforeRender(self): pass
+            
+    def AfterRender(self): pass

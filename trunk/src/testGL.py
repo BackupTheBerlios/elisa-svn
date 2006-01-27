@@ -26,7 +26,7 @@ class MyClass(zForm.Form):
         zForm.Form.__init__(self)        
 
         self.SetBackColor(1.0, 1.0, 1.0)
-        self.SetBackgroundImage("testGL/themes/mce/COMMON.BACKGROUND.PNG")
+        self.SetBackgroundImageFromFile("testGL/themes/mce/COMMON.BACKGROUND.PNG")
         
         #FIXME : FONT + VIDEO IS VERY SLOW
         #self._font = zFont.Font("very slow with long text !!! to fix")
@@ -54,7 +54,7 @@ class MyClass(zForm.Form):
         self._ctl.SetSize(300, 40)
         self._ctl.SetText("ctl")
         self._ctl.SetLocation(120.0, 80.0, 2.0)
-        self._ctl.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
+        self._ctl.SetBackgroundImageFromFile("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
         self.AddControl(self._ctl)
 
         self._ctl3 = zVideo.Video()

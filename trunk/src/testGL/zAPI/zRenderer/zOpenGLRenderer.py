@@ -11,7 +11,8 @@ class OpenGLRenderer(zBaseClass.RendererBase):
         self._CameraZposition = -500.0
         self._AspectRatio = 1.0;
         self._width, self._height = constants.GetWindowSize()
-
+        self._DrawBackground = False
+        
     def init(self):
         
         glMatrixMode(GL_MODELVIEW)
@@ -51,7 +52,7 @@ class OpenGLRenderer(zBaseClass.RendererBase):
          glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
          
     def DrawBackground(self) :
-        if self._BackgroundSurface != None:
+        if self._DrawBackground == True:
             
             glPushMatrix()
             glMatrixMode(GL_MODELVIEW)
@@ -65,17 +66,22 @@ class OpenGLRenderer(zBaseClass.RendererBase):
             glPopMatrix()
             glMatrixMode(GL_MODELVIEW)
             glPopMatrix() 
-
-
+    
     def SetBackColor(self, Red, Green, Blue):
+        zBaseClass.RendererBase.SetBackColor(self, Red, Green, Blue)
         glClearColor(Red, Green, Blue, 0.0)
         
-    def SetBackgroundImage(self, PathAndFileName):
+    def SetBackgroundImageFromFile(self, PathAndFileName):
+        zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, PathAndFileName)
+        if self._BackgroundSurface == None:
+            self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
+            self._BackgroundSurface.SetSize(2.0, 2.0)
+            self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
+            self._BackgroundSurface.SetBackColor(255.0, 255.0, 255.0)
+        self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
+        
         if PathAndFileName == None:
-            self._BackgroundSurface = None
+            self._DrawBackground = False
         else:
-            if self._BackgroundSurface == None:
-                self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
-                self._BackgroundSurface.SetSize(2.0, 2.0)
-                self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
-            self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
+            self._DrawBackground = True
+

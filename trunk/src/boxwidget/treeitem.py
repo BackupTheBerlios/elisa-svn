@@ -14,6 +14,6 @@ class TreeItem(surface.Surface):
         self._status = in_status
         
         if in_status == 0:
-            self.SetAlphaLevel(50)
+            self.SetAlphaLevel(35)
         else:
             self.SetAlphaLevel(100)

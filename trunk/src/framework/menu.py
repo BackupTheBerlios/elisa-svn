@@ -98,19 +98,20 @@ class MenuLevel(object):
     """
     manipulate menu level element (group of L{menu.MenuItem} element)
     """
-    
+
     def __init__(self, in_levelname = "level"):
         """
         constructor
         """
         self._levelname = in_levelname
-        
-        """      
+             
         self._selected_callback = None
         self._unselected_callback = None
         self._selected_args = None
         self._unselected_args = None
+        print in_levelname
         
+        """
         levelist format is :
         [ [item, level attached], [item, level attached] ....]
         level attached is the next level under current item. default value is None

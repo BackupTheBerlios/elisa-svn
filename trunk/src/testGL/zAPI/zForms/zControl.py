@@ -36,7 +36,7 @@ class Control(object):
     def SetSurface(self, surface):
         self._Surface = surface
         
-    def SetBackgroundImage(self, PathAndFileName, UseAlpha=False):
+    def SetBackgroundImageFromFile(self, PathAndFileName, UseAlpha=False):
         self._BackgroundImagePath = PathAndFileName
         self._Surface.SetBackgroundImageFromFile(PathAndFileName, UseAlpha)
     

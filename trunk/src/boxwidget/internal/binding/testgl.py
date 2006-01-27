@@ -24,7 +24,7 @@ class zWindow(windowbase._WindowBase):
 
     def SetBackgroundImage(self, PathAndFileName=None):
         windowbase._WindowBase.SetBackgroundImage(self, PathAndFileName)
-        self.GetNativeSurface().SetBackgroundImage(PathAndFileName)
+        self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName)
         
     def Close(self):
         self.GetNativeSurface().DisplayStats()
@@ -63,7 +63,7 @@ class zSurface(surfacebase._SurfaceBase):
 
     def SetBackgroundImage(self, PathAndFileName=None):
         surfacebase._SurfaceBase.SetBackgroundImage(self, PathAndFileName)
-        self.GetNativeSurface().SetBackgroundImage(PathAndFileName, True)
+        self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName, True)
         
     def SetAlphaLevel(self, in_level):
         surfacebase._SurfaceBase.SetAlphaLevel(self, in_level)

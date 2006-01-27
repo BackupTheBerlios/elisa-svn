@@ -46,8 +46,8 @@ class Form(zControl.Control):
         zControl.Control.SetBackColor(self, Red, Green, Blue)
         self._Renderer.SetBackColor(Red, Green, Blue)
     
-    def SetBackgroundImage(self, PathAndFileName, UseAlpha=False):
-        self._Renderer.SetBackgroundImage(PathAndFileName)
+    def SetBackgroundImageFromFile(self, PathAndFileName, UseAlpha=False):
+        self._Renderer.SetBackgroundImageFromFile(PathAndFileName)
         
     #FIXME : not implemented
     def SetLocation(self, x, y): pass
