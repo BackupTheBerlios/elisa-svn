@@ -10,8 +10,6 @@ class Window(factory._WindowFactory()):
     def __init__(self):
         super(Window,self).__init__() 
         self._EventsHandler = eventsmanager.EventsManager()
-        
-        print "zzzzzzzzzzzzzzzzzzzzzzzzzzzz"
     
     def Refresh(self):
     

@@ -89,10 +89,10 @@ class Form(zControl.Control):
         
         if self.FpsEnable == True:
             self._wait=( (self._MinMsBetweenFrame - (pygame.time.get_ticks() - StartAt))/1000.0 )
-            #if self._wait >0:
-            #    time.sleep(self._wait)
-            #else:
-            #    time.sleep(0.001)
+            if self._wait >0:
+                time.sleep(self._wait)
+            else:
+                time.sleep(0.001)
             
         return True
     
@@ -103,11 +103,17 @@ class Form(zControl.Control):
         
     def AddControl(self, ctrl):
         self._ControlCollection.append(ctrl)
+        self._SortzOderDrawingBool = True
+        ctrl._SetForm(self)
     
+    def ReorderControls(self):
+        self._SortzOderDrawingBool = True
+        
     def RemoveControl(self, ctrl):
         ctrl.OnUnload()
         self._ControlCollection.remove(ctrl)
         self._SortzOderDrawingBool = True
+        ctrl._SetForm(None)
         
     def Render(self):
         self.Draw()
@@ -132,9 +138,9 @@ class Form(zControl.Control):
         for control in self._SortedControlCollection:
             if isinstance(control,list) == True:
                 for control2 in control:
-                    control2.Draw()
+                    if control2.Visible(): control2.Draw()
             else:
-                control.Draw()
+                if control2.Visible(): control.Draw()
             
     def Draw(self):
         self._Renderer.DrawBackground();

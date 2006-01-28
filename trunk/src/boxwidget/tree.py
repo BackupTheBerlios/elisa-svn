@@ -1,13 +1,12 @@
 import surface, event, treelevel
 
-class Tree(surface.Surface):
+class Tree(surface.SurfaceGroup):
 
     def __init__(self, in_rootlevel):
-        surface.Surface.__init__(self)
+        surface.SurfaceGroup.__init__(self)
         
         self._rootlevel = in_rootlevel
-        self.Hide()
-        
+
         self.SetAlphaLevel = 10
         self._surfaceitems = []
         _rootlevelsurface = treelevel.TreeLevel(in_rootlevel)
@@ -21,12 +20,16 @@ class Tree(surface.Surface):
         return self._currentlevelID()
         
     def OnEvent(self, in_event):
-        if in_event.GetSimpleEvent() == event.SE_UP:
-            self.SelectPreviousLevel()
-        if in_event.GetSimpleEvent() == event.SE_DOWN:
-            self.SelectNextLevel()
+        if self.VisibleGroup() == True:
+            if in_event.GetSimpleEvent() == event.SE_UP:
+                self.SelectPreviousLevel()
+            if in_event.GetSimpleEvent() == event.SE_DOWN:
+                self.SelectNextLevel()
+            if in_event.GetSimpleEvent() == event.SE_OK:
+                _treeitemsurface = self.GetCurrentLevelSurface().GetSelectedItem()
+                _treeitemsurface.GetMenuItemData().CallActionCallback()
             
-        return surface.Surface.OnEvent(self, in_event)
+        return surface.SurfaceGroup.OnEvent(self, in_event)
         
     def SelectPreviousLevel(self):
         _treelevelsurface = self.GetCurrentLevelSurface()

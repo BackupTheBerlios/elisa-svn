@@ -13,7 +13,7 @@ class TreeLevel(surface.Surface):
         self.SetAlphaLevel(0)
         self._currentrank = 0
         self._BackImage = surface.Surface()
-        self._BackImage.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
+        self._BackImage.SetBackgroundFromFile("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
         self._BackImage.SetSize(500,40)
         self._BackImage.SetLocation(20,30,2.1)
         self.AddSurface(self._BackImage)
@@ -23,8 +23,8 @@ class TreeLevel(surface.Surface):
             s = treeitem.TreeItem(item)
             s.SetSize(128, 128)
             s.SetLocation(_i, -12, 2.2)
-            _i += 140
-            s.SetBackgroundImage(item.GetPicturePathAndFilename())
+            _i += 150
+            s.SetBackgroundFromFile(item.GetPicturePathAndFilename())
             self.AddSurface(s)
             self._surfaceitems.append(s)
             self._currentrank = 0

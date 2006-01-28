@@ -65,8 +65,9 @@ class MyClass(zForm.Form):
         self._ctl3.SetURI("file:///home/yoyo/temp/Le-roi-lion.avi")
         self._ctl3.SetAlpha(150)
         self._ctl3.Play()
+        #self._ctl3.Hide()
         self.AddControl(self._ctl3)
-
+        #self._ctl3.Show()
         
            
 if __name__ == '__main__': 

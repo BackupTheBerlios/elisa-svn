@@ -13,7 +13,7 @@ class MenuItem(object):
         self._action_callback = None
         self._selected_args = None
         self._unselected_args = None
-        self._action_args = None
+        self._action_callback_args = None
         self._level = None
         
     def SetShortname(self, in_shortname):
@@ -88,7 +88,7 @@ class MenuItem(object):
             if self._action_callback_args == None:
                 self._action_callback()
             else:
-                self._action_callback(self._selected_action_args)
+                self._action_callback(self._action_callback_args)
                 
     def __repr__(self):
         return self._shortname + ":" + str(MenuItem)

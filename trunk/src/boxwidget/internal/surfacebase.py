@@ -26,13 +26,13 @@ class _SurfaceBase(object):
         """
         self._alphalevel = in_level
 
-    def SetBackgroundImage(self, in_pathandfilename=None):
+    def SetBackgroundFromFile(self, in_pathandfilename=None):
         """
         set widget background image
         """
         self._backgroundimagepath = in_pathandfilename
         
-    def GetBackgroundImage(self):
+    def GetBackgroundFile(self):
         """
         return path and filename of background image
         """
@@ -116,10 +116,9 @@ class _SurfaceBase(object):
         _mainwindow = self.GetWindow()
         #if new surface is added to another surface visible (added to main form)
         #I fire OnAddSurface event
-        if _mainwindow != None and in_surface not in _mainwindow.GetAddedSurfaceToNativeWindow():
+        if _mainwindow != None:
             _mainwindow.AddSurfaceToNativeWindow(in_surface)
             in_surface._SetWindow(self.GetWindow())
-            _mainwindow.GetAddedSurfaceToNativeWindow().append(in_surface)
         
         #re-set location for apply location offset on child surface
         self.SetLocation(self._x, self._y, self._z)
@@ -133,9 +132,8 @@ class _SurfaceBase(object):
             self._surfacelist.remove(in_surface)
         
         _mainwindow = self.GetWindow()
-        if in_surface in _mainwindow.GetAddedSurfaceToNativeWindow():
+        if _mainwindow != None:
             _mainwindow.RemoveSurfaceFromNativeWindow(in_surface)
-            _mainwindow.GetAddedSurfaceToNativeWindow().remove(in_surface)
                 
         #remove child surface also
         #copy needeed because list in modified by recursive fct

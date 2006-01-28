@@ -26,7 +26,15 @@ def _SurfaceFactory():
     if _Engine == "testGL":
         return testgl.zSurface
 
-
+def _VideoSurfaceFactory():
+    """
+    return surface object of select render engine
+    @param in_WidgetEngine: widget engine used. can be "testGL"
+    @type in_WidgetEngine: string
+    """
+    if _Engine == "testGL":
+        return testgl.zVideoSurface
+        
 def _EventsManagerFactory():
     """
     return surface object of select render engine

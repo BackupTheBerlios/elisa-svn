@@ -16,7 +16,26 @@ class Control(object):
         self._BackColorB = 0.0
         self._Alpha = 255.0
         self._Rotate = zPoint3D.Point3D()
+        self._Visible = True
+        self._Form = None
 
+    def _SetForm(self, in_form):
+        self._Form = in_form
+        
+    def GetForm(self):
+        return self._Form
+        
+    def Show(self):
+        self._Visible = True
+        if self.GetForm() != None:
+            self.GetForm().ReorderControls()
+    
+    def Hide(self):
+        self._Visible = False
+    
+    def Visible(self):
+        return self._Visible
+        
     def GetRect(self):
         return self._SurfaceRectangle
         

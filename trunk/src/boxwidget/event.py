@@ -14,6 +14,7 @@ KEY_ESCAPE = "KEY_ESCAPE"
 
 #SimpleEvent
 SE_OK = "SE_OK"
+SE_MENU = "SE_MENU"
 SE_UP = "SE_UP"
 SE_DOWN = "SE_DOWN"
 SE_LEFT = "SE_LEFT"

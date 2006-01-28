@@ -1,6 +1,6 @@
-from boxwidget import window, tree
+from boxwidget import window, tree, event, videosurface
 from boxwidget.internal import factory
-import menu, config, common
+import menu, config, common, os
 
 _config = config.Config()
 factory._SetRenderer(_config.Get("RenderEngine"))
@@ -19,14 +19,22 @@ class BoxApplication(window.Window):
         """
         common._SetApplication(self)
         window.Window.__init__(self)
-          
+        
+        self._videosurface = videosurface.VideoSurface()
+        self._videosurface.SetSize(800.0,600.0)
+        self._videosurface.SetLocation(0.0 ,0.0 , -0.01)
+        self._videosurface.SetBackColor(255.0, 255.0, 255.0)
+        self._videosurface.Hide()
+        self.AddSurface(self._videosurface)
         self._plugintreelist = []
         self._rootlevel = menu.MenuLevel("root")
 
     def RestoreBackground(self):
-        #FIXME : JUST PUT BACKGROUND TO BLACK
-        self.SetBackgroundImage(None)
+        #JUST PUT BACKGROUND TO BLACK
+        self.SetBackgroundFromFile(None)
         self.SetBackColor(0,0,0)
+        if self._videosurface.GetStatus() in (videosurface.VideoSurface.VS_PLAY, videosurface.VideoSurface.VS_PAUSE):
+            self._videosurface.Show()   
 
     def AddPlugin(self, in_plugin):
         """
@@ -42,20 +50,35 @@ class BoxApplication(window.Window):
         
     def Refresh(self):            
         window.Window.Refresh(self)
-            
+    
+    def StartVideoFile(self, in_filename):
+        if os.path.exists(in_filename):
+            self._videosurface.SetVideoFile(in_filename)
+            self._videosurface.Play()
+            self._videosurface.Show()
+    
+    def ShowImageFile(self, in_filename):
+        self._videosurface.Hide()
+        self.SetBackgroundFromFile(in_filename)
+        
     def Run(self):
         
         #Create widget menu
-        _treewidget = tree.Tree(self._rootlevel)
-        _treewidget.SetSize(500, 100)
-        _treewidget.SetLocation(120.0, 150.0, 2.0)
-        self.AddSurface(_treewidget)
+        self._treewidget = tree.Tree(self._rootlevel)
+        self._treewidget.SetSize(500, 100)
+        self._treewidget.SetLocation(120.0, 150.0, 2.0)
+        self.AddSurface(self._treewidget)
         
         window.Window.Run(self)
         
- 
+    def OnEvent(self, in_event):
+        if in_event.GetSimpleEvent() == event.SE_MENU:
+            self.ToogleMenu()
+
+        return window.Window.OnEvent(self, in_event)
+        
     def ToogleMenu(self):
-        if _treewidget.Visible()==True:
-            _treewidget.Hide()
+        if self._treewidget.VisibleGroup()==True:
+            self._treewidget.HideGroup()
         else:
-            _treewidget.Show()
+            self._treewidget.ShowGroup()

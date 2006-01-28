@@ -12,7 +12,6 @@ class _WindowBase(surfacebase._SurfaceBase):
         surfacebase._SurfaceBase.__init__(self)
         "native binded widget framework window"
         self._SetWindow(self)
-        self._SurfaceAddedToNativeWindow = []
         self._focusedsurface = None
         self._Fps = 50
         
@@ -41,9 +40,6 @@ class _WindowBase(surfacebase._SurfaceBase):
         refresh complete window (draw current frame)
         @return: False if loop stop required, True if noting.
         """
-        
-    def GetAddedSurfaceToNativeWindow(self):
-        return self._SurfaceAddedToNativeWindow
         
     def Close(self):
         """

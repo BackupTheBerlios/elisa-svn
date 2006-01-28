@@ -1,6 +1,6 @@
-from boxwidget.internal import windowbase, surfacebase, eventsmanagerbase
+from boxwidget.internal import windowbase, surfacebase, eventsmanagerbase, videosurfacebase
 from boxwidget import event
-from testGL.zAPI.zForms import zForm,zPictureBox
+from testGL.zAPI.zForms import zForm,zPictureBox,zOpenGLVideo
 import pygame
 from pygame.locals import *
 
@@ -22,8 +22,8 @@ class zWindow(windowbase._WindowBase):
     def SetBackColor(self, Red, Green, Blue):
         self.GetNativeSurface().SetBackColor(Red, Green, Blue)
 
-    def SetBackgroundImage(self, PathAndFileName=None):
-        windowbase._WindowBase.SetBackgroundImage(self, PathAndFileName)
+    def SetBackgroundFromFile(self, PathAndFileName=None):
+        windowbase._WindowBase.SetBackgroundFromFile(self, PathAndFileName)
         self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName)
         
     def Close(self):
@@ -31,14 +31,11 @@ class zWindow(windowbase._WindowBase):
         windowbase._WindowBase.Close(self)
      
     def AddSurfaceToNativeWindow(self, in_surface):
-        windowbase._WindowBase.AddSurfaceToNativeWindow(self, in_surface)
-        if in_surface.Visible() == True:
-            self.GetNativeSurface().AddControl(in_surface.GetNativeSurface())
-            (_tx, _ty, _tz) = in_surface.GetAbsoluteLocation()
-            in_surface.GetNativeSurface().SetLocation(_tx, _ty, _tz)
+        self.GetNativeSurface().AddControl(in_surface.GetNativeSurface())
+        (_tx, _ty, _tz) = in_surface.GetAbsoluteLocation()
+        in_surface.GetNativeSurface().SetLocation(_tx, _ty, _tz)
 
     def RemoveSurfaceFromNativeWindow(self, in_surface):
-        windowbase._WindowBase.RemoveSurfaceFromNativeWindow(self, in_surface)
         self.GetNativeSurface().RemoveControl(in_surface.GetNativeSurface())
         
 class zSurface(surfacebase._SurfaceBase):
@@ -50,6 +47,7 @@ class zSurface(surfacebase._SurfaceBase):
         self.SetNaviteSurface(zPictureBox.PictureBox())
         
     def SetSize(self, Width, Height):  
+        surfacebase._SurfaceBase.SetSize(self, Width, Height)
         self.GetNativeSurface().SetSize(Width, Height)
         
     def SetLocation(self, x, y, z):
@@ -61,14 +59,65 @@ class zSurface(surfacebase._SurfaceBase):
     def SetBackColor(self, Red, Green, Blue):
         self.GetNativeSurface().SetBackColor(Red, Green, Blue)
 
-    def SetBackgroundImage(self, PathAndFileName=None):
-        surfacebase._SurfaceBase.SetBackgroundImage(self, PathAndFileName)
+    def SetBackgroundFromFile(self, PathAndFileName=None):
+        surfacebase._SurfaceBase.SetBackgroundFromFile(self, PathAndFileName)
         self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName, True)
         
     def SetAlphaLevel(self, in_level):
         surfacebase._SurfaceBase.SetAlphaLevel(self, in_level)
         self.GetNativeSurface().SetAlpha(in_level*2.55)
+        
+    def Hide(self):
+        surfacebase._SurfaceBase.Hide(self)
+        self.GetNativeSurface().Hide()
 
+    def Show(self):
+        surfacebase._SurfaceBase.Show(self)
+        self.GetNativeSurface().Show()
+
+class zVideoSurface(videosurfacebase._VideoSurfaceBase):
+
+    def __init__(self):
+        videosurfacebase._VideoSurfaceBase.__init__(self)
+        self.SetNaviteSurface(zOpenGLVideo.OpenGLVideo())
+        
+    def SetVideoFile(self, in_videofile):
+        videosurfacebase._VideoSurfaceBase.SetVideoFile(self, in_videofile)
+        self.GetNativeSurface().SetURI("file://" + str(in_videofile))
+        
+    def Play(self):
+        videosurfacebase._VideoSurfaceBase.Play(self)
+        self.GetNativeSurface().Play()
+        
+    def SetSize(self, Width, Height):  
+        videosurfacebase._VideoSurfaceBase.SetSize(self, Width, Height)
+        self.GetNativeSurface().SetSize(Width, Height)
+        
+    def SetLocation(self, x, y, z):
+        #if parent defined, location of widget is relative
+        videosurfacebase._VideoSurfaceBase.SetLocation(self, x, y, z)
+        (_tx, _ty, _tz) = self.GetAbsoluteLocation()
+        self.GetNativeSurface().SetLocation(_tx, _ty, _tz)
+    
+    def SetBackColor(self, Red, Green, Blue):
+        self.GetNativeSurface().SetBackColor(Red, Green, Blue)
+
+    def SetBackgroundFromFile(self, PathAndFileName=None):
+        videosurfacebase._VideoSurfaceBase.SetBackgroundFromFile(self, PathAndFileName)
+        self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName, True)
+        
+    def SetAlphaLevel(self, in_level):
+        videosurfacebase._VideoSurfaceBase.SetAlphaLevel(self, in_level)
+        self.GetNativeSurface().SetAlpha(in_level*2.55)
+
+    def Hide(self):
+        videosurfacebase._VideoSurfaceBase.Hide(self)
+        self.GetNativeSurface().Hide()
+
+    def Show(self):
+        videosurfacebase._VideoSurfaceBase.Show(self)
+        self.GetNativeSurface().Show()
+        
 class zEventsManager(eventsmanagerbase._EventsManagerBase):
 
     def __init__(self):
@@ -98,10 +147,8 @@ class zEventsManager(eventsmanagerbase._EventsManagerBase):
             if in_pyevent.key == pygame.K_RETURN:
                 return event.Event(event.DEV_KEYBOARD, event.KEY_RETURN, event.SE_OK)
             if in_pyevent.key == pygame.K_SPACE:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_SPACE, event.SE_OK)
+                return event.Event(event.DEV_KEYBOARD, event.KEY_SPACE, event.SE_MENU)
             if in_pyevent.key == pygame.K_ESCAPE:
                 return event.Event(event.DEV_KEYBOARD, event.KEY_ESCAPE, event.SE_QUIT)
                 
         return None
-        
-       
