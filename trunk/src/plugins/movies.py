@@ -16,6 +16,7 @@ class PluginTreeMovies(plugin.PluginTree):
         level1.AddItem(item1)
         
         level2 = menu.MenuLevel("movies level")
+        level2.ShowItemLabel()
         item11 = menu.MenuItem("nemo")
         item11.SetPicturePathAndFilename("icons/folder.png")
         item11.SetActionCallback(app.StartVideoFile,"/home/yoyo/temp/nemo-fr.avi")

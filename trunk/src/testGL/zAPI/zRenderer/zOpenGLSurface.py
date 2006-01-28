@@ -88,6 +88,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
                 
             self._RefreshTexture = True
 
+    def RecreateTexture(self): self._TextureID = None
+    
     #FIXME : allow different image size. actually, all image must have the same size.
     def LoadTexture(self):
     

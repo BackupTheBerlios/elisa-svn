@@ -16,6 +16,7 @@ class PluginTreePictures(plugin.PluginTree):
         level1.AddItem(item1)
         
         level2 = menu.MenuLevel("folder level")
+        level2.ShowItemLabel()
         item11 = menu.MenuItem("nature")
         item11.SetPicturePathAndFilename("icons/folder.png")
         level2.AddItem(item11)     
@@ -25,6 +26,7 @@ class PluginTreePictures(plugin.PluginTree):
 
         
         level3 = menu.MenuLevel("nature pictures level")
+        level3.ShowItemLabel()
         level3.SetUnselectedCallback(app.RestoreBackground,None)
         item31 = menu.MenuItem("house")
         item31.SetPicturePathAndFilename("sample_data/pictures/nature/house.jpg")
@@ -47,23 +49,24 @@ class PluginTreePictures(plugin.PluginTree):
         level3.AddItem(item34) 
         
         level4 = menu.MenuLevel("animals pictures level")
+        level4.ShowItemLabel()
         level4.SetUnselectedCallback(app.RestoreBackground,None)
-        item41 = menu.MenuItem("house")
+        item41 = menu.MenuItem("duck")
         item41.SetPicturePathAndFilename("sample_data/pictures/animals/duck.jpg")
         item41.SetSelectedCallback(app.ShowImageFile,"sample_data/pictures/animals/duck.jpg")
         level4.AddItem(item41) 
 
-        item42 = menu.MenuItem("mountain")
+        item42 = menu.MenuItem("lambs")
         item42.SetPicturePathAndFilename("sample_data/pictures/animals/lambs.jpg")
         item42.SetSelectedCallback(app.ShowImageFile,"sample_data/pictures/animals/lambs.jpg")
         level4.AddItem(item42) 
         
-        item43 = menu.MenuItem("tree")
+        item43 = menu.MenuItem("dogs")
         item43.SetPicturePathAndFilename("sample_data/pictures/animals/dogs.jpg")
         item43.SetSelectedCallback(app.ShowImageFile,"sample_data/pictures/animals/dogs.jpg")
         level4.AddItem(item43) 
         
-        item44 = menu.MenuItem("wall")
+        item44 = menu.MenuItem("hippo")
         item44.SetPicturePathAndFilename("sample_data/pictures/animals/hippo.jpg")
         item44.SetSelectedCallback(app.ShowImageFile,"sample_data/pictures/animals/hippo.jpg")
         level4.AddItem(item44) 

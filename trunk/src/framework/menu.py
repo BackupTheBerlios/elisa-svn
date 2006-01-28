@@ -104,7 +104,7 @@ class MenuLevel(object):
         constructor
         """
         self._levelname = in_levelname
-             
+        self._showitemlabel = False
         self._selected_callback = None
         self._unselected_callback = None
         self._selected_args = None
@@ -117,6 +117,10 @@ class MenuLevel(object):
         """
         self._itemlist = []
 
+    def ShowItemLabel(self): self._showitemlabel = True
+    def HideItemLabel(self): self._showitemlabel = False
+    def ItemLabelVisible(self): return self._showitemlabel
+    
     def SetSelectedCallback(self, in_callback, in_args = None):
         """callback called when menu item is selected"""
         self._selected_callback = in_callback

@@ -1,6 +1,6 @@
-from boxwidget.internal import windowbase, surfacebase, eventsmanagerbase, videosurfacebase
+from boxwidget.internal import windowbase, surfacebase, eventsmanagerbase, videosurfacebase, fontsurfacebase
 from boxwidget import event
-from testGL.zAPI.zForms import zForm,zPictureBox,zOpenGLVideo
+from testGL.zAPI.zForms import zForm, zPictureBox, zOpenGLVideo, zFont
 import pygame
 from pygame.locals import *
 
@@ -37,15 +37,8 @@ class zWindow(windowbase._WindowBase):
 
     def RemoveSurfaceFromNativeWindow(self, in_surface):
         self.GetNativeSurface().RemoveControl(in_surface.GetNativeSurface())
-        
-class zSurface(surfacebase._SurfaceBase):
-    """
-    surface binding class for testGL render engine
-    """   
-    def __init__(self):
-        surfacebase._SurfaceBase.__init__(self)
-        self.SetNaviteSurface(zPictureBox.PictureBox())
-        
+
+class _bindingcommon:
     def SetSize(self, Width, Height):  
         surfacebase._SurfaceBase.SetSize(self, Width, Height)
         self.GetNativeSurface().SetSize(Width, Height)
@@ -74,8 +67,36 @@ class zSurface(surfacebase._SurfaceBase):
     def Show(self):
         surfacebase._SurfaceBase.Show(self)
         self.GetNativeSurface().Show()
+        
+class zSurface(_bindingcommon, surfacebase._SurfaceBase):
+    """
+    surface binding class for testGL render engine
+    """   
+    def __init__(self):
+        surfacebase._SurfaceBase.__init__(self)
+        self.SetNaviteSurface(zPictureBox.PictureBox())        
 
-class zVideoSurface(videosurfacebase._VideoSurfaceBase):
+class zFontSurface(_bindingcommon, fontsurfacebase._FontSurfaceBase):
+    """
+    surface binding class for testGL font surface
+    """   
+    def __init__(self):
+        fontsurfacebase._FontSurfaceBase.__init__(self)
+        self.SetNaviteSurface(zFont.Font())
+        self.GetNativeSurface().SetFontSize(self.GetFontSize()) 
+        
+    def SetFontSize(self, in_size):
+        fontsurfacebase._FontSurfaceBase.SetFontSize(self, in_size)
+        self.GetNativeSurface().SetFontSize(in_size)
+        
+    def SetText(self, in_text):
+        fontsurfacebase._FontSurfaceBase.SetText(self, in_text)
+        self.GetNativeSurface().SetText(in_text)
+    
+    def GetSize(self):
+        return self.GetNativeSurface().GetSize()
+            
+class zVideoSurface(_bindingcommon, videosurfacebase._VideoSurfaceBase):
 
     def __init__(self):
         videosurfacebase._VideoSurfaceBase.__init__(self)
@@ -88,35 +109,6 @@ class zVideoSurface(videosurfacebase._VideoSurfaceBase):
     def Play(self):
         videosurfacebase._VideoSurfaceBase.Play(self)
         self.GetNativeSurface().Play()
-        
-    def SetSize(self, Width, Height):  
-        videosurfacebase._VideoSurfaceBase.SetSize(self, Width, Height)
-        self.GetNativeSurface().SetSize(Width, Height)
-        
-    def SetLocation(self, x, y, z):
-        #if parent defined, location of widget is relative
-        videosurfacebase._VideoSurfaceBase.SetLocation(self, x, y, z)
-        (_tx, _ty, _tz) = self.GetAbsoluteLocation()
-        self.GetNativeSurface().SetLocation(_tx, _ty, _tz)
-    
-    def SetBackColor(self, Red, Green, Blue):
-        self.GetNativeSurface().SetBackColor(Red, Green, Blue)
-
-    def SetBackgroundFromFile(self, PathAndFileName=None):
-        videosurfacebase._VideoSurfaceBase.SetBackgroundFromFile(self, PathAndFileName)
-        self.GetNativeSurface().SetBackgroundImageFromFile(PathAndFileName, True)
-        
-    def SetAlphaLevel(self, in_level):
-        videosurfacebase._VideoSurfaceBase.SetAlphaLevel(self, in_level)
-        self.GetNativeSurface().SetAlpha(in_level*2.55)
-
-    def Hide(self):
-        videosurfacebase._VideoSurfaceBase.Hide(self)
-        self.GetNativeSurface().Hide()
-
-    def Show(self):
-        videosurfacebase._VideoSurfaceBase.Show(self)
-        self.GetNativeSurface().Show()
         
 class zEventsManager(eventsmanagerbase._EventsManagerBase):
 
