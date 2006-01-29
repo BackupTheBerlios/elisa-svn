@@ -39,7 +39,7 @@ class BoxApplication(window.Window):
         #JUST PUT BACKGROUND TO BLACK
         self.SetBackgroundFromFile(None)
         self.SetBackColor(0,0,0)
-        if self._videosurface.GetStatus() in (videosurface.VideoSurface.VS_PLAY, videosurface.VideoSurface.VS_PAUSE):
+        if self._videosurface != None and self._videosurface.GetStatus() in (videosurface.VideoSurface.VS_PLAY, videosurface.VideoSurface.VS_PAUSE):
             self._videosurface.Show()   
 
     def AddPlugin(self, in_plugin):
@@ -69,7 +69,7 @@ class BoxApplication(window.Window):
             self._videosurface.Show()
     
     def ShowImageFile(self, in_filename):
-        self._videosurface.Hide()
+        if self._videosurface != None: self._videosurface.Hide()
         self.SetBackgroundFromFile(in_filename)
         
     def Run(self):
@@ -77,7 +77,7 @@ class BoxApplication(window.Window):
         #Create widget menu
         self._treewidget = tree.Tree(self._rootlevel)
         self._treewidget.SetSize(500, 100)
-        self._treewidget.SetLocation(105.0, 450.0, 2.0)
+        self._treewidget.SetInitialLocation(105.0, 450.0, 2.0)
         self.AddSurface(self._treewidget)
         
         window.Window.Run(self)

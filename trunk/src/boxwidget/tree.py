@@ -56,9 +56,11 @@ class Tree(surface.SurfaceGroup):
     
     def SetLocation(self, x, y, z):
         surface.SurfaceGroup.SetLocation(self, x, y, z)
-        if self._DrawingNextLevel == False and self._DrawingPreviousLevel == False : 
-            self._y_init = y
-                
+    
+    def SetInitialLocation(self, x, y, z):
+        self._y_init = y
+        self.SetLocation(x, y, z)
+           
     def Refresh(self):
         _step = 10
         if self._DrawingNextLevel == True:
