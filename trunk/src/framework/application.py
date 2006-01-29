@@ -51,9 +51,11 @@ class BoxApplication(window.Window):
     def Refresh(self):            
         window.Window.Refresh(self)
     
+    #FIXME : Crash when try another video when on is playing
     def StartVideoFile(self, in_filename):
         if os.path.exists(in_filename):
-            self._videosurface.SetVideoFile(in_filename)
+            self._videosurface.Stop()
+            #self._videosurface.SetVideoFile(in_filename)
             self._treewidget.HideGroup()
             self._videosurface.Play()
             self._videosurface.Show()

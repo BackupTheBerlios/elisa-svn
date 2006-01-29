@@ -19,6 +19,9 @@ class _VideoSurfaceBase(surfacebase._SurfaceBase):
         
     def Play(self):
         self._videostatus = _VideoSurfaceBase.VS_PLAY
-        
+    
+    def Stop(self):
+        self._videostatus = _VideoSurfaceBase.VS_STOP
+            
     def GetStatus(self):
         return self._videostatus

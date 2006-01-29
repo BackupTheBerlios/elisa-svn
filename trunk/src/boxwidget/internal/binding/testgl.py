@@ -109,7 +109,11 @@ class zVideoSurface(_bindingcommon, videosurfacebase._VideoSurfaceBase):
     def Play(self):
         videosurfacebase._VideoSurfaceBase.Play(self)
         self.GetNativeSurface().Play()
-        
+    
+    def Stop(self):
+        videosurfacebase._VideoSurfaceBase.Stop(self)
+        self.GetNativeSurface().Stop()
+            
 class zEventsManager(eventsmanagerbase._EventsManagerBase):
 
     def __init__(self):
