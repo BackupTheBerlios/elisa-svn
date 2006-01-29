@@ -15,7 +15,7 @@ class OpenGLVideo(zControl.Control, zGstreamer.GstPlayer):
         if self._videoheight == None:
             self._videoheight = self._MySink.GetHeight() 
         if Frame != None and self._videoheight != None and self._videowidth != None:
-            self.GetSurface().SetBackgroundImageFromBuffer(Frame, self._videowidth, self._videoheight)
+            self.GetSurface().SetBackgroundImageFromBuffer(Frame, self._videowidth, self._videoheight, )
         zControl.Control.Draw(self)
 
     def OnUnload(self):

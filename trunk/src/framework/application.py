@@ -20,15 +20,21 @@ class BoxApplication(window.Window):
         common._SetApplication(self)
         window.Window.__init__(self)
         
+        self._videosurface = None
+        self._videofilename = None
+
+        self._plugintreelist = []
+        self._rootlevel = menu.MenuLevel("root")
+
+    def CreateVideoSurface(self):
+        if self._videosurface != None: self.RemoveSurface(self._videosurface)
         self._videosurface = videosurface.VideoSurface()
         self._videosurface.SetSize(800.0,600.0)
         self._videosurface.SetLocation(0.0 ,0.0 , -0.01)
         self._videosurface.SetBackColor(255.0, 255.0, 255.0)
         self._videosurface.Hide()
         self.AddSurface(self._videosurface)
-        self._plugintreelist = []
-        self._rootlevel = menu.MenuLevel("root")
-
+        
     def RestoreBackground(self):
         #JUST PUT BACKGROUND TO BLACK
         self.SetBackgroundFromFile(None)
@@ -54,6 +60,8 @@ class BoxApplication(window.Window):
     #FIXME : Crash when try another video when on is playing
     def StartVideoFile(self, in_filename):
         if os.path.exists(in_filename):
+            if in_filename != self._videofilename: self.CreateVideoSurface()
+            self._videofilename = in_filename
             self._videosurface.Stop()
             self._videosurface.SetVideoFile(in_filename)
             self._treewidget.HideGroup()
