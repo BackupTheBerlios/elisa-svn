@@ -54,6 +54,7 @@ class BoxApplication(window.Window):
     def StartVideoFile(self, in_filename):
         if os.path.exists(in_filename):
             self._videosurface.SetVideoFile(in_filename)
+            self._treewidget.HideGroup()
             self._videosurface.Play()
             self._videosurface.Show()
     
@@ -66,7 +67,7 @@ class BoxApplication(window.Window):
         #Create widget menu
         self._treewidget = tree.Tree(self._rootlevel)
         self._treewidget.SetSize(500, 100)
-        self._treewidget.SetLocation(120.0, 150.0, 2.0)
+        self._treewidget.SetLocation(105.0, 450.0, 2.0)
         self.AddSurface(self._treewidget)
         
         window.Window.Run(self)

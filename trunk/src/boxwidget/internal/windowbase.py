@@ -40,6 +40,7 @@ class _WindowBase(surfacebase._SurfaceBase):
         refresh complete window (draw current frame)
         @return: False if loop stop required, True if noting.
         """
+        surfacebase._SurfaceBase.Refresh(self)
         
     def Close(self):
         """

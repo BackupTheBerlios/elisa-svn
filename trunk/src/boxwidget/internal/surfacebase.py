@@ -54,6 +54,11 @@ class _SurfaceBase(object):
         self._x = x
         self._y = y
         self._z = z
+        
+        for in_child in self._surfacelist: in_child._RefreshLocation()
+    
+    def _RefreshLocation(self):
+        self.SetLocation(self._x, self._y, self._z)
     
     def GetLocation(self):
         """ 
@@ -93,6 +98,9 @@ class _SurfaceBase(object):
         refresh surface
         @return: True if no error, False if error.
         """
+        for in_surface in self._surfacelist:
+            in_surface.Refresh()
+            
         return True
 
     def GetNativeSurface(self):

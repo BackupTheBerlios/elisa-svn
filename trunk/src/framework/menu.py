@@ -105,6 +105,7 @@ class MenuLevel(object):
         """
         self._levelname = in_levelname
         self._showitemlabel = False
+        self._showpreviousmenu = True
         self._selected_callback = None
         self._unselected_callback = None
         self._selected_args = None
@@ -117,9 +118,15 @@ class MenuLevel(object):
         """
         self._itemlist = []
 
+    #FIXME put in one fct
     def ShowItemLabel(self): self._showitemlabel = True
     def HideItemLabel(self): self._showitemlabel = False
     def ItemLabelVisible(self): return self._showitemlabel
+    
+    #FIXME put in one fct
+    def ShowPreviousMenu(self): self._showpreviousmenu = True
+    def HidePreviousMenu(self): self._showpreviousmenu = False
+    def PreviousMenuVisible(self): return self._showpreviousmenu
     
     def SetSelectedCallback(self, in_callback, in_args = None):
         """callback called when menu item is selected"""

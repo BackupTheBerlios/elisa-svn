@@ -27,6 +27,7 @@ class PluginTreePictures(plugin.PluginTree):
         
         level3 = menu.MenuLevel("nature pictures level")
         level3.ShowItemLabel()
+        level3.HidePreviousMenu()
         level3.SetUnselectedCallback(app.RestoreBackground,None)
         item31 = menu.MenuItem("house")
         item31.SetPicturePathAndFilename("sample_data/pictures/nature/house.jpg")
@@ -50,6 +51,7 @@ class PluginTreePictures(plugin.PluginTree):
         
         level4 = menu.MenuLevel("animals pictures level")
         level4.ShowItemLabel()
+        level4.HidePreviousMenu()
         level4.SetUnselectedCallback(app.RestoreBackground,None)
         item41 = menu.MenuItem("duck")
         item41.SetPicturePathAndFilename("sample_data/pictures/animals/duck.jpg")

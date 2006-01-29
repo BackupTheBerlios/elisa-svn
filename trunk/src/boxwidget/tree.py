@@ -6,6 +6,9 @@ class Tree(surface.SurfaceGroup):
         surface.SurfaceGroup.__init__(self)
         
         self._rootlevel = in_rootlevel
+        self._DrawingNextLevel = False
+        self._DrawingPreviousLevel = False
+        self._leveltodraw = None
 
         self.SetAlphaLevel = 10
         self._surfaceitems = []
@@ -13,9 +16,9 @@ class Tree(surface.SurfaceGroup):
         self._surfaceitems.append(_rootlevelsurface)
         self._currentlevelID = 0
         self.DrawLevel(_rootlevelsurface)
-        
+        self._y_init = 0
         self.AddSurface(_rootlevelsurface)
-
+    
     def GetCurrentLevelID(self):
         return self._currentlevelID()
         
@@ -39,6 +42,7 @@ class Tree(surface.SurfaceGroup):
             _treeleveldata.CallUnselectedCallback()
             self.RemoveSurface(_treelevelsurface)
             self._surfaceitems.remove(_treelevelsurface)
+            self._DrawingPreviousLevel = True
     
     def SelectNextLevel(self):
         _treeitemsurface = self.GetCurrentLevelSurface().GetSelectedItem()
@@ -47,14 +51,50 @@ class Tree(surface.SurfaceGroup):
             _nextlevelsurface = treelevel.TreeLevel(_nextleveldata)
             self._currentlevelID += 1
             self._surfaceitems.append(_nextlevelsurface)
-            self.DrawLevel(_nextlevelsurface)
-            _nextleveldata.CallSelectedCallback()
-            
-
+            self._DrawingNextLevel = True
+            self._leveltodraw = _nextlevelsurface
+    
+    def SetLocation(self, x, y, z):
+        surface.SurfaceGroup.SetLocation(self, x, y, z)
+        if self._DrawingNextLevel == False and self._DrawingPreviousLevel == False : 
+            self._y_init = y
+                
+    def Refresh(self):
+        _step = 10
+        if self._DrawingNextLevel == True:
+            _ymin = self._y_init - 130 * self._currentlevelID
+            (_x,_y,_z) = self.GetLocation()
+            if _y > _ymin:
+                #print str(_y) + " min:" + str(_ymin)
+                _y = _y - _step
+                if _y <= _ymin: _y = _ymin
+                self.SetLocation(_x, _y, _z)
+            else:
+                self.DrawLevel(self._leveltodraw)
+                self._DrawingNextLevel = False
+        elif self._DrawingPreviousLevel == True:
+            if self._currentlevelID > 0 : 
+                _ymin = self._y_init + 130 * (self._currentlevelID -2)
+            else:
+                _ymin = self._y_init
+                
+            (_x,_y,_z) = self.GetLocation()
+            #print str(_y) + " min:" + str(_ymin)
+            if _y < _ymin:
+                _y = _y +_step
+                if _y >= _ymin: _y =  self._y_init - 130 * (self._currentlevelID)
+                #print str(_y) + " min:" + str(_ymin)
+                self.SetLocation(_x, _y, _z)
+            else:
+                self._DrawingPreviousLevel = False
+        
+        surface.SurfaceGroup.Refresh(self)
+        
     def DrawLevel(self, in_level):
         in_level.SetLocation(0,130 * self._currentlevelID, 3)
         in_level.SetSize(300, 40)
         self.AddSurface(in_level)
+        in_level.GetMenuLevelData().CallSelectedCallback()
             
     def GetCurrentLevelSurface(self):
         return self._surfaceitems[self._currentlevelID]
