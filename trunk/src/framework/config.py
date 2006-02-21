@@ -2,6 +2,10 @@ from configobj import ConfigObj
 
 CONFIG_FILE = "elisa.conf"
 
+DEFAULT = {'resolution': (800, 600),
+           'plugins': ('pictures','dvd'),
+           'RenderEngine': 'testGL'}
+
 config = None
 
 class _Config(object):
@@ -10,12 +14,13 @@ class _Config(object):
         print 'loading configuration'
         self._config = ConfigObj(CONFIG_FILE)
         if not self._config:
-            self.SetDefaultConfig()
+            self.create_default_config()
                     
-    def Get(self, key, section=None, default=None):
-        if not section:
-            section = 'general'
+    def get_option(self, key, section='general', default=None):
         return self._config[section].get(key, default)
+
+    def set_option(self, key, section='general', value):
+        self._config[section][key] = value
 
     def write(self):
         """
@@ -37,12 +42,19 @@ class _Config(object):
         in the config
         """
         self._config[section_name] = section_data
+
+    def create_default_config(self):
+        self._config['general'] = DEFAULT
+
+
+    # deprecated
         
+    def Get(self, key, section=None, default=None):
+        raise DeprecationWarning, 'use get_option() method!'
+    
     def SetDefaultConfig(self):
-        self._config['general'] = {'resolution': (800, 600),
-                                   'plugins': ('pictures','dvd'),
-                                   'RenderEngine': 'testGL'}
-        
+        raise DeprecationWarning, 'use create_default_config() method!'
+
 
 def Config():
     global config
