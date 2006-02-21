@@ -42,6 +42,19 @@ class BoxApplication(window.Window):
         if self._videosurface != None and self._videosurface.GetStatus() in (videosurface.VideoSurface.VS_PLAY, videosurface.VideoSurface.VS_PAUSE):
             self._videosurface.Show()   
 
+    def load_plugins(self, plugin_names=None):
+        """ Add the plugins given their name. If no argument supplied,
+        we load the plugins referenced in the 'general' section of the config
+
+        """
+        if not plugin_names:
+            plugin_names = _config.Get('plugins',default=[])
+
+        for name in plugin_names:
+            print 'loading plugin %s' % name
+            # TODO: find the plugin, instantiate it and register it
+            #self.AddPlugin()
+
     def AddPlugin(self, in_plugin):
         """
         add plugin to the main tree box menu
@@ -81,6 +94,10 @@ class BoxApplication(window.Window):
         self.AddSurface(self._treewidget)
         
         window.Window.Run(self)
+
+    def Close(self):
+        _config.write()
+        window.Window.Close(self)
         
     def OnEvent(self, in_event):
         if in_event.GetSimpleEvent() == event.SE_MENU:

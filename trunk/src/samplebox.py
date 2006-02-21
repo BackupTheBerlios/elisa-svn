@@ -14,12 +14,14 @@ if __name__ == '__main__':
     #_test.SetLocation(120.0, 80.0, 1.0)
     #_test.SetBackgroundImage("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
     #_main.MainWindow().AddSurface(_test)
-    
+
+    #_main.load_plugins()
+
     _main.AddPlugin(pictures.PluginTreePictures())
     _main.AddPlugin(movies.PluginTreeMovies())
     _main.AddPlugin(radio.PluginTreeRadio())
     _main.AddPlugin(dvd.PluginTreeDvd())
-        
+    
     _main.Run()
 
     

@@ -5,6 +5,8 @@ class PluginTreeDvd(plugin.PluginTree):
     dvd plugin_tree
     """
 
+    name = "dvd"
+
     def __init__(self):
         plugin.PluginTree.__init__(self)
         

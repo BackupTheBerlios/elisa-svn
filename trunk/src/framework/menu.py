@@ -158,7 +158,7 @@ class MenuLevel(object):
 
         
     def __repr__(self):
-        return self._levelname + ":" + str(MenuLevel)
+        return self._levelname + ":" + str(MenuLevel) + " (%s items)" % str(len(self.GetItemList()))
         
     def AddItem(self, in_item):
         """

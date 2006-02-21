@@ -1,14 +1,111 @@
 from framework import plugin, menu, common
+import os
+
 
 class PluginTreePictures(plugin.PluginTree):
     """
     radio plugin_tree
     """
-          
+    
+    name = "pictures"
+    default_config = {'root_directory':'/tmp'}
+
     def __init__(self):
         plugin.PluginTree.__init__(self)
+        self._levels = {}
         
+        self.load_root_directory()
+        
+
+    def load_root_directory(self):
+        """
+        Create the whole directory tree menu from the root directory
+        (which is referenced in the plugin's config.
+        
+        """
+        root = self.get_config()['root_directory']
+
+        self.root_level = menu.MenuLevel("picture_root_level")
+        item1 = menu.MenuItem("pictures")
+        item1.SetPicturePathAndFilename("icons/camera.png")
+        self.root_level.AddItem(item1)
+        self.SetRootLevel(self.root_level)
+
         app = common.GetApplication()
+        os.path.walk(root, self._load_sub_directory, app)
+
+        if self._levels:
+            print self._levels
+            level2 = menu.MenuLevel("folder level")
+            level2.ShowItemLabel()
+            #self.AddLevel(level2, self.root_level, item1)
+            
+
+    def _load_sub_directory(self, app, dir_name, filenames):
+        """
+        Create the tree menu for a given directory full name
+        
+        """
+
+        for filename in filenames:
+            path = os.path.join(dir_name, filename)
+
+            if os.path.isdir(path):
+
+                depth = self._get_depth_from_root(path)
+                level = menu.MenuLevel(path)
+                level.ShowItemLabel()
+                level.HidePreviousMenu()
+                level.SetUnselectedCallback(app.RestoreBackground,None)
+                self.add_level(level, depth)
+                
+            else:
+                depth = self._get_depth_from_root(dir_name)
+
+                item = menu.MenuItem(path)
+                item.SetPicturePathAndFilename(path)
+                item.SetSelectedCallback(app.ShowImageFile,path)
+
+                self.add_item(item, depth)
+                                
+
+    def _get_depth_from_root(self, path):
+        root = self.get_config()['root_directory']
+        depth = 0
+
+        # strip the ending /
+        if path.endswith(os.path.sep):
+            path = path[:-1]
+
+        # skip the root path
+        path = path[len(root):]
+
+        idx = path.find(os.path.sep)
+        while idx != -1:
+            path = path[idx+1:]
+            idx = path.find(os.path.sep)
+            depth += 1
+
+        return depth
+
+
+    def add_item(self, item, depth):
+        item_name = item.GetShortname()
+        
+        for level in self._levels[depth]:
+            if item_name.startswith(level._levelname):
+                #print 'Adding %s in %s' % (item_name, level._levelname)
+                level.AddItem(item)
+                return
+
+    def add_level(self, level, depth):
+
+        try:
+            self._levels[depth].append(level)
+        except KeyError:
+            self._levels[depth] = [level,]
+        
+    """
                 
         level1 = menu.MenuLevel("picture_root_level")
         item1 = menu.MenuItem("pictures")
@@ -78,3 +175,4 @@ class PluginTreePictures(plugin.PluginTree):
         self.AddLevel(level3, level2, item11)
         self.AddLevel(level4, level2, item12)
         
+    """

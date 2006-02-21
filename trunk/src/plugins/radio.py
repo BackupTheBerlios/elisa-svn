@@ -4,6 +4,8 @@ class PluginTreeRadio(plugin.PluginTree):
     """
     radio plugin_tree
     """
+
+    name = "radios"
     
     def __init__(self):
         plugin.PluginTree.__init__(self)
