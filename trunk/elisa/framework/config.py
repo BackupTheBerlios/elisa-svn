@@ -1,5 +1,5 @@
 from configobj import ConfigObj
-from framework.log import Logger
+from elisa.framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 

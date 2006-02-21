@@ -1,11 +1,11 @@
 
-from framework import menu, config, common, log
+from elisa.framework import menu, config, log
 import os
 import time
 
 import pkg_resources
-from framework.plugin import InterfaceOmission, Plugin
-import framework.config
+from elisa.framework.plugin import InterfaceOmission, Plugin
+import elisa.framework.config
 
 """
 TODO:
@@ -30,7 +30,7 @@ class Application:
         """
 
         logger = log.Logger()
-        config = framework.config.Config()
+        config = elisa.framework.config.Config()
         
         if not plugin_names:
             plugin_names = config.get_option('plugins',default=[])
@@ -67,6 +67,6 @@ class Application:
                 break
             
     def close(self):
-        config = framework.config.Config()
+        config = elisa.framework.config.Config()
         config.write()
         

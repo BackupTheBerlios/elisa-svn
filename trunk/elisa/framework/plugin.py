@@ -1,4 +1,4 @@
-from framework import menu, config
+from elisa.framework import menu, menu, config
 
 from sets import Set
 import inspect

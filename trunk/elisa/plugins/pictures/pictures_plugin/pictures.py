@@ -1,5 +1,5 @@
 
-from framework.plugin import IPlugin, PluginTree
+from elisa.framework.plugin import IPlugin, PluginTree
 import os
 
 

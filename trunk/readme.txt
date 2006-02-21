@@ -24,13 +24,13 @@ To run the samplebox
 1. Be sure to have installed setuptools
 2. build the plugins (there will be an automatic build mechanism very soon):
 
-   $ cd plugins/pictures
+   $ cd elisa/plugins/pictures
    $ sudo python setup.py develop
 
 3. set your PYTHONPATH so that you don't need to install Elisa for
    testing it:
 
-   $ export PYTHONPATH="/path/to/src/"
+   $ export PYTHONPATH="/path/to/elisa/"
    $ python samplebox.py
 
 

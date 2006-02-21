@@ -1,6 +1,6 @@
 #sample bnx using framework
 
-from framework import application
+from elisa.framework import application
 
 class BoxApplication(application.Application):
     pass
