@@ -13,10 +13,17 @@ key map
 Dependencies
 ============
 
+- Python >= 2.4
 - PyGame
 - Gstreamer 0.10 + binding python
 - ConfigObj : http://www.voidspace.org.uk/python/configobj.html
+- setuptools : http://peak.telecommunity.com/DevCenter/EasyInstall
 
 and some others. (I need to check :) )
 
-yoyo.
+
+Notes about setuptools
+======================
+
+Download http://peak.telecommunity.com/dist/ez_setup.py and run it as
+root. 
