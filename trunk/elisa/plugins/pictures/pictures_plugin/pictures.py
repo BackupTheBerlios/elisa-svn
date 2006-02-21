@@ -1,9 +1,9 @@
 
-from elisa.framework.plugin import IPlugin, PluginTree
+from elisa.framework.plugin import IPlugin, TreePlugin
 import os
 
 
-class PicturesPluginTree(PluginTree):
+class PicturesTreePlugin(TreePlugin):
     """
     pictures plugin_tree
     """
@@ -15,7 +15,7 @@ class PicturesPluginTree(PluginTree):
     default_config = {'root_directory':'/tmp'}
 
     def __init__(self):
-        PluginTree.__init__(self)
+        TreePlugin.__init__(self)
         self._levels = {}
         
         self.load_root_directory()

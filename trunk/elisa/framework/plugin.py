@@ -1,4 +1,4 @@
-from elisa.framework import menu, menu, config
+from elisa.framework import menu, menu, config,  log
 
 from sets import Set
 import inspect
@@ -41,12 +41,12 @@ class InterfaceChecker(type):
                                                   missing)
 
         # safety check
-        if classname != 'Plugin':
+        if classname not in ('Plugin', 'TreePlugin',
+                             'CustomPlugin', 'ScreenLessPlugin'):
             assert obj.implements(IPlugin), \
                    "You need to implement at least IPlugin in %r" % classname
         
         return obj
-
 
 class Plugin(object):
     
@@ -62,10 +62,11 @@ class Plugin(object):
         """
         Constructor
         """
+        self.logger = log.Logger()
         self.load_config()
-
+        
     def load_config(self):
-        print 'Plugin %s is loading its config' % self.name
+        self.logger.info('Plugin %s is loading its config' % self.name)
         _config = config.Config()
         section_name = "plugins.%s" % self.name
 
@@ -110,12 +111,10 @@ class Plugin(object):
     
 
 
-class PluginTree(Plugin, menu.MenuTree):
+class TreePlugin(Plugin, menu.MenuTree):
     
     "tree navigation Plugin Class"
 
-    __implements__ = IPlugin
-    
     def __init__(self):
         """
         Constructor
@@ -123,25 +122,17 @@ class PluginTree(Plugin, menu.MenuTree):
         Plugin.__init__(self)
         menu.MenuTree.__init__(self)
 
-class PluginCustom(Plugin):
+class CustomPlugin(Plugin):
     
     "custom interface Plugin Class"
 
-    __implements__ = IPlugin
-
-    
     def __init__(self):
         """
         Constructor
         """
 
 
-class PluginScreenless(Plugin):
-    
-    "screenless Plugin Class"
-
-    __implements__ = IPlugin
-
+class ScreenLessPlugin(Plugin):
     
     def __init__(self):
         """

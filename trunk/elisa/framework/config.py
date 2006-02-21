@@ -12,10 +12,12 @@ config = None
 class _Config(object):
     
     def __init__(self):
-        print 'loading configuration'
+
         self._config = ConfigObj(CONFIG_FILE)
         self._logger = Logger()
-        
+
+        self._logger.info('loading configuration')
+
         if not self._config:
             self.create_default_config()
                     

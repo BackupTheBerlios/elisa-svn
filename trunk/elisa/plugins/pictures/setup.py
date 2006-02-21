@@ -9,5 +9,5 @@ setup(
     packages=['pictures_plugin'],
     entry_points="""
     [elisa.plugins]
-    pictures = pictures_plugin.pictures:PicturesPluginTree
+    pictures = pictures_plugin.pictures:PicturesTreePlugin
     """)
