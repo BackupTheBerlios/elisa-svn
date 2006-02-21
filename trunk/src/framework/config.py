@@ -19,7 +19,7 @@ class _Config(object):
     def get_option(self, key, section='general', default=None):
         return self._config[section].get(key, default)
 
-    def set_option(self, key, section='general', value):
+    def set_option(self, key, value, section='general'):
         self._config[section][key] = value
 
     def write(self):

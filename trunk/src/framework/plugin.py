@@ -113,6 +113,8 @@ class Plugin(object):
 class PluginTree(Plugin, menu.MenuTree):
     
     "tree navigation Plugin Class"
+
+    __implements__ = IPlugin
     
     def __init__(self):
         """
@@ -124,6 +126,9 @@ class PluginTree(Plugin, menu.MenuTree):
 class PluginCustom(Plugin):
     
     "custom interface Plugin Class"
+
+    __implements__ = IPlugin
+
     
     def __init__(self):
         """
@@ -134,6 +139,9 @@ class PluginCustom(Plugin):
 class PluginScreenless(Plugin):
     
     "screenless Plugin Class"
+
+    __implements__ = IPlugin
+
     
     def __init__(self):
         """
