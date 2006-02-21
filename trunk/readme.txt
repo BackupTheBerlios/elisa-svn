@@ -27,10 +27,8 @@ To run the samplebox
    $ cd elisa/plugins/pictures
    $ sudo python setup.py develop
 
-3. set your PYTHONPATH so that you don't need to install Elisa for
-   testing it:
+3. Run the samplebox:
 
-   $ export PYTHONPATH="/path/to/elisa/"
    $ python samplebox.py
 
 
