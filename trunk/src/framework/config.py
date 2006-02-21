@@ -1,4 +1,5 @@
 from configobj import ConfigObj
+from framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 
@@ -13,6 +14,8 @@ class _Config(object):
     def __init__(self):
         print 'loading configuration'
         self._config = ConfigObj(CONFIG_FILE)
+        self._logger = Logger()
+        
         if not self._config:
             self.create_default_config()
                     
@@ -27,7 +30,7 @@ class _Config(object):
         save the config in a text file (handled by ConfigObj)
         
         """
-        print 'saving config...'
+        self._logger.info('saving config...')
         self._config.write()
 
     def get_section(self, section_name):

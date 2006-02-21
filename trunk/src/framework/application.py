@@ -48,19 +48,24 @@ class Application:
                 continue
             
             assert issubclass(plugin_class,Plugin), '%r is not a valid Plugin!' % plugin_class
+
             self.register_plugin(plugin_class())
+            logger.info("Loaded the plugin '%s'" % entrypoint.name)
 
     def register_plugin(self, in_plugin):
         self._plugin_tree_list.append(in_plugin)
         
     def run(self):
+        logger = log.Logger()
 
         while 1:
-            print "i'm running"
-            time.sleep(0.5)
-
-        self.close()
-
+            try:
+                logger.info("i'm running")
+                time.sleep(0.5)
+            except:
+                self.close()
+                break
+            
     def close(self):
         config = framework.config.Config()
         config.write()
