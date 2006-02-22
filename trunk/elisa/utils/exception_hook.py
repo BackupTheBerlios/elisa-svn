@@ -80,6 +80,7 @@ class EmailTracebackHook(cgitb.Hook):
         
 def set_exception_hook(mail_from, mail_to, mail_subject, smtp_server):
     " override the default exception hook with out customized one "
+    print 'set exception hook'
     hook = EmailTracebackHook(file=NullFile(), display=0,
                               logdir='tracebacks', format='mail')
     hook.set_mail_parameters(mail_from, mail_to, mail_subject, smtp_server)

@@ -29,7 +29,7 @@ class Application:
         config = elisa.framework.config.Config()
         mail_section = config.get_section('mail')
 
-        enable = mail_section.get('enable', False)
+        enable = int(mail_section.get('enable', '0'))
         if enable:
             mail_from = mail_section.get('mail_from', 'elisa@localhost')
             mail_to = mail_section.get('mail_to', ['phil@localhost'])

@@ -122,6 +122,9 @@ class TreePlugin(Plugin, menu.MenuTree):
         Plugin.__init__(self)
         menu.MenuTree.__init__(self)
 
+    def __repr__(self):
+        return menu.MenuTree.__repr__(self)
+
 class CustomPlugin(Plugin):
     
     "custom interface Plugin Class"

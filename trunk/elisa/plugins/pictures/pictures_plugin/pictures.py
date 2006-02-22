@@ -1,7 +1,10 @@
 
 from elisa.framework.plugin import IPlugin, TreePlugin
-import os
+from elisa.framework.menu import MenuTree, MenuItem
+import elisa.utils.misc
 
+import os
+import re
 
 class PicturesTreePlugin(TreePlugin):
     """
@@ -12,14 +15,13 @@ class PicturesTreePlugin(TreePlugin):
 
     
     name = "pictures"
-    default_config = {'root_directory':'/tmp'}
+    default_config = {'root_directory':'sample_data'}
 
     def __init__(self):
         TreePlugin.__init__(self)
-        self._levels = {}
-        
+        self.set_short_name("Pictures menu")
         self.load_root_directory()
-        
+        print repr(self)
 
     def load_root_directory(self):
         """
@@ -27,4 +29,33 @@ class PicturesTreePlugin(TreePlugin):
         (which is referenced in the plugin's config.
         
         """
-        pass
+        root = self.get_config().get('root_directory')
+        os.path.walk(root, self._load_sub_directory, None)
+
+    def _load_sub_directory(self, app, dir_name, filenames):
+        """
+        Create the tree menu for a given directory full name
+        
+        """
+        for filename in filenames:
+            path = os.path.join(dir_name, filename)
+
+            if self._match_hidden(path):
+                continue
+            
+            if os.path.isdir(path):
+                item = MenuTree(short_name=path)
+            elif elisa.utils.misc.file_is_picture(path):
+                item = MenuItem(short_name=path)
+            else:
+                item = None
+                
+            if item:
+                parent = self.get_item_with_name(dir_name)
+                if not parent:
+                    parent = self
+                parent.add_item(item)
+                
+
+    def _match_hidden(self, path):
+        return re.match(".*/\..*", path)
