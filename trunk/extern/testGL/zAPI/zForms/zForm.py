@@ -3,10 +3,10 @@ from OpenGL.GLU import *
 import pygame
 import time
 from pygame.locals import *
-from testGL.zAPI.zForms import zControl
-from testGL.zAPI.zForms import zPictureBox
-from testGL.zAPI.zRenderer import zOpenGLRenderer
-from testGL.common import constants
+from extern.testGL.zAPI.zForms import zControl
+from extern.testGL.zAPI.zForms import zPictureBox
+from extern.testGL.zAPI.zRenderer import zOpenGLRenderer
+from extern.testGL.common import constants
 
 
 class Form(zControl.Control):

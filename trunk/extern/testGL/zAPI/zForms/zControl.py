@@ -1,7 +1,7 @@
-from testGL.common import constants
-from testGL.zAPI.zRenderer import zOpenGLSurface
-from testGL.zAPI.zDrawing import zRectangle3D
-from testGL.zAPI.zDrawing import zPoint3D
+from extern.testGL.common import constants
+from extern.testGL.zAPI.zRenderer import zOpenGLSurface
+from extern.testGL.zAPI.zDrawing import zRectangle3D
+from extern.testGL.zAPI.zDrawing import zPoint3D
 
 class Control(object):
    

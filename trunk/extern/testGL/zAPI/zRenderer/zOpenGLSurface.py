@@ -1,9 +1,9 @@
-from testGL.common import constants
+from extern.testGL.common import constants
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from testGL.zAPI.zRenderer import zBaseClass
-from testGL.zAPI.zDrawing import zRectangle3D
-from testGL.zAPI.zDrawing.zPoint3D import Point3D
+from extern.testGL.zAPI.zRenderer import zBaseClass
+from extern.testGL.zAPI.zDrawing import zRectangle3D
+from extern.testGL.zAPI.zDrawing.zPoint3D import Point3D
 from Image import *
 
 class OpenGLSurface(zBaseClass.SurfaceBase):

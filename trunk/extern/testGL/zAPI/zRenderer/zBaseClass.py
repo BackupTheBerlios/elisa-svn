@@ -1,4 +1,4 @@
-from testGL.zAPI.zDrawing import zRectangle3D
+from extern.testGL.zAPI.zDrawing import zRectangle3D
 
 class SurfaceBase(object):
         

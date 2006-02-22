@@ -1,8 +1,8 @@
-from testGL.common import constants
+from extern.testGL.common import constants
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from testGL.zAPI.zRenderer import zBaseClass
-from testGL.zAPI.zRenderer import zOpenGLSurface
+from extern.testGL.zAPI.zRenderer import zBaseClass
+from extern.testGL.zAPI.zRenderer import zOpenGLSurface
 
 class OpenGLRenderer(zBaseClass.RendererBase):
     

@@ -1,4 +1,4 @@
-from testGL.zAPI.zForms import zControl
+from extern.testGL.zAPI.zForms import zControl
 
 class PictureBox(zControl.Control):
 
