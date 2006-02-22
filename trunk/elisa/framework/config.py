@@ -3,10 +3,6 @@ from elisa.framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 
-DEFAULT = {'resolution': (800, 600),
-           'plugins': ('pictures','dvd'),
-           'RenderEngine': 'testGL'}
-
 config = None
 
 class _Config(object):
@@ -17,15 +13,18 @@ class _Config(object):
         self._logger = Logger()
 
         self._logger.info('loading configuration')
-
-        if not self._config:
-            self.create_default_config()
                     
     def get_option(self, key, section='general', default=None):
         return self.get_section(section).get(key, default)
 
     def set_option(self, key, value, section='general'):
         self._config[section][key] = value
+
+    def del_option(self, key, section_name='general'):
+        section = self.get_section(section_name)
+        if section and section.has_key(key):
+            del section[key]
+        self.set_section(section_name, section)
 
     def write(self):
         """
@@ -41,7 +40,7 @@ class _Config(object):
         """
         return self._config.get(section_name,{})
 
-    def add_section(self, section_name, section_data):
+    def set_section(self, section_name, section_data):
         """
         Store section_data in a new section identified by section_name
         in the config
@@ -51,10 +50,6 @@ class _Config(object):
     def del_section(self, section_name):
         if self._config.has_key(section_name):
             del self._config[section_name]
-
-    def create_default_config(self):
-        self._config['general'] = DEFAULT
-
 
     # deprecated
         
