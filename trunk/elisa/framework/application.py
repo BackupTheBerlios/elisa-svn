@@ -1,5 +1,6 @@
 
 from elisa.framework import menu, config, log
+from elisa.utils import exception_hook
 import os
 import time
 
@@ -21,8 +22,22 @@ class Application:
     """
 
     def __init__(self):
+        self.set_exception_hook()
         self._plugin_tree_list = []
-    
+
+    def set_exception_hook(self):
+        config = elisa.framework.config.Config()
+        mail_section = config.get_section('mail')
+
+        enable = mail_section.get('enable', False)
+        if enable:
+            mail_from = mail_section.get('mail_from', 'elisa@localhost')
+            mail_to = mail_section.get('mail_to', ['phil@localhost'])
+            mail_subject = "Elisa error"
+            smtp_server = mail_section.get('smtp_server', 'localhost')
+
+            exception_hook.set_exception_hook(mail_from, mail_to, mail_subject, smtp_server)
+
     def load_plugins(self, plugin_names=None):
         """ Add the plugins given their name. If no argument supplied,
         we load the plugins referenced in the 'general' section of the config

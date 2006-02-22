@@ -22,7 +22,7 @@ class _Config(object):
             self.create_default_config()
                     
     def get_option(self, key, section='general', default=None):
-        return self._config[section].get(key, default)
+        return self.get_section(section).get(key, default)
 
     def set_option(self, key, value, section='general'):
         self._config[section][key] = value
@@ -39,7 +39,7 @@ class _Config(object):
         """
         @return the ConfigObj section identified by section_name
         """
-        return self._config.get(section_name)
+        return self._config.get(section_name,{})
 
     def add_section(self, section_name, section_data):
         """
@@ -47,6 +47,10 @@ class _Config(object):
         in the config
         """
         self._config[section_name] = section_data
+
+    def del_section(self, section_name):
+        if self._config.has_key(section_name):
+            del self._config[section_name]
 
     def create_default_config(self):
         self._config['general'] = DEFAULT
