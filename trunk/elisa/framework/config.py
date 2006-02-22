@@ -3,13 +3,11 @@ from elisa.framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 
-config = None
-
-class _Config(object):
+class Config:
     
-    def __init__(self):
+    def __init__(self, config_file=CONFIG_FILE):
 
-        self._config = ConfigObj(CONFIG_FILE)
+        self._config = ConfigObj(config_file)
         self._logger = Logger()
 
         self._logger.info('loading configuration')
@@ -58,10 +56,3 @@ class _Config(object):
     
     def SetDefaultConfig(self):
         raise DeprecationWarning, 'use create_default_config() method!'
-
-
-def Config():
-    global config
-    if not config:
-        config = _Config()
-    return config

@@ -2,7 +2,6 @@
 from elisa.framework import menu, config, log
 from elisa.utils import exception_hook
 import os
-import time
 
 import pkg_resources
 from elisa.framework.plugin import InterfaceOmission, Plugin
@@ -21,12 +20,21 @@ class Application:
     Main box application class
     """
 
-    def __init__(self):
+    def __init__(self, config_file_name=config.CONFIG_FILE):
+        self.set_config(config_file_name)
         self.set_exception_hook()
         self._plugin_tree_list = []
 
+    def set_config(self, config_file_name):
+        logger = log.Logger()
+        logger.info("Using config file : %s" % config_file_name)
+        self._config = config.Config(config_file_name)
+
+    def get_config(self):
+        return self._config
+
     def set_exception_hook(self):
-        config = elisa.framework.config.Config()
+        config = self.get_config()
         mail_section = config.get_section('mail')
 
         enable = int(mail_section.get('enable', '0'))
@@ -45,7 +53,7 @@ class Application:
         """
 
         logger = log.Logger()
-        config = elisa.framework.config.Config()
+        config = self.get_config()
         
         if not plugin_names:
             plugin_names = config.get_option('plugins',default=[])
@@ -64,24 +72,15 @@ class Application:
             
             assert issubclass(plugin_class,Plugin), '%r is not a valid Plugin!' % plugin_class
 
-            self.register_plugin(plugin_class())
+            self.register_plugin(plugin_class(self))
             logger.info("Loaded the plugin '%s'" % entrypoint.name)
 
     def register_plugin(self, in_plugin):
         self._plugin_tree_list.append(in_plugin)
         
     def run(self):
-        logger = log.Logger()
-
-        while 1:
-            try:
-                logger.info("i'm running")
-                time.sleep(0.5)
-            except:
-                self.close()
-                break
+        pass
             
     def close(self):
-        config = elisa.framework.config.Config()
-        config.write()
+        self.get_config().write()
         

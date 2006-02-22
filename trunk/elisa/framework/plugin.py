@@ -1,4 +1,4 @@
-from elisa.framework import menu, menu, config,  log
+from elisa.framework import menu, menu, log
 
 from sets import Set
 import inspect
@@ -58,22 +58,29 @@ class Plugin(object):
     default_config = {}
     name = "default"
     
-    def __init__(self):
+    def __init__(self, application):
         """
         Constructor
         """
+        self.set_application(application)
         self.logger = log.Logger()
         self.load_config()
-        
+
+    def set_application(self, app):
+        self._application = app
+
+    def get_application(self):
+        return self._application
+
     def load_config(self):
         self.logger.info('Plugin %s is loading its config' % self.name)
-        _config = config.Config()
+        config = self.get_application().get_config()
         section_name = "plugins.%s" % self.name
 
-        section = _config.get_section(section_name)
+        section = config.get_section(section_name)
         if not section:
             section = self.default_config
-            _config.add_section(section_name,self.default_config)
+            config.add_section(section_name,self.default_config)
 
         self.config = section
 
@@ -115,11 +122,11 @@ class TreePlugin(Plugin, menu.MenuTree):
     
     "tree navigation Plugin Class"
 
-    def __init__(self):
+    def __init__(self, application):
         """
         Constructor
         """
-        Plugin.__init__(self)
+        Plugin.__init__(self, application)
         menu.MenuTree.__init__(self)
 
     def __repr__(self):
@@ -129,16 +136,16 @@ class CustomPlugin(Plugin):
     
     "custom interface Plugin Class"
 
-    def __init__(self):
+    def __init__(self, application):
         """
         Constructor
         """
-
+        Plugin.__init__(self, application)
 
 class ScreenLessPlugin(Plugin):
     
-    def __init__(self):
+    def __init__(self, application):
         """
         Constructor
         """
-        
+        Plugin.__init__(self, application)

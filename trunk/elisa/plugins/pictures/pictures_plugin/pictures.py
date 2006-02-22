@@ -17,8 +17,8 @@ class PicturesTreePlugin(TreePlugin):
     name = "pictures"
     default_config = {'root_directory':'sample_data'}
 
-    def __init__(self):
-        TreePlugin.__init__(self)
+    def __init__(self, application):
+        TreePlugin.__init__(self, application)
         self.set_short_name("Pictures menu")
         self.load_root_directory()
         print repr(self)
