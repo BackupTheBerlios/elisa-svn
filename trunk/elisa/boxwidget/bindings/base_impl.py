@@ -55,6 +55,8 @@ class _Base_Font_Impl(object):
         
     def set_location(self, x, y, z): pass
     
+    def set_back_color(self, Red, Green, Blue): pass
+    
     def set_alpha_level(self, level): pass
     
     def hide(self): pass

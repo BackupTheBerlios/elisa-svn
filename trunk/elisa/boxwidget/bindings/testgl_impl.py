@@ -126,6 +126,9 @@ class _testGL_Font_Impl(base_impl._Base_Font_Impl):
     def set_location(self, x, y, z):
         self._surface_native.SetLocation( x, y, z)
         
+    def set_back_color(self, Red, Green, Blue):
+        self._surface_native.SetBackColor(Red, Green, Blue)
+        
     def set_alpha_level(self, level):
         self._surface_native.SetAlpha(level*2.55)
         

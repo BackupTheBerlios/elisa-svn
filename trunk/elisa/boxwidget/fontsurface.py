@@ -56,6 +56,7 @@ class FontSurface(object):
         self._alphalevel = level
         self._font_impl.set_alpha_level(level)
 
+    
     def set_size(self, width, height):
         """
         define the size in 2D plan
@@ -109,7 +110,14 @@ class FontSurface(object):
             _cz += _tz
             
         return (_cx, _cy, _cz)
-        
+    
+    def set_back_color(self, red, green, blue):
+        """
+        set widget backcolor
+        """
+        self._logger.debug('Surface.set_back_color(()', self)
+        self._surface_impl.set_back_color(red, green, blue)
+            
     def refresh(self):
         """
         refresh surface

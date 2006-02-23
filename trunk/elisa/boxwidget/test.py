@@ -4,6 +4,10 @@ class w (window.Window):
     
     def __init__(self):
         window.Window.__init__(self)
+        
+        f = fontsurface.FontSurface()
+        self.add_surface(f)
+        
         self.s = surface.Surface('s')
         (self.x,self.y,self.z) =  100,100,0
         self.s.set_location(self.x,self.y,self.z)
@@ -17,9 +21,6 @@ class w (window.Window):
         self.s.add_surface(s2)
         s2.add_surface(s3)
         self.add_surface(self.s)
-        f = fontsurface.FontSurface()
-        #f.set_text("test")
-        self.add_surface(f)
   
     def refresh(self):
         window.Window.refresh(self)  
