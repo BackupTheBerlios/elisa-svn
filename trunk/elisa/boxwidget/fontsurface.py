@@ -11,11 +11,11 @@ class FontSurface(object):
     class of Surface
     """
     
-    def __init__(self, name='Surface'):
+    def __init__(self, text='text'):
         self._logger = Logger()
-        self._name=name
+        self._name=text
         self._logger.debug('Font.__init__()', self)
-        self._font_impl = testgl_impl._testGL_Font_Impl()
+        self._font_impl = testgl_impl._testGL_Font_Impl(text)
         self._parentsurface = None
         self._x = 0
         self._y = 0

@@ -89,7 +89,7 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
             
     def pygame_event_converter(self, pyevent):
     
-        self._logger.debug_verbose('_testGL_EventsManager_Impl.pygame_event_converter()', self)
+        self._logger.debug_verbose  ('_testGL_EventsManager_Impl.pygame_event_converter()', self)
         if pyevent.type == pygame.QUIT:   
             return events.Events(events.DEV_SYSTEM, events.EVENT_QUIT, events.SE_QUIT)
         if pyevent.type == pygame.KEYDOWN:
@@ -112,10 +112,10 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
 
 class _testGL_Font_Impl(base_impl._Base_Font_Impl):
 
-    def __init__(self):
+    def __init__(self, text='text'):
         self._logger = Logger()
-        self._logger.debug('_testGL_Surface_Impl.__init__()', self)
-        self._surface_native = zFont.Font()
+        self._logger.debug('_testGL_Surface_Impl.__init__(' + str(text) + ')', self)
+        self._surface_native = zFont.Font(text)
     
     def get_native_surface(self):
         return self._surface_native       

@@ -72,14 +72,18 @@ class _Logger:
         """
         Logger._log.log(logging.INFO, info)
 
-    def debug(self, msg):
+    def debug(self, msg, obj=None):
         """ Log functional data (in >= DEBUG log level)
         """
+        if obj:
+            msg = '%s on %s' % (msg, str(obj))
         Logger._log.log(logging.DEBUG, msg)
 
-    def debug_detailled(self, msg):
+    def debug_detailled(self, msg, obj=None):
         """ Log verbose functional data (in >= DEBUG_DETAILLED log level)
         """
+        if obj:
+            msg = '%s on %s' % (msg, str(obj))
         Logger._log.log(self.levels['DEBUG_DETAILLED'], msg)
 
     def debug_verbose(self, msg, obj=None, level=None):

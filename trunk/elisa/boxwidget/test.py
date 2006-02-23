@@ -18,7 +18,7 @@ class w (window.Window):
         s2.add_surface(s3)
         self.add_surface(self.s)
         f = fontsurface.FontSurface()
-        f.set_text("test")
+        #f.set_text("test")
         self.add_surface(f)
   
     def refresh(self):
