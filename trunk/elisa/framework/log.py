@@ -15,15 +15,15 @@ class _Logger:
       
     Logging levels:
 
-    - STATUS    : 25
-    - INFO      : 20
-    - DETAILLED : 15
-    - DEBUG     : 10
+    - INFO            : 20
+    - DEBUG           : 10
+    - DEBUG_DETAILLED : 5
+    - DEBUG_VERBOSE   : 1
 
     """
 
-    levels = {'STATUS': 25,
-              'DETAILLED': 15
+    levels = {'DEBUG_DETAILLED': 5,
+              'DEBUG_VERBOSE': 1
               }
 
     def __init__(self):
@@ -43,8 +43,8 @@ class _Logger:
 	Logger._log.addHandler(handler)
 
         #self.set_level('STATUS')
-        self.set_level('DETAILLED')
-        	
+        self.set_level('DEBUG_DETAILLED')
+        
 	logging.basicConfig()
 	root = logging.getLogger()
 	handler = root.handlers[0]
@@ -53,14 +53,10 @@ class _Logger:
     def set_level(self, name):
         """ Set the log level. name can be one of:
 
-        - 'STATUS'
         - 'INFO'
-        - 'DETAILLED'
         - 'DEBUG'
-
-        if the level is set to 'DETAILLED' then 'STATUS' and 'INFOS'
-        also become active. Another example: if level set to 'DEBUG',
-        all others levels become active too.
+        - 'DEBUg_DETAILLED'
+        - 'DEBUG_VERBOSE'
 
         """
         level = logging.getLevelName(name)
@@ -70,20 +66,28 @@ class _Logger:
     def get_level(self):
         return self._level_name
 
-    def debug_fct(self, msg):
-        Logger._log.log(logging.INFO,msg)
-
-    def debug_fct_v(self, msg):
-        Logger._log.log(self.levels['DETAILLED'], msg)
     
     def info(self, info):
-        Logger._log.log(self.levels['STATUS'], info)
+        """ Log some basic info (in >= INFO log level)
+        """
+        Logger._log.log(logging.INFO, info)
+
+    def debug_fct(self, msg):
+        """ Log functional data (in >= DEBUG log level)
+        """
+        Logger._log.log(logging.DEBUG, msg)
+
+    def debug_fct_v(self, msg):
+        """ Log verbose functional data (in >= DEBUG_DETAILLED log level)
+        """
+        Logger._log.log(self.levels['DEBUG_DETAILLED'], msg)
 
     def debug_details(self, msg, obj=None, level=None):
-        if not obj:
-            Logger._log.log(logging.DEBUG, msg)
-        else:
-            Logger._log.log(logging.DEBUG, msg + ' on ' + str(obj) )
+        """ Detailled logging (in >= DEBUG_VERBOSE log level)
+        """
+        if obj:
+            msg = '%s on %s' % (msg, str(obj))
+        Logger._log.log(self.levels['DEBUG_VERBOSE'], msg)
 
     # backward compat
 

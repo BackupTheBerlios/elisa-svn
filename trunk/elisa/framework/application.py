@@ -1,11 +1,10 @@
 
 from elisa.framework import menu, config, log
-from elisa.utils import exception_hook
-import os
-
-import pkg_resources
 from elisa.framework.plugin import InterfaceOmission, Plugin
-import elisa.framework.config
+from elisa.utils import exception_hook
+
+import os
+import pkg_resources
 
 """
 TODO:
