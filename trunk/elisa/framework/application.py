@@ -2,6 +2,9 @@
 from elisa.framework import config, log
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
+from elisa.boxwidget import window
+
+import os
 import pkg_resources
 
 """
@@ -12,12 +15,13 @@ TODO:
 
 """
 
-class Application:
+class Application(window.Window):
     """
     Main box application class
     """
 
     def __init__(self, config_file_name=config.CONFIG_FILE):
+        window.Window.__init__(self)
         self._config = None
         self.set_config(config_file_name)
         self.set_exception_hook()
@@ -89,10 +93,11 @@ class Application:
     def run(self):
         """ Execute the application. Does nothing by default.
         """
-        pass
+        window.Window.run(self)
             
     def close(self):
         """ Close the application. Good idea to save the configuration
         here, since it's probable it has been updated.
         """
+        window.Window.close(self)
         self.get_config().write()
