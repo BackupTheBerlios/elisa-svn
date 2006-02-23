@@ -17,7 +17,7 @@ class EventsManager(object):
         """
         @return: a list of event is queue and empty the queue
         """
-        #self._logger.debug('EventsManager.get_event_queue()', self)
+        self._logger.debug_verbose('EventsManager.get_event_queue()', self)
         return self._eventsmanager_impl.get_event_queue()
 
         

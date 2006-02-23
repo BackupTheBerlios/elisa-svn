@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 
-from common import constants
-from zAPI.zForms import zForm
-from zAPI.zForms import zPictureBox
-from zAPI.zForms import zVideo
+from extern.testGL.common import constants
+from extern.testGL.zAPI.zForms import zForm
+from extern.testGL.zAPI.zForms import zPictureBox
+from extern.testGL.zAPI.zForms import zVideo
 import time
 
 class MyClass(zForm.Form):

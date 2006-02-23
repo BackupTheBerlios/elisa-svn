@@ -133,7 +133,7 @@ class Surface(object):
         """
         refresh surface
         """
-        #self._logger.debug('Surface.refresh()', self)
+        self._logger.debug_verbose('Surface.refresh()', self)
         for surface in self._surface_list:
             surface.refresh()
                     

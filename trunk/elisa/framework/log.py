@@ -72,27 +72,22 @@ class _Logger:
         """
         Logger._log.log(logging.INFO, info)
 
-    def debug_fct(self, msg):
+    def debug(self, msg):
         """ Log functional data (in >= DEBUG log level)
         """
         Logger._log.log(logging.DEBUG, msg)
 
-    def debug_fct_v(self, msg):
+    def debug_detailled(self, msg):
         """ Log verbose functional data (in >= DEBUG_DETAILLED log level)
         """
         Logger._log.log(self.levels['DEBUG_DETAILLED'], msg)
 
-    def debug_details(self, msg, obj=None, level=None):
+    def debug_verbose(self, msg, obj=None, level=None):
         """ Detailled logging (in >= DEBUG_VERBOSE log level)
         """
         if obj:
             msg = '%s on %s' % (msg, str(obj))
         Logger._log.log(self.levels['DEBUG_VERBOSE'], msg)
-
-    # backward compat
-
-    debug = debug_details
-
         
 def Logger():
     global logger

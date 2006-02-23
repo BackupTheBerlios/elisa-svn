@@ -58,7 +58,7 @@ class Window(object):
         refresh complete window (draw current frame)
         @return: False if loop stop required, True if noting.
         """
-        #self._logger.debug('Window.refresh()', self)
+        self._logger.debug_verbose('Window.refresh()', self)
         
         for current_event in self._events_manager.get_event_queue():
             #notify child widget about event

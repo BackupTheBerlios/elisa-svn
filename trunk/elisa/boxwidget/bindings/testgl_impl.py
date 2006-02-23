@@ -89,7 +89,7 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
             
     def pygame_event_converter(self, pyevent):
     
-        self._logger.debug('_testGL_EventsManager_Impl.pygame_event_converter()', self)
+        self._logger.debug_verbose('_testGL_EventsManager_Impl.pygame_event_converter()', self)
         if pyevent.type == pygame.QUIT:   
             return events.Events(events.DEV_SYSTEM, events.EVENT_QUIT, events.SE_QUIT)
         if pyevent.type == pygame.KEYDOWN:

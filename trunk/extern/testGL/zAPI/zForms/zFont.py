@@ -1,4 +1,4 @@
-from testGL.zAPI.zForms import zPictureBox
+from extern.testGL.zAPI.zForms import zPictureBox
 from pygame.font import *
 from pygame import *
 
@@ -10,7 +10,7 @@ class Font(zPictureBox.PictureBox):
         if not font.get_init():
             print 'Could not render font.'
             sys.exit(0)
-        self._font = font.Font('testGL/common/font.ttf',72)
+        self._font = font.Font('/home/yoyo/Projects/Elisa/trunk/extern/testGL/common/font.ttf',72)
         self._texture = None
         self._fontsize = 32
         self.SetText(in_text)
@@ -26,7 +26,7 @@ class Font(zPictureBox.PictureBox):
             letter_w = 0
             letter_h = 0
         return (letter, letter_w, letter_h)
-   
+        
     def SetFontSize(self, in_size):
         self._fontsize = in_size
         self._SetFontText(self.GetText())

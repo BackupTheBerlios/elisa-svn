@@ -1,6 +1,5 @@
-from testGL.common import constants
-from testGL.zAPI.zForms import zOpenGLVideo
-from testGL.zAPI.zForms import zSDLVideo
+from extern.testGL.common import constants
+from extern.testGL.zAPI.zForms import zOpenGLVideo
 
 def Video():
     if constants.GetVideoMode() == 'OpenGL':

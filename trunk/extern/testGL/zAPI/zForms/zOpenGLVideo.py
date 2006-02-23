@@ -1,5 +1,5 @@
-from testGL.zAPI import zGstreamer
-from testGL.zAPI.zForms import zControl
+from extern.testGL.zAPI import zGstreamer
+from extern.testGL.zAPI.zForms import zControl
 
 class OpenGLVideo(zControl.Control, zGstreamer.GstPlayer):
 

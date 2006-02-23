@@ -31,7 +31,7 @@ class FontSurface(object):
        
     def _get_child_surface(self):
         return []
-        
+            
     def fire_event(self, event): 
         #self._logger.debug('Font.fire_event()', self)
         return self.on_event(event)
