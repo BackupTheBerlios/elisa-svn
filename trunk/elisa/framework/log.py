@@ -1,9 +1,10 @@
 
 import logging
+from elisa.utils import singleton
 
 logger = None
 
-class _Logger:
+class Logger(singleton.Singleton):
     """
     The Elisa logger, which basically log messages to a file named
     elisa.log. Use it like this:
@@ -27,7 +28,8 @@ class _Logger:
               }
 
     def __init__(self):
-
+        singleton.Singleton.__init__(self)
+        
         format = '%(asctime)s %(levelname)-8s %(message)s'
         datefmt = '%a, %d %b %Y %H:%M:%S'
         fname = 'elisa.log'
@@ -39,8 +41,8 @@ class _Logger:
         for name, lvl in self.levels.iteritems():
             logging.addLevelName(lvl, name)
 
-        Logger._log = logging.getLogger('Elisa')
-        Logger._log.addHandler(handler)
+        self._log = logging.getLogger('Elisa')
+        self._log.addHandler(handler)
 
         #self.set_level('STATUS')
         self.set_level('DEBUG_DETAILLED')
@@ -60,7 +62,7 @@ class _Logger:
 
         """
         level = logging.getLevelName(name)
-        Logger._log.setLevel(level)
+        self._log.setLevel(level)
         self._level_name = name
 
     def get_level(self):
@@ -71,35 +73,28 @@ class _Logger:
     def info(self, info):
         """ Log some basic info (in >= INFO log level)
         """
-        Logger._log.log(logging.INFO, info)
+        self._log.log(logging.INFO, info)
 
     def debug(self, msg, obj=None):
         """ Log functional data (in >= DEBUG log level)
         """
         if obj:
             msg = '%s on %s' % (msg, str(obj))
-        Logger._log.log(logging.DEBUG, msg)
+        self._log.log(logging.DEBUG, msg)
 
     def debug_detailled(self, msg, obj=None):
         """ Log verbose functional data (in >= DEBUG_DETAILLED log level)
         """
         if obj:
             msg = '%s on %s' % (msg, str(obj))
-        Logger._log.log(self.levels['DEBUG_DETAILLED'], msg)
+        self._log.log(self.levels['DEBUG_DETAILLED'], msg)
 
     def debug_verbose(self, msg, obj=None):
         """ Detailled logging (in >= DEBUG_VERBOSE log level)
         """
         if obj:
             msg = '%s on %s' % (msg, str(obj))
-        Logger._log.log(self.levels['DEBUG_VERBOSE'], msg)
-
-def Logger():
-    " Logger singleton "
-    global logger
-    if logger is None:
-        logger = _Logger()
-    return logger
+        self._log.log(self.levels['DEBUG_VERBOSE'], msg)
 
 if __name__ == '__main__':
     l = Logger()
