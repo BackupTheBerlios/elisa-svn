@@ -41,9 +41,13 @@ class _Logger:
 	handler = root.handlers[0]
 	handler.setFormatter(formatter)
 
-    def debug(self, msg):
-        Logger._log.debug(msg)
-        
+    def debug(self, msg, obj=None):
+
+        if obj== None:
+            Logger._log.debug(msg)
+        else:
+            Logger._log.debug(msg + ' on ' + str(obj) )
+            
     def info(self, info):
         Logger._log.info(info)
 
