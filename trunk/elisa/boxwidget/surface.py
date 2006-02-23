@@ -187,10 +187,12 @@ class Surface(object):
         
     def hide(self):
         self._logger.debug('Surface.hide()', self)
+        self._surface_impl.hide()
         self._visible = False
         
     def show(self):
         self._logger.debug('Surface.show()', self)
+        self._surface_impl.show()
         self._visible = True
         
     def visible(self):

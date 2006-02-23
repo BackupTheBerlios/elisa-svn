@@ -1,9 +1,8 @@
-from twisted.internet import reactor, task
-import surface
-from bindings import testgl_impl
-
+from elisa.boxwidget import surface, eventsmanager
+from elisa.boxwidget.bindings import testgl_impl
 from elisa.framework.log import Logger
 
+from twisted.internet import reactor, task
 
 class Window(object):
     """
@@ -14,9 +13,11 @@ class Window(object):
         self._logger = Logger()
         self._logger.debug('Window.__init__()', self)
         self._window_impl = testgl_impl._testGL_Window_Impl()
+        self._events_manager = eventsmanager.EventsManager()
         self._focusedsurface = None
         self._Fps = 50
         self._surfacelist = []
+        self._background_image_path = None
     
     def _get_window_impl(self):
         self._logger.debug('Window.(_get_window_impl)', self)
@@ -58,6 +59,13 @@ class Window(object):
         @return: False if loop stop required, True if noting.
         """
         #self._logger.debug('Window.refresh()', self)
+        
+        for current_event in self._events_manager.get_event_queue():
+            e = current_event.get_simple_event()
+            #self._FireEventToAllWidget(currentevent)
+            if e == event.SE_QUIT:
+                self.close()
+        
         for surface in self._surfacelist:
             surface.refresh()
         self._window_impl.refresh()
@@ -74,3 +82,12 @@ class Window(object):
         called just before main loop starting
         """
         self._logger.debug('Window.on_load()', self)
+
+    def set_background_from_file(self, path_and_file_name=None):
+        """
+        set window background image
+        """
+        self._logger.debug('Surface.set_background_from_file(' + str(path_and_file_name) + ')', self)
+        self._background_image_path = path_and_file_name
+        self._window_impl.set_background_from_file(path_and_file_name)
+        

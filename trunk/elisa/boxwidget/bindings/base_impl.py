@@ -16,3 +16,24 @@ class _Base_Window_Impl(object):
     def add_surface(self, impl_surface): pass
 
     def remove_surface(self, impl_surface): pass
+
+
+class _Base_Surface_Impl(object):
+
+    def __init__(self): pass
+    
+    def get_native_surface(self): pass      
+        
+    def set_size(self, Width, Height): pass
+        
+    def set_location(self, x, y, z): pass
+    
+    def set_back_color(self, Red, Green, Blue): pass
+
+    def set_background_from_file(self, path_and_filename=None): pass
+    
+    def set_alpha_level(self, level): pass
+    
+    def hide(self): pass
+
+    def show(self): pass
