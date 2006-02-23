@@ -71,7 +71,8 @@ class FontSurface(object):
         return current size
         """
         self._logger.debug('Font.get_size()', self)
-        return (self._width, self._height)
+        #return (self._width, self._height)
+        return self._font_impl.get_size()
 
     def set_location(self, x, y, z):
         """

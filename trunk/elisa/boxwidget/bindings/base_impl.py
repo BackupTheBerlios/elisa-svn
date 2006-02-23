@@ -52,6 +52,8 @@ class _Base_Font_Impl(object):
     def get_native_surface(self): pass      
         
     def set_size(self, Width, Height): pass
+    
+    def get_size(self): pass
         
     def set_location(self, x, y, z): pass
     

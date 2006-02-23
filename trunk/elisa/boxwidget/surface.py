@@ -216,3 +216,38 @@ class Surface(object):
     def __repr__(self):
         #FIXME str(self) make recursive call
         return self._name #+ str(self)
+        
+        
+class SurfaceGroup(Surface):
+    """
+    SurfaceGroup class
+    group all surface, but have not
+    """
+    
+    def __init__(self):
+        Surface.__init__(self)
+        #Surface of group element are always hidden
+        Surface.hide(self)
+        
+        self._child_visible = True
+        
+    def hide_group(self):
+        self._child_visible = False
+        self._recursive_hide(self)
+    
+    def _recursive_hide(self, surface):
+        for s in surface._GetChildSurface():
+            s.hide()
+            self._recursive_hide(s)
+            
+    def show_group(self):
+        self._child_visible = True
+        self._recursive_show(self)
+        
+    def _recursive_show(self, surface):
+        for s in surface._get_child_surface():
+            s.show()
+            self._recursive_show(s)
+            
+    def visible_group(self):
+        return self._child_visible

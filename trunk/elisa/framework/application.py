@@ -91,7 +91,7 @@ class Application(window.Window):
         self._plugin_tree_list.append(in_plugin)
         
     def run(self):
-        """ Execute the application. Does nothing by default.
+        """ Execute the application. Start main loop.
         """
         window.Window.run(self)
             
