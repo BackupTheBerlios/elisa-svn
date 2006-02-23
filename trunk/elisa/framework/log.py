@@ -38,7 +38,7 @@ class _Logger:
 	Logger._log = logging.getLogger('Elisa')
 	Logger._log.addHandler(handler)
 
-        self.set_level('DEBUG')
+        self.set_level('STATUS')
         #self.set_level('DETAILLED')
         	
 	logging.basicConfig()
@@ -55,24 +55,19 @@ class _Logger:
         return self._level_name
 
     def debug(self, msg, obj=None, level=None):
-        self.set_level('DEBUG')
-
         if not obj:
-            Logger._log.debug(msg)
+            Logger._log.debug('DEBUG', msg)
         else:
-            Logger._log.debug(msg + ' on ' + str(obj) )
+            Logger._log.debug('DEBUG', msg + ' on ' + str(obj) )
 
     def ponctual(self, msg):
-        self.set_level('NORMAL')
-        Logger._log.debug(msg)
+        Logger._log.log('NORMAL',msg)
 
     def loop(self, msg):
-        self.set_level('DETAILLED')
-        Logger._log.debug(msg)
+        Logger._log.debug('DETAILLED', msg)
     
     def info(self, info):
-        self.set_level('STATUS')
-        Logger._log.debug(info)
+        Logger._log.debug('STATUS', info)
         
 def Logger():
     global logger
