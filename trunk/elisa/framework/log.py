@@ -54,20 +54,21 @@ class _Logger:
     def get_level(self):
         return self._level_name
 
-    def debug(self, msg, obj=None, level=None):
-        if not obj:
-            Logger._log.debug('DEBUG', msg)
-        else:
-            Logger._log.debug('DEBUG', msg + ' on ' + str(obj) )
-
     def ponctual(self, msg):
         Logger._log.log('NORMAL',msg)
 
     def loop(self, msg):
-        Logger._log.debug('DETAILLED', msg)
+        Logger._log.log('DETAILLED', msg)
     
     def info(self, info):
-        Logger._log.debug('STATUS', info)
+        Logger._log.log('STATUS', info)
+
+    def debug(self, msg, obj=None, level=None):
+        if not obj:
+            Logger._log.log('DEBUG', msg)
+        else:
+            Logger._log.log('DEBUG', msg + ' on ' + str(obj) )
+
         
 def Logger():
     global logger
