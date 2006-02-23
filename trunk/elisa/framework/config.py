@@ -4,21 +4,36 @@ from elisa.framework.log import Logger
 CONFIG_FILE = "elisa.conf"
 
 class Config:
+    """ Elisa's configuration system
+
+    Each configuration is stored in a text file. The configuration is
+    structured in sections. There's at least one section called
+    'general'. Each plugin has its own section (ex: 'plugin.foo').
+    
+
+    """
     
     def __init__(self, config_file=CONFIG_FILE):
 
         self._config = ConfigObj(config_file)
         self._logger = Logger()
-
         self._logger.info('loading configuration')
                     
     def get_option(self, key, section='general', default=None):
+        """ Fetch the option value stored in the given section, at the
+        given key. Return a default value if the key is not found.
+        """
         return self.get_section(section).get(key, default)
 
     def set_option(self, key, value, section='general'):
+        """ Store an option value under key id at the given section.
+        """
         self._config[section][key] = value
 
     def del_option(self, key, section_name='general'):
+        """ Remove the option identified by key under the specified
+        section.
+        """
         section = self.get_section(section_name)
         if section and section.has_key(key):
             del section[key]
@@ -36,7 +51,7 @@ class Config:
         """
         @return the ConfigObj section identified by section_name
         """
-        return self._config.get(section_name,{})
+        return self._config.get(section_name, {})
 
     def set_section(self, section_name, section_data):
         """
@@ -46,13 +61,7 @@ class Config:
         self._config[section_name] = section_data
 
     def del_section(self, section_name):
+        """ Remove the section identified by section_name
+        """
         if self._config.has_key(section_name):
             del self._config[section_name]
-
-    # deprecated
-        
-    def Get(self, key, section=None, default=None):
-        raise DeprecationWarning, 'use get_option() method!'
-    
-    def SetDefaultConfig(self):
-        raise DeprecationWarning, 'use create_default_config() method!'

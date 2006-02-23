@@ -1,4 +1,15 @@
 #sample bnx using framework
+import os
+
+#os.environ['PYCHECKER_DISABLED'] = '1'
+# 
+# -F /home/pnormand/Projects/Elisa/trunk/misc/pycheckerrc"
+os.environ['PYCHECKER'] = " -q -b ['configobj', 'validate']"
+
+import pychecker.checker
+
+
+
 
 from elisa.framework import application, log
 import time

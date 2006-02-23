@@ -1,5 +1,4 @@
 class MenuTree:
-
     """
     manipulate a tree 
     """
@@ -19,9 +18,9 @@ class MenuTree:
         "name used on menu if picture is not set"
         return self._short_name
 
-    def set_help_string(self, help):
+    def set_help_string(self, help_string):
         """helpstring shown on box when item is selected"""        
-        self._help_string = help
+        self._help_string = help_string
 
     def get_help_string(self):
         """helpstring shown on box when item is selected"""        
@@ -36,9 +35,13 @@ class MenuTree:
         return self._picture_path
 
     def get_items(self):
+        """fetch the list of sub MenuTree/MenuItem instances """
         return self._items
 
     def get_item_with_name(self, name):
+        """look for a MenuTree/MenuItem with given name in the
+        children list. This method is recursive
+        """
         for item in self.get_items():
             found = item.get_item_with_name(name)
             if not found:
@@ -50,23 +53,38 @@ class MenuTree:
         return None
         
     def add_item(self, item):
+        """ Add a new MenuTree/MenuItem in our children list and link
+        the item with self
+        """
         item.set_parent(self)
         self._items.append(item)
 
     def del_item(self, item):
+        """ Remove the item instance from our children list
+        """
         index = self._items.index(item)
         del self._items[index]
 
     def is_root(self):
+        """ Boolean util method to check wether we are the root node
+        of the tree
+        """
         return self.get_parent() is None
 
     def set_parent(self, parent):
+        """ Link the current instance with another MenuTree, which
+        becomes our parent node
+        """
         self._parent = parent
 
     def get_parent(self):
+        """ MenuTree parent accessor
+        """
         return self._parent
 
     def __repr__(self):
+        """ Textual representation of the tree. This method is recursive
+        """
         level = self.get_level() 
         items = self.get_items()
         representation = "%s - %s (%s items)" % ("  " * level,
@@ -77,6 +95,9 @@ class MenuTree:
         return representation
 
     def get_level(self):
+        """ Fetch the depth at which the instance is located in the
+        tree. Return 0 if we are root.
+        """
         parent = self.get_parent()
         level = 0
         while parent:
@@ -86,108 +107,64 @@ class MenuTree:
 
 
 class MenuItem(MenuTree):
-
     """
-    manipulate menu item element
+    Manipulate menu item element
     """
     
     def __init__(self, short_name="None"):
         MenuTree.__init__(self, short_name=short_name)
-        self.set_selected_callback(None,())
+        self.set_selected_callback(None, ())
         self.set_unselected_callback(None, ())
         self.set_action_callback(None, ())
 
     def __repr__(self):
+        """ Textual representation of the item """
         level = self.get_level() 
         representation = "%s - %s" % ("  " * level,
                                       self.get_short_name())
         return representation
 
-    def set_selected_callback(self, cb, args):
+    def set_selected_callback(self, callback, args):
         """callback called when menu item is selected"""
-        self._selected_callback = cb
-        self._selected_cb_args = args
+        self._selected_callback = callback
+        self._selected_callback_args = args
         
     def get_selected_callback(self):
         """callback called when menu item is selected"""
-        return (self._selected_callback, self._selected_cb_args)
+        return (self._selected_callback, self._selected_callback_args)
 
-    def set_action_callback(self, cb, args):
-        self._action_callback = cb
-        self._action_cb_args = args
+    def set_action_callback(self, callback, args):
+        """callback called when menu item is activated"""
+        self._action_callback = callback
+        self._action_callback_args = args
         
     def get_action_callback(self):
-        return (self._action_callback, self._action_cb_args)
+        """callback called when menu item is activated"""
+        return (self._action_callback, self._action_callback_args)
 
-    def set_unselected_callback(self, cb, args):
-        self._unselected_callback = cb
-        self._unselected_cb_args = args
+    def set_unselected_callback(self, callback, args):
+        """callback called when menu item is unselected"""
+        self._unselected_callback = callback
+        self._unselected_callback_args = args
         
     def get_unselected_callback(self):
-        return (self._unselected_callback, self._unselected_cb_args)
+        """callback called when menu item is unselected"""
+        return (self._unselected_callback, self._unselected_callback_args)
 
     def call_selected_callback(self):
         """callback called when menu item is selected"""
-        cb, args = self.get_selected_callback()
-        cb(*args)
+        callback, args = self.get_selected_callback()
+        callback(*args)
 
     def call_unselected_callback(self):
         """callback called when menu item is selected"""
-        cb, args = self.get_unselected_callback()
-        cb(*args)
+        callback, args = self.get_unselected_callback()
+        callback(*args)
 
     def call_action_callback(self):
         """callback called when menu item is selected"""
-        cb, args = self.get_action_callback()
-        cb(*args)
-
-    # deprecated
-
-    def SetShortname(self, in_shortname):
-        """name used on menu if picture is not set"""
-        raise DeprecationWarning, 'use set_short_name() instead'
-    
-    def GetShortname(self):
-        raise DeprecationWarning, 'use get_short_name() instead'
-        
-    def GetLevel(self):
-        "name used on menu if picture is not set"
-        raise DeprecationWarning, 'use get_level() instead'
-        
-    def SetHelpstring(self, in_helpstring):
-        raise DeprecationWarning, 'use set_help_string() instead'
-        
-    def GetHelpstring(self):
-        raise DeprecationWarning, 'use get_help_string() instead'
-     
-    def SetPicturePathAndFilename(self, in_picturepath):
-        raise DeprecationWarning, 'use set_picture_path() instead'
-    
-    def GetPicturePathAndFilename(self):
-        """complete path of picture shown in menu"""
-        raise DeprecationWarning, 'use get_picture_path() instead'
-    
-    def SetSelectedCallback(self, in_callback, in_args = None):
-        raise DeprecationWarning, 'use set_selected_callback() instead'
-        
-    def SetUnselectedCallback(self, in_callback, in_args = None):
-        """callback called when menu item is selected"""
-        raise DeprecationWarning, 'use set_unselected_callback() instead'
-
-    def SetActionCallback(self, in_callback, in_args = None):
-        """callback called when menu item is selected"""
-        raise DeprecationWarning, 'use set_action_callback() instead'
-
-    def CallSelectedCallback(self):
-        raise DeprecationWarning, 'use call_selected_callback() instead'
-        
-    def CallUnselectedCallback(self):
-        raise DeprecationWarning, 'use call_unselected_callback() instead'
-        
-    def CallActionCallback(self):
-        raise DeprecationWarning, 'use call_action_callback() instead'
-    
-
+        callback, args = self.get_action_callback()
+        callback(*args)
 
 if __name__ == '__main__':
     root = MenuTree()
