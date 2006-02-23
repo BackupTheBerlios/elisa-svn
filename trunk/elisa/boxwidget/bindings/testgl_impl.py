@@ -1,12 +1,16 @@
 import base_impl
 from extern.testGL.zAPI.zForms import zForm, zPictureBox
 
+from elisa.framework.log import Logger
+
 class _testGL_Window_Impl(base_impl._Base_Window_Impl):
     """
     windows binding class for testGL renderEngine
     """
 
     def __init__(self):
+        self._logger = Logger()
+        self._logger.debug('_testGL_Window_Impl.__init__()', self)
         self._window_native=zForm.Form()
         self._window_native.FpsEnable = False
         
@@ -23,6 +27,7 @@ class _testGL_Window_Impl(base_impl._Base_Window_Impl):
         self._window_native.DisplayStats()
      
     def add_surface(self, impl_surface):
+        self._logger.debug('_testGL_Window_Impl.add_surface()', self)
         self._window_native.AddControl(impl_surface.get_native_surface())
         #(_tx, _ty, _tz) = in_surface.GetAbsoluteLocation()
         #self._surface_native.SetLocation(_tx, _ty, _tz)
