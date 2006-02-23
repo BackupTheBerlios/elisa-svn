@@ -22,6 +22,10 @@ class _Logger:
 
     """
 
+    levels = {'STATUS': 25,
+              'DETAILLED': 15
+              }
+
     def __init__(self):
         
 	format = '%(asctime)s %(levelname)-8s %(message)s'
@@ -31,15 +35,15 @@ class _Logger:
 	formatter = logging.Formatter(format, datefmt)
 	handler = logging.FileHandler(fname)
 	handler.setFormatter(formatter)
-	
-        logging.addLevelName(25, 'STATUS')
-        logging.addLevelName(15, 'DETAILLED')
+
+        for name, lvl in self.levels.iteritems():
+            logging.addLevelName(lvl, name)
 
 	Logger._log = logging.getLogger('Elisa')
 	Logger._log.addHandler(handler)
 
-        self.set_level('STATUS')
-        #self.set_level('DETAILLED')
+        #self.set_level('STATUS')
+        self.set_level('DETAILLED')
         	
 	logging.basicConfig()
 	root = logging.getLogger()
@@ -47,6 +51,18 @@ class _Logger:
 	handler.setFormatter(formatter)
 
     def set_level(self, name):
+        """ Set the log level. name can be one of:
+
+        - 'STATUS'
+        - 'INFO'
+        - 'DETAILLED'
+        - 'DEBUG'
+
+        if the level is set to 'DETAILLED' then 'STATUS' and 'INFOS'
+        also become active. Another example: if level set to 'DEBUG',
+        all others levels become active too.
+
+        """
         level = logging.getLevelName(name)
 	Logger._log.setLevel(level)
         self._level_name = name
@@ -54,20 +70,24 @@ class _Logger:
     def get_level(self):
         return self._level_name
 
-    def ponctual(self, msg):
-        Logger._log.log('NORMAL',msg)
+    def debug_fct(self, msg):
+        Logger._log.log(logging.INFO,msg)
 
-    def loop(self, msg):
-        Logger._log.log('DETAILLED', msg)
+    def debug_fct_v(self, msg):
+        Logger._log.log(self.levels['DETAILLED'], msg)
     
     def info(self, info):
-        Logger._log.log('STATUS', info)
+        Logger._log.log(self.levels['STATUS'], info)
 
-    def debug(self, msg, obj=None, level=None):
+    def debug_details(self, msg, obj=None, level=None):
         if not obj:
-            Logger._log.log('DEBUG', msg)
+            Logger._log.log(logging.DEBUG, msg)
         else:
-            Logger._log.log('DEBUG', msg + ' on ' + str(obj) )
+            Logger._log.log(logging.DEBUG, msg + ' on ' + str(obj) )
+
+    # backward compat
+
+    debug = debug_details
 
         
 def Logger():
@@ -80,4 +100,4 @@ if __name__ == '__main__':
     l = Logger()
 
     l.info("Hello World")
-    l.error("Argh")
+    l.debug("Argh")
