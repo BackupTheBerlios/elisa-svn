@@ -23,7 +23,6 @@ class _Logger:
 
     def __init__(self):
         
-	level = logging.DEBUG
 	format = '%(asctime)s %(levelname)-8s %(message)s'
 	datefmt = '%a, %d %b %Y %H:%M:%S'
 	fname = 'elisa.log'
@@ -31,26 +30,57 @@ class _Logger:
 	formatter = logging.Formatter(format, datefmt)
 	handler = logging.FileHandler(fname)
 	handler.setFormatter(formatter)
+
+        logging.addLevelName(15, 'DETAILLED')
 	
 	Logger._log = logging.getLogger('Elisa')
 	Logger._log.addHandler(handler)
-	Logger._log.setLevel(level)
-	
+
+        self.set_level('DEBUG')
+        #self.set_level('DETAILLED')
+        	
 	logging.basicConfig()
 	root = logging.getLogger()
 	handler = root.handlers[0]
 	handler.setFormatter(formatter)
 
-    def debug(self, msg, obj=None):
+    def set_level(self, name):
+        level = logging.getLevelName(name)
+	Logger._log.setLevel(level)
+        self._level_name = name
 
-        if obj== None:
+    def get_level(self):
+        return self._level_name
+
+    def disable(self):
+        for level_name in ('CRITICAL', 'DEBUG', 'INFO',
+                           'ERROR', 'FATAL'):
+            level = getattr(logging, level_name)
+            logging.disable(level)
+
+    def enable(self):
+        pass
+
+    def debug(self, msg, obj=None, level=None):
+
+        if not level:
+            level = self.get_level()
+        elif level == 'NORMAL':
+            level = 'INFO'
+        elif level == 'VERBOSE':
+            level = 'DEBUG'
+
+        self.set_level(level)
+
+        if not obj:
             Logger._log.debug(msg)
         else:
             Logger._log.debug(msg + ' on ' + str(obj) )
-            
+    
     def info(self, info):
         Logger._log.info(info)
 
+    """
     def error(self, error):
         Logger._log.error(error)
 
@@ -59,7 +89,7 @@ class _Logger:
 
     def critical(self, msg):
         Logger._log.critical(msg)
-
+    """
         
 def Logger():
     global logger
