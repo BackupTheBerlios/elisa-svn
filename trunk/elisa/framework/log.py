@@ -13,11 +13,12 @@ class _Logger:
       logger.debug("hey this is a log message")
       logger.info("need some info ?")
       
-    Other operations available:
+    Logging levels:
 
-    - error(msg)
-    - warning(msg)
-    - critical(msg)
+    - STATUS    : 25
+    - INFO      : 20
+    - DETAILLED : 15
+    - DEBUG     : 10
 
     """
 
@@ -30,9 +31,10 @@ class _Logger:
 	formatter = logging.Formatter(format, datefmt)
 	handler = logging.FileHandler(fname)
 	handler.setFormatter(formatter)
-
-        logging.addLevelName(15, 'DETAILLED')
 	
+        logging.addLevelName(25, 'STATUS')
+        logging.addLevelName(15, 'DETAILLED')
+
 	Logger._log = logging.getLogger('Elisa')
 	Logger._log.addHandler(handler)
 
@@ -52,44 +54,25 @@ class _Logger:
     def get_level(self):
         return self._level_name
 
-    def disable(self):
-        for level_name in ('CRITICAL', 'DEBUG', 'INFO',
-                           'ERROR', 'FATAL'):
-            level = getattr(logging, level_name)
-            logging.disable(level)
-
-    def enable(self):
-        pass
-
     def debug(self, msg, obj=None, level=None):
-
-        if not level:
-            level = self.get_level()
-        elif level == 'NORMAL':
-            level = 'INFO'
-        elif level == 'VERBOSE':
-            level = 'DEBUG'
-
-        self.set_level(level)
+        self.set_level('DEBUG')
 
         if not obj:
             Logger._log.debug(msg)
         else:
             Logger._log.debug(msg + ' on ' + str(obj) )
+
+    def ponctual(self, msg):
+        self.set_level('NORMAL')
+        Logger._log.debug(msg)
+
+    def loop(self, msg):
+        self.set_level('DETAILLED')
+        Logger._log.debug(msg)
     
     def info(self, info):
-        Logger._log.info(info)
-
-    """
-    def error(self, error):
-        Logger._log.error(error)
-
-    def warning(self, warning):
-        Logger._log.warning(warning)
-
-    def critical(self, msg):
-        Logger._log.critical(msg)
-    """
+        self.set_level('STATUS')
+        Logger._log.debug(info)
         
 def Logger():
     global logger
