@@ -37,3 +37,26 @@ class _Base_Surface_Impl(object):
     def hide(self): pass
 
     def show(self): pass
+  
+  
+class _Base_EventsManager_Impl(object):
+        
+    def get_event_queue(self): pass
+            
+    def pygame_event_converter(self, pyevent): pass
+
+class _Base_Font_Impl(object):
+
+    def __init__(self): pass
+    
+    def get_native_surface(self): pass      
+        
+    def set_size(self, Width, Height): pass
+        
+    def set_location(self, x, y, z): pass
+    
+    def set_alpha_level(self, level): pass
+    
+    def hide(self): pass
+
+    def show(self): pass

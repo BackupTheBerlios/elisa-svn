@@ -1,4 +1,4 @@
-from elisa.boxwidget import surface, eventsmanager
+from elisa.boxwidget import surface, eventsmanager, events
 from elisa.boxwidget.bindings import testgl_impl
 from elisa.framework.log import Logger
 
@@ -16,7 +16,7 @@ class Window(object):
         self._events_manager = eventsmanager.EventsManager()
         self._focusedsurface = None
         self._Fps = 50
-        self._surfacelist = []
+        self._surface_list = []
         self._background_image_path = None
     
     def _get_window_impl(self):
@@ -25,8 +25,8 @@ class Window(object):
         
     def add_surface(self, surface):
         self._logger.debug('Window.add_surface()', self)
-        if surface not in self._surfacelist:
-            self._surfacelist.append(surface)
+        if surface not in self._surface_list:
+            self._surface_list.append(surface)
             
         surface._set_parent(self)
         surface._set_window(self)
@@ -39,8 +39,8 @@ class Window(object):
     
     def remove_surface(self, surface):
         self._logger.debug('Window.remove_surface()', self)
-        if surface in self._surfacelist:
-            self._surfacelist.remove(surface)
+        if surface in self._surface_list:
+            self._surface_list.remove(surface)
         self._window_impl.remove_surface(surface._get_surface_impl())
                    
     def run(self):
@@ -61,15 +61,28 @@ class Window(object):
         #self._logger.debug('Window.refresh()', self)
         
         for current_event in self._events_manager.get_event_queue():
-            e = current_event.get_simple_event()
-            #self._FireEventToAllWidget(currentevent)
-            if e == event.SE_QUIT:
-                self.close()
+            #notify child widget about event
+            for child_surface in self._surface_list:
+                if child_surface.fire_event(current_event) == False:
+                    break
+
+            if self.on_event(current_event) == True:
+                e = current_event.get_simple_event()
+                if e == events.SE_QUIT:
+                    self.close()
         
-        for surface in self._surfacelist:
+        for surface in self._surface_list:
             surface.refresh()
         self._window_impl.refresh()
-        
+   
+    def on_event(self, event):
+        """
+        called if new event is fire
+        if return False, event will not fired to next event
+        """
+        self._logger.debug('Window.on_event(' + str(event) + ')', self)
+        return True
+             
     def close(self):
         """
         close window
@@ -90,4 +103,3 @@ class Window(object):
         self._logger.debug('Surface.set_background_from_file(' + str(path_and_file_name) + ')', self)
         self._background_image_path = path_and_file_name
         self._window_impl.set_background_from_file(path_and_file_name)
-        

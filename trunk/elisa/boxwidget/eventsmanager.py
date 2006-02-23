@@ -11,19 +11,13 @@ class EventsManager(object):
         self._logger = Logger()
         self._logger.debug('EventsManager.__init__()', self)
         
-        self._eventsmanager_impl = testgl_impl._testGL_EventsManager_Impl(self._push_event)
-        self._eventqueue = []
+        self._eventsmanager_impl = testgl_impl._testGL_EventsManager_Impl()
     
     def get_event_queue(self):
         """
         @return: a list of event is queue and empty the queue
         """
         #self._logger.debug('EventsManager.get_event_queue()', self)
-        return_value = self._eventqueue[:]
-        self._eventqueue = []
-        return return_value
-        
-    def _push_event(self, in_event):
-        self._logger.debug('EventsManager._push_event()', self)
-        self._eventqueue.append(in_event)
+        return self._eventsmanager_impl.get_event_queue()
+
         

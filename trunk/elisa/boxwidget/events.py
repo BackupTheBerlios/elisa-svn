@@ -21,7 +21,7 @@ SE_LEFT = "SE_LEFT"
 SE_RIGHT = "SE_RIGHT"
 SE_QUIT = "SE_QUIT"
 
-class Event(object):
+class Events(object):
     """
     single event class handler
     """

@@ -1,6 +1,6 @@
+from elisa.boxwidget import events
 from elisa.boxwidget.bindings import base_impl
-from elisa.boxwidget.bindings import base_impl
-from extern.testGL.zAPI.zForms import zForm, zPictureBox
+from extern.testGL.zAPI.zForms import zForm, zPictureBox, zFont
 from elisa.framework.log import Logger
 
 import pygame
@@ -71,37 +71,74 @@ class _testGL_Surface_Impl(base_impl._Base_Surface_Impl):
     def show(self):
         self._surface_native.Show()  
 
-class _testGL_EventsManager_Impl(object):
+class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
 
-    def __init__(self, push_event_function):
-        self._push_event_function = push_event_function
+    def __init__(self):
+        self._logger = Logger()
+        self._logger.debug('_testGL_EventsManager_Impl.__init__()', self)
+        self._eventqueue = []
         
     def get_event_queue(self):
-        for event in pygame.event.get():
-            _boxevent = self.pygame_event_converter(event)
+        self._eventqueue = []
+        for pyevent in pygame.event.get():
+            _boxevent = self.pygame_event_converter(pyevent)
             if _boxevent != None:
-                self._push_event_function(_boxevent)
+                self._eventqueue.append(_boxevent)
         
-        return eventsmanagerbase._EventsManagerBase.GetEventQueue(self)
+        return self._eventqueue
             
     def pygame_event_converter(self, pyevent):
     
+        self._logger.debug('_testGL_EventsManager_Impl.pygame_event_converter()', self)
         if pyevent.type == pygame.QUIT:   
-            return event.Event(event.DEV_SYSTEM, event.EVENT_QUIT, event.SE_QUIT)
+            return events.Events(events.DEV_SYSTEM, events.EVENT_QUIT, events.SE_QUIT)
         if pyevent.type == pygame.KEYDOWN:
             if pyevent.key == pygame.K_LEFT:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_LEFT, event.SE_LEFT)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_LEFT, events.SE_LEFT)
             if pyevent.key == pygame.K_RIGHT:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_RIGHT, event.SE_RIGHT)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_RIGHT, events.SE_RIGHT)
             if pyevent.key == pygame.K_UP:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_UP, event.SE_UP)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_UP, events.SE_UP)
             if pyevent.key == pygame.K_DOWN:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_DOWN, event.SE_DOWN)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_DOWN, events.SE_DOWN)
             if pyevent.key == pygame.K_RETURN:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_RETURN, event.SE_OK)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_RETURN, events.SE_OK)
             if pyevent.key == pygame.K_SPACE:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_SPACE, event.SE_MENU)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_SPACE, events.SE_MENU)
             if pyevent.key == pygame.K_ESCAPE:
-                return event.Event(event.DEV_KEYBOARD, event.KEY_ESCAPE, event.SE_QUIT)
+                return events.Events(events.DEV_KEYBOARD, events.KEY_ESCAPE, events.SE_QUIT)
                 
         return None
+
+class _testGL_Font_Impl(base_impl._Base_Font_Impl):
+
+    def __init__(self):
+        self._logger = Logger()
+        self._logger.debug('_testGL_Surface_Impl.__init__()', self)
+        self._surface_native = zFont.Font()
+    
+    def get_native_surface(self):
+        return self._surface_native       
+        
+    def set_size(self, Width, Height):  
+        self._surface_native.SetSize(Width, Height)
+        
+    def set_location(self, x, y, z):
+        self._surface_native.SetLocation( x, y, z)
+        
+    def set_alpha_level(self, level):
+        self._surface_native.SetAlpha(level*2.55)
+        
+    def hide(self):
+        self._logger.debug('_testGL_Surface_Impl.hide()', self)
+        self._surface_native.Hide()
+
+    def show(self):
+        self._surface_native.Show()   
+        
+    def setfont_size(self, size):
+        self._surface_native.SetFontSize(size)
+        
+    def SetText(self, text):
+        self._surface_native.SetText(text)
+        

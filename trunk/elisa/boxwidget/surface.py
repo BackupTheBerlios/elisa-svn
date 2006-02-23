@@ -2,18 +2,17 @@ from elisa.boxwidget.bindings import testgl_impl
 
 from elisa.framework.log import Logger
 
-class Surface(object):
-   
+class Surface(object):  
     """
     class of Surface
     """
     
-    def __init__(self, name='no_name'):
+    def __init__(self, name='Surface'):
         self._logger = Logger()
         self._name=name
         self._logger.debug('Surface.__init__()', self)
         self._surface_impl = testgl_impl._testGL_Surface_Impl()
-        self._surfacelist = []
+        self._surface_list = []
         self._parentsurface = None
         self._x = 0
         self._y = 0
@@ -27,6 +26,21 @@ class Surface(object):
         
         self._surface_impl.set_size(self._width, self._height)
 
+    def fire_event(self, event): 
+        #self._logger.debug('Surface.fire_event()', self)
+        for child_surface in self._surface_list:
+                if child_surface.fire_event(event) == False:
+                    break
+        return self.on_event(event)
+    
+    def on_event(self, event):
+        """
+        called if new event is fire
+        if return False, event will not fired to next event
+        """
+        self._logger.debug('Surface.on_event(' + str(event) + ')', self)
+        return True
+            
     def _get_surface_impl(self):
         self._logger.debug('Surface._get_surface_impl()', self)
         return self._surface_impl
@@ -81,7 +95,7 @@ class Surface(object):
         (ax, ay, az) = self.get_absolute_location()
         self._surface_impl.set_location(ax, ay, az)
         
-        for child in self._surfacelist: child._refresh_location()
+        for child in self._surface_list: child._refresh_location()
     
     def _refresh_location(self):
         self._logger.debug('Surface._refresh_location()', self)
@@ -120,13 +134,13 @@ class Surface(object):
         refresh surface
         """
         #self._logger.debug('Surface.refresh()', self)
-        for surface in self._surfacelist:
+        for surface in self._surface_list:
             surface.refresh()
                     
     def add_surface(self, surface):
         self._logger.debug('Surface.add_surface(' + str(surface) + ')', self)
-        if surface not in self._surfacelist:
-            self._surfacelist.append(surface) 
+        if surface not in self._surface_list:
+            self._surface_list.append(surface) 
         
         _mainwindow = self.get_window()
         surface._set_parent(self);
@@ -143,8 +157,8 @@ class Surface(object):
 
     def remove_surface(self, surface):
         self._logger.debug('Surface.remove_surface()', self)
-        if surface in self._surfacelist:
-            self._surfacelist.remove(surface)
+        if surface in self._surface_list:
+            self._surface_list.remove(surface)
         
         
         _mainwindow = self.get_window()
@@ -153,13 +167,13 @@ class Surface(object):
                 
         #remove child surface also
         #copy needeed because list in modified by recursive fct
-        _child = self._surfacelist[:]
+        _child = self._surface_list[:]
         for s in _child:
             surface.remove_surface(s)
     
     def _get_child_surface(self):
         self._logger.debug('Surface._get_child_surface()', self)
-        return self._surfacelist
+        return self._surface_list
         
     def _set_parent(self, parent):
         self._logger.debug('Surface._set_parent()', self)
@@ -168,14 +182,6 @@ class Surface(object):
     def get_parent(self):
         self._logger.debug('Surface.get_parent()', self)
         return self._parentsurface
-
-    def on_event(self, event):
-        """
-        called if new event is fire
-        if return False, event will not fired to next event
-        """
-        self._logger.debug('Surface.on_event()', self)
-        return True
         
     def _set_window(self, window):
         self._logger.debug('Surface._set_window()', self)

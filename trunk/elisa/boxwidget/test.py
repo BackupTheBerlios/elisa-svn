@@ -1,4 +1,4 @@
-import window,surface
+import window, surface, fontsurface
 
 class w (window.Window):
     
@@ -17,6 +17,9 @@ class w (window.Window):
         self.s.add_surface(s2)
         s2.add_surface(s3)
         self.add_surface(self.s)
+        f = fontsurface.FontSurface()
+        f.set_text("test")
+        self.add_surface(f)
   
     def refresh(self):
         window.Window.refresh(self)  
