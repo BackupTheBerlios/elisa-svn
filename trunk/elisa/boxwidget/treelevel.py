@@ -13,9 +13,9 @@ class TreeLevel(surface.Surface):
         self.set_alpha_level(0)
         self._current_rank = 0
         self._back_image = surface.Surface()
-        self._back_image.SetBackgroundFromFile("testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
-        self._back_image.SetSize(550,40)
-        self._back_image.SetLocation(20,30,2.1)
+        self._back_image.set_background_from_file("extern/testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
+        self._back_image.set_size(550,40)
+        self._back_image.set_location(20,30,2.1)
         self.add_surface(self._back_image)
         self._font = None
         if self._menu_level_data.item_label_visible():

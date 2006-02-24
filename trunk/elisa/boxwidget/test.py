@@ -21,6 +21,8 @@ class w (window.Window):
         self.s.add_surface(s2)
         s2.add_surface(s3)
         self.add_surface(self.s)
+        s2.hide(True)
+        self.s.show(True)
   
     def refresh(self):
         window.Window.refresh(self)  
