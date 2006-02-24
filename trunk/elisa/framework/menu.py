@@ -47,6 +47,25 @@ class Mixin:
         name = self.get_short_name()
         return "%s (%s items)" % (name, len(items))
 
+    def get_tree_from_item(self, parent_item=None):
+        """ Create a new MenuTree starting at parent and including all
+        the items stored by this item.
+        """
+        if not parent_item:
+            parent_item = self.get_root()
+
+        menu = MenuTree(parent_item.get_short_name())
+
+        def build_sub_tree(items, parent):
+            for item in items:
+                new_item = item.copy()
+                menu.add_item(new_item, parent=parent)
+                build_sub_tree(item.get_items(),new_item)
+
+        build_sub_tree(parent_item.get_items(), parent_item.copy())
+        return menu
+
+
 class MenuTree(Mixin):
     """
     manipulate a tree 
@@ -58,6 +77,16 @@ class MenuTree(Mixin):
 
     def get_parent(self):
         return None
+
+    def get_root(self):
+        return self
+
+    def copy(self):
+        """ Create a copy of the MenuItem
+            TODO: copy the items too ?
+        """
+        dup = MenuTree(short_name=self.get_short_name())
+        return dup
         
     def pretty_print(self):
         """ Textual representation of the tree. This method is recursive
@@ -94,10 +123,17 @@ class MenuItem(Mixin):
         return representation
 
     def copy(self):
+        dup = MenuItem(parent=None,
+                       short_name=self.get_short_name())
+        return dup
+        
+
+    def deep_copy(self):
         """ Create a copy of the MenuItem
             TODO: copy all the MenuItem attributes (callbacks, help, picture_path)
         """
-        dup = MenuItem(parent=self.get_parent(),
+        parent = self.get_parent().copy()
+        dup = MenuItem(parent=parent,
                        short_name=self.get_short_name())
         return dup
     
@@ -112,25 +148,6 @@ class MenuItem(Mixin):
         """
         return self._parent
 
-    def get_items_from_parent(self, parent=None):
-        """ Create a new MenuTree starting at parent and including all
-        the items stored by this item.
-        """
-        if not parent:
-            parent = self.get_root()
-
-        menu = MenuTree(parent.get_short_name())
-
-        def build_sub_menu(items):
-            for item in items:
-                new_item = item.copy()
-                menu.add_item(new_item, parent=item.get_parent())
-                build_sub_menu(item.get_items())
-
-        build_sub_menu(parent.get_items())
-        return menu
-
-
     def get_root(self):
         parent = self.get_parent()
         while parent:
@@ -138,6 +155,17 @@ class MenuItem(Mixin):
                 return parent
             parent = parent.get_parent()
         return None
+
+    def get_level(self):
+        """ Fetch the depth at which the instance is located in the
+        tree. Return 0 if we are root.
+        """
+        parent = self.get_parent()
+        level = 0
+        while parent:
+            parent = parent.get_parent()
+            level += 1
+        return level
 
     def set_help_string(self, help_string):
         """helpstring shown on box when item is selected"""        
@@ -154,17 +182,6 @@ class MenuItem(Mixin):
     def get_picture_path(self):
         """complete path of picture shown in menu"""
         return self._picture_path
-
-    def get_level(self):
-        """ Fetch the depth at which the instance is located in the
-        tree. Return 0 if we are root.
-        """
-        parent = self.get_parent()
-        level = 0
-        while parent:
-            parent = parent.get_parent()
-            level += 1
-        return level
 
     def set_selected_callback(self, callback, args):
         """callback called when menu item is selected"""
@@ -196,33 +213,42 @@ class MenuItem(Mixin):
     def call_selected_callback(self):
         """callback called when menu item is selected"""
         callback, args = self.get_selected_callback()
-        callback(*args)
+        if callable(callback):
+            callback(*args)
 
     def call_unselected_callback(self):
         """callback called when menu item is selected"""
         callback, args = self.get_unselected_callback()
-        callback(*args)
+        if callable(callback):
+            callback(*args)
 
     def call_action_callback(self):
         """callback called when menu item is selected"""
         callback, args = self.get_action_callback()
-        callback(*args)
+        if callable(callback):
+            callback(*args)
 
 if __name__ == '__main__':
     root = MenuTree()
     
     root.add_item(MenuItem(short_name="level 1"))
 
-    sub = MenuItem(short_name="level 2")
-    sub.add_item(MenuItem(short_name="level 3"))
+    sub = MenuItem(short_name="level 1 bis")
+    sub.add_item(MenuItem(short_name="level 2"))
     root.add_item(sub)
 
     print root.pretty_print()
     print "-" * 80
-    print root.get_item_with_name("level 2")
-
+    lvl1b = root.get_item_with_name("level 1 bis")
+    print lvl1b
+    
     print root.get_items()
 
     print sub.get_root()
-    
-    print sub.get_items_from_parent(sub).pretty_print()
+
+    new_sub_tree = root.get_tree_from_item()#lvl1b)
+    print new_sub_tree
+    print new_sub_tree.get_items()[0].get_level()
+    print new_sub_tree.pretty_print()
+
+    print root.get_tree_from_item(lvl1b).pretty_print()
