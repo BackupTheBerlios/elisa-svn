@@ -47,7 +47,7 @@ class Mixin:
         name = self.get_short_name()
         return "%s (%s items)" % (name, len(items))
 
-    def get_tree_from_item(self, parent_item=None):
+    def get_tree_from_item(self, parent_item=None, root_level=False):
         """ Create a new MenuTree starting at parent and including all
         the items stored by this item.
         """
@@ -60,7 +60,8 @@ class Mixin:
             for item in items:
                 new_item = item.copy()
                 menu.add_item(new_item, parent=parent)
-                build_sub_tree(item.get_items(),new_item)
+                if not root_level:
+                    build_sub_tree(item.get_items(),new_item)
 
         build_sub_tree(parent_item.get_items(), parent_item.copy())
         return menu
@@ -252,3 +253,7 @@ if __name__ == '__main__':
     print new_sub_tree.pretty_print()
 
     print root.get_tree_from_item(lvl1b).pretty_print()
+
+    print "-" * 80
+    
+    print root.get_tree_from_item(root_level=True).pretty_print()
