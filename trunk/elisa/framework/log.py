@@ -66,7 +66,12 @@ class Logger(singleton.Singleton):
         #self.set_level('STATUS')
         self.set_level('DEBUG_DETAILLED')
 
-        logging.basicConfig(stream=err)
+        try:
+            logging.basicConfig(stream=err)
+        except TypeError:
+            # happens when using python 2.3
+            logging.basicConfig()
+        
         root = logging.getLogger()
         handler = root.handlers[0]
         handler.setFormatter(formatter)
