@@ -36,7 +36,9 @@ def launch():
     p = Player()
     p.play_uri(sys.argv[1])
 
-    mainloop.run()
+    import time
+    time.sleep(30)
+    #mainloop.run()
 
 
 if __name__ == '__main__':

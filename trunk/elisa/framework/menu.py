@@ -12,11 +12,14 @@ class Mixin:
         """fetch the list of sub MenuTree/MenuItem instances """
         return self._items
     
-    def add_item(self, item):
+    def add_item(self, item, parent=None):
         """ Add a new MenuTree/MenuItem in our children list and link
         the item with self
         """
-        item.set_parent(self)
+        if not parent:
+            parent = self
+            
+        item.set_parent(parent)
         self._items.append(item)
 
     def del_item(self, item):
@@ -39,6 +42,10 @@ class Mixin:
 
         return None
 
+    def __repr__(self):
+        items = self.get_items()
+        name = self.get_short_name()
+        return "%s (%s items)" % (name, len(items))
 
 class MenuTree(Mixin):
     """
@@ -52,17 +59,15 @@ class MenuTree(Mixin):
     def get_parent(self):
         return None
         
-    def __repr__(self):
+    def pretty_print(self):
         """ Textual representation of the tree. This method is recursive
         """
         items = self.get_items()
         representation = "- %s (%s items)" % (self.get_short_name(),
                                               len(items))
         for item in items:
-            representation += "\n" + repr(item)
+            representation += "\n" + item.pretty_print()
         return representation
-
-
 
 class MenuItem(Mixin):
     """
@@ -79,15 +84,23 @@ class MenuItem(Mixin):
         self.set_action_callback(None, ())
         self._items = []
         
-    def __repr__(self):
+    def pretty_print(self):
         """ Textual representation of the item """
         level = self.get_level() 
         representation = "%s - %s" % ("  " * level,
                                       self.get_short_name())
         for item in self.get_items():
-            representation += "\n" + repr(item)
+            representation += "\n" + item.pretty_print()
         return representation
 
+    def copy(self):
+        """ Create a copy of the MenuItem
+            TODO: copy all the MenuItem attributes (callbacks, help, picture_path)
+        """
+        dup = MenuItem(parent=self.get_parent(),
+                       short_name=self.get_short_name())
+        return dup
+    
     def set_parent(self, parent):
         """ Link the current instance with another MenuTree, which
         becomes our parent node
@@ -99,6 +112,32 @@ class MenuItem(Mixin):
         """
         return self._parent
 
+    def get_items_from_parent(self, parent=None):
+        """ Create a new MenuTree starting at parent and including all
+        the items stored by this item.
+        """
+        if not parent:
+            parent = self.get_root()
+
+        menu = MenuTree(parent.get_short_name())
+
+        def build_sub_menu(items):
+            for item in items:
+                new_item = item.copy()
+                menu.add_item(new_item, parent=item.get_parent())
+                build_sub_menu(item.get_items())
+
+        build_sub_menu(parent.get_items())
+        return menu
+
+
+    def get_root(self):
+        parent = self.get_parent()
+        while parent:
+            if not parent.get_parent():
+                return parent
+            parent = parent.get_parent()
+        return None
 
     def set_help_string(self, help_string):
         """helpstring shown on box when item is selected"""        
@@ -126,7 +165,6 @@ class MenuItem(Mixin):
             parent = parent.get_parent()
             level += 1
         return level
-
 
     def set_selected_callback(self, callback, args):
         """callback called when menu item is selected"""
@@ -179,6 +217,12 @@ if __name__ == '__main__':
     sub.add_item(MenuItem(short_name="level 3"))
     root.add_item(sub)
 
-    print root
+    print root.pretty_print()
     print "-" * 80
     print root.get_item_with_name("level 2")
+
+    print root.get_items()
+
+    print sub.get_root()
+    
+    print sub.get_items_from_parent(sub).pretty_print()
