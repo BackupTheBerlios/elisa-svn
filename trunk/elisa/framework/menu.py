@@ -1,3 +1,4 @@
+import copy
 
 class Mixin:
     def set_short_name(self, name):
@@ -86,7 +87,8 @@ class MenuTree(Mixin):
         """ Create a copy of the MenuItem
             TODO: copy the items too ?
         """
-        dup = MenuTree(short_name=self.get_short_name())
+        dup = copy.deepcopy(self)
+        dup._items = []
         return dup
         
     def pretty_print(self):
@@ -124,20 +126,11 @@ class MenuItem(Mixin):
         return representation
 
     def copy(self):
-        dup = MenuItem(parent=None,
-                       short_name=self.get_short_name())
+        dup = copy.deepcopy(self)
+        dup.set_parent(None)
+        dup._items = []
         return dup
-        
-
-    def deep_copy(self):
-        """ Create a copy of the MenuItem
-            TODO: copy all the MenuItem attributes (callbacks, help, picture_path)
-        """
-        parent = self.get_parent().copy()
-        dup = MenuItem(parent=parent,
-                       short_name=self.get_short_name())
-        return dup
-    
+            
     def set_parent(self, parent):
         """ Link the current instance with another MenuTree, which
         becomes our parent node
