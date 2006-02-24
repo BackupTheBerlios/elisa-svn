@@ -1,8 +1,8 @@
 
-from elisa.framework import config, log
+from elisa.framework import config, log, menu
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
-from elisa.boxwidget import window
+from elisa.boxwidget import window, tree
 
 import os
 import pkg_resources
@@ -23,6 +23,7 @@ class Application(window.Window):
     def __init__(self, config_file_name=config.CONFIG_FILE):
         window.Window.__init__(self)
         self._config = None
+        self._tree = None
         self.set_config(config_file_name)
         self.set_exception_hook()
         self._plugin_tree_list = []
@@ -84,6 +85,11 @@ class Application(window.Window):
 
             self.register_plugin(plugin_class(self))
             logger.info("Loaded the plugin '%s'" % entrypoint.name)
+
+    def create_menu(self):
+        """Create menu from plugin list
+        """
+        #for plugin in self._plugin_tree_list:
 
     def register_plugin(self, in_plugin):
         """ Add the given plugin instance to our internal plugins list.
