@@ -2,10 +2,10 @@ from elisa.boxwidget import surface, treeitem, events, surface, fontsurface
 
 class TreeLevel(surface.Surface):
 
-    def __init__(self, menu_level_data):
+    def __init__(self, menuitem_list):
         surface.Surface.__init__(self)
             
-        self._menu_level_data = menu_level_data
+        self._menuitem_list = menuitem_list
         
         #list composed of sublist [item,surface]
         #rank are the same as visual rank
@@ -18,19 +18,18 @@ class TreeLevel(surface.Surface):
         self._back_image.set_location(20,30,2.1)
         self.add_surface(self._back_image)
         self._font = None
-        if self._menu_level_data.item_label_visible():
-            self._font = fontsurface.font_surface()
-            self._font.set_font_size(36)
-            self._font.hide()
-            self.add_surface(self._font)
+        self._font = fontsurface.FontSurface()
+        self._font.set_font_size(36)
+        self._font.hide()
+        self.add_surface(self._font)
         
         _i = 10
-        for item in self._menu_level_data.get_item_list():
+        for item in self._menuitem_list:
             s = treeitem.TreeItem(item, self._font)
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
-            s.set_background_from_file(item.get_picture_path_and_filename())
+            #s.set_background_from_file(item.get_picture_path_and_filename())
             self.add_surface(s)
             self._surface_items.append(s)
             self._current_rank = 0
@@ -41,8 +40,8 @@ class TreeLevel(surface.Surface):
         current_itemdata.call_selected_callback()
         
 
-    def get_menu_level_data(self):
-        return self._menu_level_data
+    def get_menuitem_list(self):
+        return self._menuitem_list
         
     def on_event(self, event):
         _parent = self.get_parent()

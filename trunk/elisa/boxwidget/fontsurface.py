@@ -1,4 +1,5 @@
 from elisa.boxwidget.bindings import testgl_impl
+from elisa.boxwidget import surface
 
 from elisa.framework.log import Logger
 
@@ -84,8 +85,6 @@ class FontSurface(object):
         self._z = z
         (ax, ay, az) = self.get_absolute_location()
         self._font_impl.set_location(ax, ay, az)
-        
-        for child in self._surface_list: child._refresh_location()
     
     def _refresh_location(self):
         self._logger.debug('Font._refresh_location()', self)
@@ -104,7 +103,7 @@ class FontSurface(object):
         _cy = self._y
         _cz = self._z
                 
-        if self._parentsurface != None and isinstance(self._parentsurface, Surface) :
+        if self._parentsurface != None and isinstance(self._parentsurface, surface.Surface) :
             (_tx, _ty, _tz) = self._parentsurface.get_absolute_location()
             _cx += _tx
             _cy += _ty
@@ -164,10 +163,10 @@ class FontSurface(object):
         return self._name
         
     def set_font_size(self, size):
-        self._font_impl.SetFontSize(size)
+        self._font_impl.set_font_size(size)
         
     def set_text(self, text):
-        self._font_impl.SetText(text)
+        self._font_impl.set_text(text)
         
     def __repr__(self):
         #FIXME str(self) make recursive call

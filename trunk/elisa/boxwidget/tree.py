@@ -2,15 +2,15 @@ from elisa.boxwidget import surface, events, treelevel
 
 class Tree(surface.Surface):
 
-    def __init__(self, rootlevel):
+    def __init__(self, menutree_root):
         surface.Surface.__init__(self)
-        
+
         self._drawing_next_level = False
         self._drawing_previous_level = False
         self._level_to_draw = None
 
         self._surface_items = []
-        _root_level_surface = treelevel.TreeLevel(rootlevel)
+        _root_level_surface = treelevel.TreeLevel(menutree_root.get_items())
         self._surface_items.append(_root_level_surface)
         self._current_level_id = 0
         self.draw_level(_root_level_surface)

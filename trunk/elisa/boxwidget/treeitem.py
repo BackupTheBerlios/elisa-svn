@@ -6,10 +6,10 @@ class TreeItem(surface.Surface):
         surface.Surface.__init__(self)
         self._menuitemdata = menuitemdata
         self._arrow_surface = surface.Surface()
-        self._arrow_surface.SetBackColor(255,255,255)
-        self._arrow_surface.SetLocation(14,128,2.3)
-        self._arrow_surface.SetSize(100,20)
-        self._arrow_surface.SetBackgroundFromFile("elisa/skins/default_skin/default_pictures/downarrow.png")
+        self._arrow_surface.set_back_color(255,255,255)
+        self._arrow_surface.set_location(14,128,2.3)
+        self._arrow_surface.set_size(100,20)
+        self._arrow_surface.set_background_from_file("elisa/skins/default_skin/default_pictures/downarrow.png")
         self.add_surface(self._arrow_surface)
         self._font = font
         self.set_status(0)

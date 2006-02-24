@@ -23,7 +23,7 @@ class Application(window.Window):
     def __init__(self, config_file_name=config.CONFIG_FILE):
         window.Window.__init__(self)
         self._config = None
-        self._tree = None
+        self._tree_data = menu.MenuTree('root')
         self.set_config(config_file_name)
         self.set_exception_hook()
         self._plugin_tree_list = []
@@ -89,7 +89,10 @@ class Application(window.Window):
     def create_menu(self):
         """Create menu from plugin list
         """
+        
+        #only one plugin for the moment.
         #for plugin in self._plugin_tree_list:
+        self._tree_data = self._plugin_tree_list[0]
 
     def register_plugin(self, in_plugin):
         """ Add the given plugin instance to our internal plugins list.
@@ -99,6 +102,11 @@ class Application(window.Window):
     def run(self):
         """ Execute the application. Start main loop.
         """
+        self._treewidget = tree.Tree(self._tree_data)
+        self._treewidget.set_size(500, 100)
+        self._treewidget.set_initial_location(105.0, 450.0, 2.0)
+        self.add_surface(self._treewidget)
+        
         window.Window.run(self)
             
     def close(self):

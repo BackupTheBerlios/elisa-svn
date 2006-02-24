@@ -124,7 +124,7 @@ class _testGL_Font_Impl(base_impl._Base_Font_Impl):
         self._surface_native.SetSize(Width, Height)
         
     def get_size(self):
-        self._surface_native.GetNativeSurface().GetSize()
+        return self._surface_native.GetSize()
         
     def set_location(self, x, y, z):
         self._surface_native.SetLocation( x, y, z)
@@ -142,9 +142,9 @@ class _testGL_Font_Impl(base_impl._Base_Font_Impl):
     def show(self):
         self._surface_native.Show()   
         
-    def setfont_size(self, size):
+    def set_font_size(self, size):
         self._surface_native.SetFontSize(size)
         
-    def SetText(self, text):
+    def set_text(self, text):
         self._surface_native.SetText(text)
         
