@@ -26,7 +26,7 @@ class Tree(surface.Surface):
                 self.select_previous_level()
             if event.get_simple_event() == events.SE_DOWN:
                 self.select_next_level()
-            if in_event.get_simple_event() == event.SE_OK:
+            if event.get_simple_event() == events.SE_OK:
                 _treeitem_surface = self.get_current_level_surface().get_selected_item()
                 _treeitem_surface.get_menu_item_data().call_action_callback()
             
@@ -55,7 +55,7 @@ class Tree(surface.Surface):
     def set_location(self, x, y, z):
         surface.Surface.set_location(self, x, y, z)
     
-    def SetInitialLocation(self, x, y, z):
+    def set_initial_location(self, x, y, z):
         self._y_init = y
         self.set_location(x, y, z)
            
@@ -94,7 +94,6 @@ class Tree(surface.Surface):
         in_level.set_location(0,130 * self._current_level_id, 3)
         in_level.set_size(300, 40)
         self.add_surface(in_level)
-        in_level.get_menulevel_data().call_selected_callback()
             
     def get_current_level_surface(self):
         return self._surface_items[self._current_level_id]

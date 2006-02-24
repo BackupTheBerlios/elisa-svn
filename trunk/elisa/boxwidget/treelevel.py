@@ -12,13 +12,13 @@ class TreeLevel(surface.Surface):
         self._surface_items = []
         self.set_alpha_level(0)
         self._current_rank = 0
-        self._back_image = surface.Surface()
+        self._back_image = surface.Surface('treelevel backimage')
         self._back_image.set_background_from_file("extern/testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
         self._back_image.set_size(550,40)
         self._back_image.set_location(20,30,2.1)
         self.add_surface(self._back_image)
         self._font = None
-        self._font = fontsurface.FontSurface()
+        self._font = fontsurface.FontSurface('treelevel font')
         self._font.set_font_size(36)
         self._font.hide()
         self.add_surface(self._font)
@@ -37,7 +37,7 @@ class TreeLevel(surface.Surface):
         current_itemsurface = self._surface_items[self._current_rank]
         current_itemdata = current_itemsurface.get_menu_item_data()
         current_itemsurface.set_status(1)
-        current_itemdata.call_selected_callback()
+        #current_itemdata.call_selected_callback()
         
 
     def get_menuitem_list(self):
@@ -51,7 +51,7 @@ class TreeLevel(surface.Surface):
             if event.get_simple_event() == events.SE_RIGHT:
                 self.select_next_item()
             
-        return surface.Surface.on_event(self, in_event)
+        return surface.Surface.on_event(self, event)
         
     def select_next_item(self):
         if self._current_rank < len(self._surface_items) - 1:

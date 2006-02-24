@@ -88,7 +88,7 @@ class Surface(object):
         """
         set location of widget (relative to parent)
         """
-        self._logger.debug('Surface.set_location()', self)
+        self._logger.debug_verbose('Surface.set_location()', self)
         self._x = x
         self._y = y
         self._z = z
@@ -98,7 +98,7 @@ class Surface(object):
         for child in self._surface_list: child._refresh_location()
     
     def _refresh_location(self):
-        self._logger.debug('Surface._refresh_location()', self)
+        self._logger.debug_verbose('Surface._refresh_location()', self)
         self.set_location(self._x, self._y, self._z)
     
     def get_location(self):
@@ -109,7 +109,7 @@ class Surface(object):
         return (self._x, self._y, self._z)
     
     def get_absolute_location(self):
-        self._logger.debug('Surface.get_absolute_location()', self)
+        self._logger.debug_verbose('Surface.get_absolute_location()', self)
         _cx = self._x
         _cy = self._y
         _cz = self._z
@@ -172,23 +172,23 @@ class Surface(object):
             surface.remove_surface(s)
     
     def _get_child_surface(self):
-        self._logger.debug('Surface._get_child_surface()', self)
+        self._logger.debug_verbose('Surface._get_child_surface()', self)
         return self._surface_list
         
     def _set_parent(self, parent):
-        self._logger.debug('Surface._set_parent()', self)
+        self._logger.debug_verbose('Surface._set_parent()', self)
         self._parentsurface = parent
         
     def get_parent(self):
-        self._logger.debug('Surface.get_parent()', self)
+        self._logger.debug_verbose('Surface.get_parent()', self)
         return self._parentsurface
         
     def _set_window(self, window):
-        self._logger.debug('Surface._set_window()', self)
+        self._logger.debug_verbose('Surface._set_window()', self)
         self._window = window
         
     def get_window(self):
-        self._logger.debug('Surface.get_window()', self)
+        self._logger.debug_verbose('Surface.get_window()', self)
         return self._window
         
     def hide(self, recursive = False):

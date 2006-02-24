@@ -5,7 +5,7 @@ class TreeItem(surface.Surface):
     def __init__(self, menuitemdata, font = None):
         surface.Surface.__init__(self)
         self._menuitemdata = menuitemdata
-        self._arrow_surface = surface.Surface()
+        self._arrow_surface = surface.Surface(self._menuitemdata.get_short_name())
         self._arrow_surface.set_back_color(255,255,255)
         self._arrow_surface.set_location(14,128,2.3)
         self._arrow_surface.set_size(100,20)

@@ -79,7 +79,7 @@ class FontSurface(object):
         """
         set location of widget (relative to parent)
         """
-        self._logger.debug('Font.set_location()', self)
+        self._logger.debug_verbose('Font.set_location()', self)
         self._x = x
         self._y = y
         self._z = z
@@ -87,7 +87,7 @@ class FontSurface(object):
         self._font_impl.set_location(ax, ay, az)
     
     def _refresh_location(self):
-        self._logger.debug('Font._refresh_location()', self)
+        self._logger.debug_verbose('Font._refresh_location()', self)
         self.set_location(self._x, self._y, self._z)
     
     def get_location(self):
@@ -98,7 +98,7 @@ class FontSurface(object):
         return (self._x, self._y, self._z)
     
     def get_absolute_location(self):
-        self._logger.debug('Font.get_absolute_location()', self)
+        self._logger.debug_verbose('Font.get_absolute_location()', self)
         _cx = self._x
         _cy = self._y
         _cz = self._z
@@ -137,7 +137,7 @@ class FontSurface(object):
         self._window = window
         
     def get_window(self):
-        self._logger.debug('Font.get_window()', self)
+        self._logger.debug_verbose('Font.get_window()', self)
         return self._window
         
     def hide(self):
