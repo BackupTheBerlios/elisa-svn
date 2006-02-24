@@ -2,6 +2,7 @@ from extern.testGL.zAPI.zForms import zPictureBox
 from pygame.font import *
 from pygame import *
 import os
+import extern.testGL
 
 class Font(zPictureBox.PictureBox):
 
@@ -11,8 +12,9 @@ class Font(zPictureBox.PictureBox):
         if not font.get_init():
             print 'Could not render font.'
             sys.exit(0)
-        _dir = os.path.dirname(zPictureBox.__file__)
-        self._font = font.Font(_dir + '/font.ttf',72)
+        _dir = os.path.dirname(extern.testGL.__file__)
+        _font_path = os.path.join(_dir, 'common', 'font.ttf')
+        self._font = font.Font(_font_path,72)
         self._texture = None
         self._fontsize = 32
         self.SetText(in_text)
