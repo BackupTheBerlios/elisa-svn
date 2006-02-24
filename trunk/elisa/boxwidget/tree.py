@@ -3,11 +3,12 @@ from elisa.boxwidget import surface, events, treelevel
 class Tree(surface.Surface):
 
     def __init__(self, menutree_root):
-        surface.Surface.__init__(self)
+        surface.Surface.__init__(self,)
 
         self._drawing_next_level = False
         self._drawing_previous_level = False
         self._level_to_draw = None
+        self.hide()
 
         self._surface_items = []
         _root_level_surface = treelevel.TreeLevel(menutree_root.get_items())
@@ -21,7 +22,8 @@ class Tree(surface.Surface):
         return self._current_level_id()
         
     def on_event(self, event):
-        if self.visible() == True:
+        self._logger.debug('Tree.on_event(' + str(event) + ')', self)
+        if self.visible(True) == True:
             if event.get_simple_event() == events.SE_UP:
                 self.select_previous_level()
             if event.get_simple_event() == events.SE_DOWN:
@@ -33,6 +35,7 @@ class Tree(surface.Surface):
         return surface.Surface.on_event(self, event)
         
     def select_previous_level(self):
+        self._logger.debug('Tree.select_previous_level()', self)
         _treelevel_surface = self.get_current_level_surface()
         _treelevel_data = _treelevel_surface.get_menulevel_data()
         if self._current_level_id > 0:
@@ -43,7 +46,8 @@ class Tree(surface.Surface):
             self._drawing_previous_level = True
     
     def select_next_level(self):
-        _treeitem_surface = self.get_current_level_surface().get_selected_Item()
+        self._logger.debug('Tree.select_next_level()', self)
+        _treeitem_surface = self.get_current_level_surface().get_selected_item()
         _nextleveldata = _treeitem_surface.get_menuitem_data().get_level()
         if _next_level_data != None:
             _next_level_surface = treelevel.TreeLevel(_next_level_data)

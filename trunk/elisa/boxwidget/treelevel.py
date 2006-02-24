@@ -29,7 +29,7 @@ class TreeLevel(surface.Surface):
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
-            #s.set_background_from_file(item.get_picture_path_and_filename())
+            s.set_background_from_file(item.get_picture_path())
             self.add_surface(s)
             self._surface_items.append(s)
             self._current_rank = 0
@@ -56,28 +56,28 @@ class TreeLevel(surface.Surface):
     def select_next_item(self):
         if self._current_rank < len(self._surface_items) - 1:
            itemsurface = self._surface_items[self._current_rank]
-           itemdata = itemsurface.get_menu_item_data()
            itemsurface.set_status(0)
-           itemdata.call_unselected_callback()
+           #itemdata = itemsurface.get_menu_item_data()
+           #itemdata.call_unselected_callback()
            
            self._current_rank += 1
            itemsurface = self._surface_items[self._current_rank]
-           itemdata = itemsurface.get_menu_item_data()
            itemsurface.set_status(1)
-           itemdata.call_selected_callback()
+           #itemdata = itemsurface.get_menu_item_data()
+           #itemdata.call_selected_callback()
     
     def select_previous_item(self):
         if self._current_rank > 0:
             itemsurface = self._surface_items[self._current_rank]
-            itemdata = itemsurface.get_menu_item_data()
             itemsurface.set_status(0)
-            itemdata.call_unselected_callback()
+            #itemdata = itemsurface.get_menu_item_data()
+            #itemdata.call_unselected_callback()
            
             self._current_rank -= 1
             itemsurface = self._surface_items[self._current_rank]
-            itemdata = itemsurface.get_menu_item_fata()
             itemsurface.set_status(1)
-            itemdata.call_selected_callback()
+            #itemdata = itemsurface.get_menu_item_data()
+            #itemdata.call_selected_callback()
 
     def get_selected_item(self):
         return self._surface_items[self._current_rank]

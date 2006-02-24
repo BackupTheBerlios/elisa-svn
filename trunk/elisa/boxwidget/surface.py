@@ -23,6 +23,7 @@ class Surface(object):
         self._background_image_path = None
         self._window = None
         self._visible = True
+        self._visible_r = True
         
         self._surface_impl.set_size(self._width, self._height)
 
@@ -196,6 +197,7 @@ class Surface(object):
         self._surface_impl.hide()
         self._visible = False
         if recursive == True:
+            self._visible_r = False
             for s in self._surface_list:
                 s.hide(True)
         
@@ -204,11 +206,14 @@ class Surface(object):
         self._surface_impl.show()
         self._visible = True
         if recursive == True:
+            self._visible_r = True
             for s in self._surface_list:
                 s.show(True)
         
-    def visible(self):
+    def visible(self, recursive = False):
         self._logger.debug('Surface.visible()', self)
+        if recursive == True:
+            return self._visible_r
         return self._visible
 
     def set_name(self, name):

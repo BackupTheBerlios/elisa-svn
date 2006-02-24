@@ -122,22 +122,22 @@ class FontSurface(object):
         """
         refresh surface
         """
-        #self._logger.debug('Font.refresh()', self)
+        self._logger.debug_verbose('Font.refresh()', self)
 
     def _set_parent(self, parent):
-        self._logger.debug('Font._set_parent()', self)
+        self._logger.debug_verbose('Font._set_parent()', self)
         self._parentsurface = parent
         
     def get_parent(self):
-        self._logger.debug('Font.get_parent()', self)
+        self._logger.debug_verbose('Font.get_parent()', self)
         return self._parentsurface
         
     def _set_window(self, window):
-        self._logger.debug('Font._set_window()', self)
+        self._logger.debug_verbose('Font._set_window()', self)
         self._window = window
         
     def get_window(self):
-        self._logger.debug_verbose('Font.get_window()', self)
+        self._logger.debug_verbose_verbose('Font.get_window()', self)
         return self._window
         
     def hide(self):

@@ -45,6 +45,10 @@ class PicturesTreePlugin(TreePlugin):
 
             if os.path.isdir(path) or elisa.utils.misc.file_is_picture(path):
                 item = MenuItem(short_name=path)
+                if os.path.isdir(path):
+                    item.set_picture_path('elisa/skins/default_skin/default_pictures/folder.png')
+                else:
+                    item.set_picture_path(path)
                 
                 parent = self.get_item_with_name(dir_name)
                 if not parent:
