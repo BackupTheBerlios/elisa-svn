@@ -1,8 +1,25 @@
 
 import logging
 from elisa.utils import singleton
+import sys
 
 logger = None
+
+class CustomFile:
+
+    def __init__(self, f):
+        self.do_write = True
+        self.f = f
+        
+
+    def write(self, data):
+        if self.do_write:
+            self.f.write(data)
+
+    def __getattr__(self, attr):
+        return getattr(self.f, attr)
+
+err = CustomFile(sys.stderr)
 
 class Logger(singleton.Singleton):
     """
@@ -47,11 +64,20 @@ class Logger(singleton.Singleton):
         #self.set_level('STATUS')
         self.set_level('DEBUG_DETAILLED')
 
-        logging.basicConfig()
+        logging.basicConfig(stream=err)
         root = logging.getLogger()
         handler = root.handlers[0]
         handler.setFormatter(formatter)
 
+        self.disable_console_output()
+
+    def enable_console_output(self):
+        err.do_write = True
+
+    def disable_console_output(self):
+        err.do_write = False
+
+        
     def set_level(self, name):
         """ Set the log level. name can be one of:
 
