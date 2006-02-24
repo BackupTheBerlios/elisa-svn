@@ -42,19 +42,19 @@ class PicturesTreePlugin(TreePlugin):
 
             if self._match_hidden(path):
                 continue
-
+            
+            #FIXME: do not work with directory with same name in different level
             if os.path.isdir(path) or elisa.utils.misc.file_is_picture(path):
-                item = MenuItem(short_name=path)
+                item = MenuItem(short_name=os.path.basename(path))
                 if os.path.isdir(path):
                     item.set_picture_path('elisa/skins/default_skin/default_pictures/folder.png')
                 else:
                     item.set_picture_path(path)
                 
-                parent = self.get_item_with_name(dir_name)
+                parent = self.get_item_with_name(os.path.basename(dir_name))
                 if not parent:
                     parent = self
                 parent.add_item(item)
-                
-
+                    
     def _match_hidden(self, path):
         return re.match(".*/\..*", path)

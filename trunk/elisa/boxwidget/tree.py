@@ -23,7 +23,7 @@ class Tree(surface.Surface):
         
     def on_event(self, event):
         self._logger.debug('Tree.on_event(' + str(event) + ')', self)
-        if self.visible(True) == True:
+        if self.visible(True) == True and self._drawing_next_level==False and self._drawing_previous_level==False :
             if event.get_simple_event() == events.SE_UP:
                 self.select_previous_level()
             if event.get_simple_event() == events.SE_DOWN:
@@ -32,7 +32,8 @@ class Tree(surface.Surface):
                 _treeitem_surface = self.get_current_level_surface().get_selected_item()
                 _treeitem_surface.get_menuitem_data().call_action_callback()
             
-        return surface.Surface.on_event(self, event)
+        #return surface.Surface.on_event(self, event)
+        return True
         
     def select_previous_level(self):
         self._logger.debug('Tree.select_previous_level()', self)
