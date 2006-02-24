@@ -1,9 +1,9 @@
 from elisa.boxwidget import surface, events, treelevel
 
-class Tree(surface.SurfaceGroup):
+class Tree(surface.Surface):
 
     def __init__(self, rootlevel):
-        surface.SurfaceGroup.__init__(self)
+        surface.Surface.__init__(self)
         
         self._drawing_next_level = False
         self._drawing_previous_level = False
@@ -21,7 +21,7 @@ class Tree(surface.SurfaceGroup):
         return self._current_level_id()
         
     def on_event(self, event):
-        if self.visible_group() == True:
+        if self.visible() == True:
             if event.get_simple_event() == events.SE_UP:
                 self.select_previous_level()
             if event.get_simple_event() == events.SE_DOWN:
@@ -30,7 +30,7 @@ class Tree(surface.SurfaceGroup):
                 _treeitem_surface = self.get_current_level_surface().get_selected_item()
                 _treeitem_surface.get_menu_item_data().call_action_callback()
             
-        return surface.SurfaceGroup.on_event(self, event)
+        return surface.Surface.on_event(self, event)
         
     def select_previous_level(self):
         _treelevel_surface = self.get_current_level_surface()
@@ -53,7 +53,7 @@ class Tree(surface.SurfaceGroup):
             self._level_to_draw = _next_level_surface
     
     def set_location(self, x, y, z):
-        surface.SurfaceGroup.set_location(self, x, y, z)
+        surface.Surface.set_location(self, x, y, z)
     
     def SetInitialLocation(self, x, y, z):
         self._y_init = y
@@ -88,7 +88,7 @@ class Tree(surface.SurfaceGroup):
             else:
                 self._drawing_previous_level = False
         
-        surface.SurfaceGroup.refresh(self)
+        surface.Surface.refresh(self)
         
     def draw_level(self, in_level):
         in_level.set_location(0,130 * self._current_level_id, 3)
