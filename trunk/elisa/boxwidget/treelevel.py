@@ -35,7 +35,7 @@ class TreeLevel(surface.Surface):
             self._current_rank = 0
 
         current_itemsurface = self._surface_items[self._current_rank]
-        current_itemdata = current_itemsurface.get_menu_item_data()
+        current_itemdata = current_itemsurface.get_menuitem_data()
         current_itemsurface.set_status(1)
         #current_itemdata.call_selected_callback()
         

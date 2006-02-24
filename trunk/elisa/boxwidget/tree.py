@@ -9,7 +9,7 @@ class Tree(surface.Surface):
         self._drawing_previous_level = False
         self._level_to_draw = None
         self.hide()
-
+        
         self._surface_items = []
         _root_level_surface = treelevel.TreeLevel(menutree_root.get_items())
         self._surface_items.append(_root_level_surface)
@@ -48,8 +48,8 @@ class Tree(surface.Surface):
     def select_next_level(self):
         self._logger.debug('Tree.select_next_level()', self)
         _treeitem_surface = self.get_current_level_surface().get_selected_item()
-        _nextleveldata = _treeitem_surface.get_menuitem_data().get_level()
-        if _next_level_data != None:
+        _next_level_data = _treeitem_surface.get_menuitem_data().get_items()
+        if _next_level_data != []:
             _next_level_surface = treelevel.TreeLevel(_next_level_data)
             self._current_level_id += 1
             self._surface_items.append(_next_level_surface)
