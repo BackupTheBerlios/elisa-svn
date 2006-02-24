@@ -21,12 +21,19 @@ class w (window.Window):
         self.s.add_surface(s2)
         s2.add_surface(s3)
         self.add_surface(self.s)
-        s2.hide(True)
-        self.s.show(True)
-  
+
+        self.t = surface.Surface('s')
+        self.add_surface(self.t)
+        self.t.set_location(self.x,self.y + 300,self.z)
+        
+        self.is_d = False
+        
     def refresh(self):
         window.Window.refresh(self)  
         #self.x += 1    
         #self.s.set_location(self.x,self.y,self.z)
+        if self.is_d==False:
+            self.is_d = True
+            self.remove_surface(self.s)
 t = w()
 t.run()

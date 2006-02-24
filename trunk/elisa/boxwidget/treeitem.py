@@ -3,9 +3,9 @@ from elisa.boxwidget import surface
 class TreeItem(surface.Surface): 
 
     def __init__(self, menuitem_data, font = None):
-        surface.Surface.__init__(self)
+        surface.Surface.__init__(self, menuitem_data.get_short_name())
         self._menuitem_data = menuitem_data
-        self._arrow_surface = surface.Surface(self._menuitem_data.get_short_name())
+        self._arrow_surface = surface.Surface(self._menuitem_data.get_short_name() + str(' arrow'))
         self._arrow_surface.set_back_color(255,255,255)
         self._arrow_surface.set_location(14,128,2.3)
         self._arrow_surface.set_size(100,20)

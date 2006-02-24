@@ -27,6 +27,16 @@ class Surface(object):
         
         self._surface_impl.set_size(self._width, self._height)
 
+    def pretty_print(self, deep = 0):
+        """ Textual representation of the tree. This method is recursive
+        """
+        representation = " " * deep + "- %s (%s items)" % (self._name,
+                                              len(self._surface_list))
+        deep += 1
+        for surface in self._surface_list:
+            representation += "\n" + surface.pretty_print(deep)
+        return representation
+        
     def fire_event(self, event): 
         #self._logger.debug('Surface.fire_event()', self)
         for child_surface in self._surface_list:
@@ -50,7 +60,7 @@ class Surface(object):
         """
         set the alpha level in percent of the widget [0 to 100%] of opacity
         """
-        self._logger.debug('Surface.set_alpha_level()', self)
+        self._logger.debug('Surface.set_alpha_level(' + str(level) + ')', self)
         self._alphalevel = level
         self._surface_impl.set_alpha_level(level)
 
@@ -157,10 +167,9 @@ class Surface(object):
             surface.add_surface(s)
 
     def remove_surface(self, surface):
-        self._logger.debug('Surface.remove_surface()', self)
-        if surface in self._surface_list:
+        self._logger.debug('Surface.remove_surface(' + str(surface) + ')', self)
+        if surface in self._get_child_surface():
             self._surface_list.remove(surface)
-        
         
         _mainwindow = self.get_window()
         if _mainwindow != None:
@@ -168,7 +177,7 @@ class Surface(object):
                 
         #remove child surface also
         #copy needeed because list in modified by recursive fct
-        _child = self._surface_list[:]
+        _child = surface._get_child_surface()[:]
         for s in _child:
             surface.remove_surface(s)
     

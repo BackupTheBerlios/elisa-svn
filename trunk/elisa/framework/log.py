@@ -38,6 +38,8 @@ class Logger(singleton.Singleton):
     - DEBUG_DETAILLED : 5
     - DEBUG_VERBOSE   : 1
 
+    FIXME : Line insered in double in logfile
+    FIXME : put miliseconds on logs
     """
 
     levels = {'DEBUG_DETAILLED': 5,

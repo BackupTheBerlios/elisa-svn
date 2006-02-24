@@ -2,21 +2,21 @@ from elisa.boxwidget import surface, events, treelevel
 
 class Tree(surface.Surface):
 
-    def __init__(self, menutree_root):
-        surface.Surface.__init__(self,)
+    def __init__(self, menutree_root, name):
+        surface.Surface.__init__(self, name)
 
         self._drawing_next_level = False
         self._drawing_previous_level = False
         self._level_to_draw = None
         self.hide()
         
-        self._surface_items = []
-        _root_level_surface = treelevel.TreeLevel(menutree_root.get_items())
-        self._surface_items.append(_root_level_surface)
+        self._treelevel_surface_list = []
+        _root_treelevel_surface = treelevel.TreeLevel(menutree_root.get_items(), "treelevel rank 0")
+        self._treelevel_surface_list.append(_root_treelevel_surface)
         self._current_level_id = 0
-        self.draw_level(_root_level_surface)
+        self.draw_level(_root_treelevel_surface)
         self._y_init = 0
-        self.add_surface(_root_level_surface)
+        self.add_surface(_root_treelevel_surface)
     
     def get_current_level_id(self):
         return self._current_level_id()
@@ -30,19 +30,19 @@ class Tree(surface.Surface):
                 self.select_next_level()
             if event.get_simple_event() == events.SE_OK:
                 _treeitem_surface = self.get_current_level_surface().get_selected_item()
-                _treeitem_surface.get_menu_item_data().call_action_callback()
+                _treeitem_surface.get_menuitem_data().call_action_callback()
             
         return surface.Surface.on_event(self, event)
         
     def select_previous_level(self):
         self._logger.debug('Tree.select_previous_level()', self)
-        _treelevel_surface = self.get_current_level_surface()
-        _treelevel_data = _treelevel_surface.get_menulevel_data()
+        _current_treelevel_surface = self.get_current_level_surface()
+        _selected_menuitem_data = _current_treelevel_surface.get_selected_item().get_menuitem_data()
         if self._current_level_id > 0:
             self._current_level_id -= 1
-            _treelevel_data.call_unselected_callback()
-            self.remove_surface(_treelevel_surface)
-            self._surface_items.remove(_treelevel_surface)
+            _selected_menuitem_data.call_unselected_callback()
+            self.remove_surface(_current_treelevel_surface)
+            self._treelevel_surface_list.remove(_current_treelevel_surface)
             self._drawing_previous_level = True
     
     def select_next_level(self):
@@ -50,9 +50,9 @@ class Tree(surface.Surface):
         _treeitem_surface = self.get_current_level_surface().get_selected_item()
         _next_level_data = _treeitem_surface.get_menuitem_data().get_items()
         if _next_level_data != []:
-            _next_level_surface = treelevel.TreeLevel(_next_level_data)
             self._current_level_id += 1
-            self._surface_items.append(_next_level_surface)
+            _next_level_surface = treelevel.TreeLevel(_next_level_data, "treelevel rank " + str(self._current_level_id) )
+            self._treelevel_surface_list.append(_next_level_surface)
             self._drawing_next_level = True
             self._level_to_draw = _next_level_surface
     
@@ -100,4 +100,4 @@ class Tree(surface.Surface):
         self.add_surface(in_level)
             
     def get_current_level_surface(self):
-        return self._surface_items[self._current_level_id]
+        return self._treelevel_surface_list[self._current_level_id]

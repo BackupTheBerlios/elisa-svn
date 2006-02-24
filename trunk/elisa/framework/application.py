@@ -102,7 +102,7 @@ class Application(window.Window):
     def run(self):
         """ Execute the application. Start main loop.
         """
-        self._treewidget = tree.Tree(self._tree_data)
+        self._treewidget = tree.Tree(self._tree_data, "main menu Tree")
         self._treewidget.set_size(500, 100)
         self._treewidget.set_initial_location(105.0, 450.0, 2.0)
         self.add_surface(self._treewidget)

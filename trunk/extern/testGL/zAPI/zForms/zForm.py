@@ -111,7 +111,8 @@ class Form(zControl.Control):
         
     def RemoveControl(self, ctrl):
         ctrl.OnUnload()
-        self._ControlCollection.remove(ctrl)
+        if ctrl in self._ControlCollection:
+            self._ControlCollection.remove(ctrl)
         self._SortzOderDrawingBool = True
         ctrl._SetForm(None)
         

@@ -29,6 +29,12 @@ class FontSurface(object):
         
         self._font_impl.set_size(self._width, self._height)
 
+    def pretty_print(self, deep = 0):
+        """ Textual representation of the tree. This method is recursive
+        """
+        return " " * deep + "- %s (0 items)" % (self._name)
+        
+    def remove_surface(self, surface): pass
        
     def _get_child_surface(self):
         return []

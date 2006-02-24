@@ -2,8 +2,8 @@ from elisa.boxwidget import surface, treeitem, events, surface, fontsurface
 
 class TreeLevel(surface.Surface):
 
-    def __init__(self, menuitem_list):
-        surface.Surface.__init__(self)
+    def __init__(self, menuitem_list, name="TreeLevel"):
+        surface.Surface.__init__(self, name)
             
         self._menuitem_list = menuitem_list
         
