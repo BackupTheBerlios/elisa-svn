@@ -42,15 +42,10 @@ class PicturesTreePlugin(TreePlugin):
 
             if self._match_hidden(path):
                 continue
-            
-            if os.path.isdir(path):
-                item = MenuTree(short_name=path)
-            elif elisa.utils.misc.file_is_picture(path):
+
+            if os.path.isdir(path) or elisa.utils.misc.file_is_picture(path):
                 item = MenuItem(short_name=path)
-            else:
-                item = None
                 
-            if item:
                 parent = self.get_item_with_name(dir_name)
                 if not parent:
                     parent = self
