@@ -17,7 +17,6 @@ class Config:
 
         self._config = ConfigObj(config_file)
         self._logger = Logger()
-        self._logger.info('loading configuration')
                     
     def get_option(self, key, section='general', default=None):
         """ Fetch the option value stored in the given section, at the

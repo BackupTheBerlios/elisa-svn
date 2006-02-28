@@ -1,27 +1,102 @@
 
 import logging
-from elisa.utils import singleton
-import sys
+import sys, os
 
+# Python 2.3 compat
+if sys.version_info[:2] == (2,3):
+    logging.getLoggerClass = lambda : logging._loggerClass
+    _basicConfig = logging.basicConfig
+    logging.basicConfig = lambda *args, **kw: _basicConfig()
+    
 logger = None
 
 class CustomFile:
 
     def __init__(self, f):
-        self.do_write = True
         self.f = f
+        self.enable()
         
+    def enable(self):
+        self.do_write = True
 
+    def disable(self):
+        self.do_write = False
+        
     def write(self, data):
         if self.do_write:
             self.f.write(data)
 
     def __getattr__(self, attr):
         return getattr(self.f, attr)
+ 
+class ElisaLogRecord(logging.LogRecord):
+    """ Custom log record """
+    
+    def __init__(self, *args, **kwargs):
+        logging.LogRecord.__init__(self, *args, **kwargs)
+        self.funcname = calling_func_name()
+        self.argnames = calling_args()
+        
+class ElisaLogger(logging.getLoggerClass()):
+    """ Custom logger that uses our log record """
+    
+    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info):
+        if lvl != logging.INFO:
+            record_class = ElisaLogRecord
+        else:
+            record_class = logging.LogRecord
+        return record_class(name, lvl, fn, lno, msg, args, exc_info)
+                            
+# Register our logger
+logging.setLoggerClass(ElisaLogger)
 
-err = CustomFile(sys.stderr)
+class ElisaFormatter(logging.Formatter):
 
-class Logger(singleton.Singleton):
+    def set_alternate_formatter(self, fmter):
+        self._alt_format = fmter
+
+    def get_alternate_formatter(self):
+        return self._alt_format
+
+    def format(self, record):
+        if isinstance(record,ElisaLogRecord):
+            formatted = logging.Formatter.format(self, record)
+        else:
+            formatted = self.get_alternate_formatter().format(record)
+        return formatted
+            
+def calling_func_name():
+    """ Calling function name """
+    f = calling_frame()
+    return f.f_code.co_name
+
+def calling_args():
+    """ Calling function arguments as dictionnary """
+    f = calling_frame()
+    return f.f_locals
+
+def calling_frame():
+    """ Calling sys frame """
+    f = sys._getframe()
+
+    while True:
+        if is_user_source_file(f.f_code.co_filename):
+            return f
+        f = f.f_back
+
+def is_user_source_file(filename):
+    return os.path.normcase(filename) not in (_srcfile, logging._srcfile)
+
+def _current_source_file():
+    base, ext = os.path.splitext(__file__)
+    if ext in ('.pyc', '.pyo'):
+        return '%s.py' % base
+    else:
+        return __file__
+
+_srcfile = os.path.normcase(_current_source_file())
+
+class _Logger:
     """
     The Elisa logger, which basically log messages to a file named
     elisa.log. Use it like this:
@@ -39,21 +114,23 @@ class Logger(singleton.Singleton):
     - DEBUG_VERBOSE   : 1
 
     FIXME : Line insered in double in logfile
-    FIXME : put miliseconds on logs
     """
 
     levels = {'DEBUG_DETAILLED': 5,
               'DEBUG_VERBOSE': 1
               }
 
+    stderr = CustomFile(sys.stderr)
+
+
     def __init__(self):
-        singleton.Singleton.__init__(self)
-        
-        format = '%(asctime)s %(levelname)-8s %(message)s'
+        default_format = '%(asctime)s.%(msecs)-4d %(levelname)-8s %(message)s'
+        format = default_format + ' in %(funcname)s(%(argnames)s)'
         datefmt = '%a, %d %b %Y %H:%M:%S'
         fname = 'elisa.log'
 
-        formatter = logging.Formatter(format, datefmt)
+        formatter = ElisaFormatter(format, datefmt)
+        formatter.set_alternate_formatter(logging.Formatter(default_format, datefmt))
         handler = logging.FileHandler(fname)
         handler.setFormatter(formatter)
 
@@ -63,27 +140,25 @@ class Logger(singleton.Singleton):
         self._log = logging.getLogger('Elisa')
         self._log.addHandler(handler)
 
-        #self.set_level('STATUS')
         self.set_level('DEBUG_DETAILLED')
 
-        try:
-            logging.basicConfig(stream=err)
-        except TypeError:
-            # happens when using python 2.3
-            logging.basicConfig()
+        logging.basicConfig(stream=self.stderr)
         
         root = logging.getLogger()
         handler = root.handlers[0]
         handler.setFormatter(formatter)
 
-        self.disable_console_output()
-
+        self.enable_console_output()
+        
     def enable_console_output(self):
-        err.do_write = True
-
+        """ enable log output to stderr """
+        self.stderr.enable()
+        self.stderr.flush()
+        
     def disable_console_output(self):
-        err.do_write = False
-
+        """ disable log output to stderr """
+        self.stderr.disable()
+        self.stderr.flush()
         
     def set_level(self, name):
         """ Set the log level. name can be one of:
@@ -111,23 +186,23 @@ class Logger(singleton.Singleton):
     def debug(self, msg, obj=None):
         """ Log functional data (in >= DEBUG log level)
         """
-        if obj:
-            msg = '%s on %s' % (msg, str(obj))
         self._log.log(logging.DEBUG, msg)
 
     def debug_detailled(self, msg, obj=None):
         """ Log verbose functional data (in >= DEBUG_DETAILLED log level)
         """
-        if obj:
-            msg = '%s on %s' % (msg, str(obj))
         self._log.log(self.levels['DEBUG_DETAILLED'], msg)
 
     def debug_verbose(self, msg, obj=None):
         """ Detailled logging (in >= DEBUG_VERBOSE log level)
         """
-        if obj:
-            msg = '%s on %s' % (msg, str(obj))
         self._log.log(self.levels['DEBUG_VERBOSE'], msg)
+
+def Logger():
+    global logger
+    if not logger:
+        logger = _Logger()
+    return logger
 
 if __name__ == '__main__':
     l = Logger()

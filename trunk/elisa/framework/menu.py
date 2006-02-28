@@ -7,10 +7,14 @@ class Mixin:
 
     def get_short_name(self):
         "name used on menu if picture is not set"
+        if not hasattr(self, '_short_name'):
+            self.set_short_name('')
         return self._short_name
     
     def get_items(self):
         """fetch the list of sub MenuTree/MenuItem instances """
+        if not hasattr(self, '_items'):
+            self._items = []
         return self._items
     
     def add_item(self, item, parent=None):
@@ -107,6 +111,7 @@ class MenuItem(Mixin):
     """
     
     def __init__(self, parent=None, short_name="None"):
+        self._items = []
         self.set_parent(parent)
         self.set_short_name(short_name)
         self.set_help_string("")
@@ -114,7 +119,6 @@ class MenuItem(Mixin):
         self.set_selected_callback(None, ())
         self.set_unselected_callback(None, ())
         self.set_action_callback(None, ())
-        self._items = []
         
     def pretty_print(self):
         """ Textual representation of the item """

@@ -4,16 +4,10 @@ from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
 from elisa.boxwidget import window, tree
 
+from sets import Set
+
 import os
 import pkg_resources
-
-"""
-TODO:
-
-- coding conventions
-- backport the old Application (depending on boxwidget)
-
-"""
 
 class Application(window.Window):
     """
@@ -21,18 +15,28 @@ class Application(window.Window):
     """
 
     def __init__(self, config_file_name=config.CONFIG_FILE):
-        window.Window.__init__(self)
-        self._config = None
-        self._tree_data = menu.MenuTree('root')
         self.set_config(config_file_name)
         self.set_exception_hook()
-        self._plugin_tree_list = []
 
+        logger = log.Logger()
+        config = self.get_config()
+        
+        logger.set_level(config.get_option('log_level'))
+        console_log_output = int(config.get_option('console_log_output'))
+        if console_log_output:
+            logger.enable_console_output()
+        else:
+            logger.disable_console_output()
+
+        logger.info("Using config file : %s" % config_file_name)
+
+        window.Window.__init__(self)
+        self._plugin_tree_list = []
+        self._tree_data = menu.MenuTree('root')
+        
     def set_config(self, config_file_name):
         """ Load the config stored in the file `config_file_name`
         """
-        logger = log.Logger()
-        logger.info("Using config file : %s" % config_file_name)
         self._config = config.Config(config_file_name)
 
     def get_config(self):
@@ -68,7 +72,7 @@ class Application(window.Window):
         if not plugin_names:
             plugin_names = self.get_config().get_option('plugins', default=[])
 
-        for entrypoint in pkg_resources.iter_entry_points("elisa.plugins"):
+        for entrypoint in pkg_resources.iter_entry_points('elisa.plugins'):
             if entrypoint.name not in plugin_names:
                 continue
             try:
@@ -85,6 +89,13 @@ class Application(window.Window):
 
             self.register_plugin(plugin_class(self))
             logger.info("Loaded the plugin '%s'" % entrypoint.name)
+
+        loaded = [ plugin.get_name() for plugin in self._plugin_tree_list ]
+        s1 = Set(loaded)
+        s2 = Set(plugin_names)
+        if not s2.issubset(s1):
+            logger.info("Plugins not found : %s" % ', '.join(list(s2-s1)))
+        
 
     def create_menu(self):
         """Create menu from plugin list

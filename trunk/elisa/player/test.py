@@ -27,7 +27,50 @@ class Player:
     def play_uri(self, uri):
         print 'Playing:', uri
         self._gst_player.set_property('uri', uri)
+        self.play()
+        
+    def play(self):
         self._gst_player.set_state(gst.STATE_PLAYING)
+
+    def pause(self):
+        self._gst_player.set_state(gst.STATE_PAUSED)
+        
+    def stop(self):
+        self._gst_player.set_state(gst.STATE_READY)
+
+    def get_state(self, timeout=1):
+        return self._gst_player.get_state(timeout=timeout)
+
+    def query_position(self):
+        "Returns a (position, duration) tuple"
+        try:
+            position, format = self._gst_player.query_position(gst.FORMAT_TIME)
+        except:
+            position = gst.CLOCK_TIME_NONE
+
+        try:
+            duration, format = self._gst_player.query_duration(gst.FORMAT_TIME)
+        except:
+            duration = gst.CLOCK_TIME_NONE
+
+        return (position, duration)
+
+    def seek(self, location):
+        """
+        @param location: time to seek to, in nanoseconds
+        """
+        gst.debug("seeking to %r" % location)
+        event = gst.event_new_seek(1.0, gst.FORMAT_TIME,
+                                   gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
+                                   gst.SEEK_TYPE_SET, location,
+                                   gst.SEEK_TYPE_NONE, 0)
+
+        res = self._gst_player.send_event(event)
+        if res:
+            gst.info("setting new stream time to 0")
+            self._gst_player.set_new_stream_time(0L)
+        else:
+            gst.error("seek to %r failed" % location)
 
 
 def launch():
@@ -36,9 +79,7 @@ def launch():
     p = Player()
     p.play_uri(sys.argv[1])
 
-    import time
-    time.sleep(30)
-    #mainloop.run()
+    mainloop.run()
 
 
 if __name__ == '__main__':

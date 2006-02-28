@@ -102,6 +102,9 @@ class Plugin(object):
         visible from here."""
         return self.config
 
+    def get_name(self):
+        return self.name
+
     def implements(cls, interface):
         """
         Check the class implements the given interface which is searched
