@@ -6,22 +6,21 @@ import elisa.utils.misc
 import os
 import re
 
-class PicturesTreePlugin(TreePlugin):
+class MoviesTreePlugin(TreePlugin):
     """
-    pictures plugin_tree
+    movies plugin_tree
     """
 
     __implements__ = IPlugin
 
     
-    name = "pictures"
-    default_config = {'root_directory':'sample_data/pictures'}
+    name = "movies"
+    default_config = {'root_directory':'sample_data/movies'}
 
     def __init__(self, application):
         TreePlugin.__init__(self, application)
-        self.set_short_name("Pictures menu")
+        self.set_short_name("Movies menu")
         self.load_root_directory()
-        print repr(self)
 
     def load_root_directory(self):
         """
@@ -44,12 +43,14 @@ class PicturesTreePlugin(TreePlugin):
                 continue
             
             #FIXME: do not work with directory with same name in different level
-            if os.path.isdir(path) or elisa.utils.misc.file_is_picture(path):
+            if os.path.isdir(path) or elisa.utils.misc.file_is_movie(path):
                 item = MenuItem(short_name=os.path.basename(path))
+
                 if os.path.isdir(path):
-                    item.set_picture_path('elisa/skins/default_skin/default_pictures/folder.png')
+                    picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
                 else:
-                    item.set_picture_path(path)
+                    picture_path = 'elisa/skins/default_skin/default_pictures/movie.png'
+                item.set_picture_path(picture_path)
                 
                 parent = self.get_item_with_name(os.path.basename(dir_name))
                 if not parent:

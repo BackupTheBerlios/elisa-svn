@@ -32,7 +32,6 @@ class Application(window.Window):
 
         window.Window.__init__(self)
         self._plugin_tree_list = []
-        self._tree_data = menu.MenuTree('root')
         
     def set_config(self, config_file_name):
         """ Load the config stored in the file `config_file_name`
@@ -101,9 +100,17 @@ class Application(window.Window):
         """Create menu from plugin list
         """
         
-        #only one plugin for the moment.
-        #for plugin in self._plugin_tree_list:
-        self._tree_data = self._plugin_tree_list[0]
+        # only one plugin for the moment.
+        # new_root = self._plugin_tree_list[0]
+        
+        self._tree_data = menu.MenuTree('root')
+
+        for tree in self._plugin_tree_list:
+            new_item = tree.as_menu_item()
+            # TODO: set the plugin's icon
+            #       use pkg_resources to find icon's path
+            # new_item.set_picture_path()
+            self._tree_data.add_item(new_item)
 
     def register_plugin(self, in_plugin):
         """ Add the given plugin instance to our internal plugins list.

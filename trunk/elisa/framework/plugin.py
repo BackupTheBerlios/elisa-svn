@@ -93,7 +93,7 @@ class Plugin(object):
         section = config.get_section(section_name)
         if not section:
             section = self.default_config
-            config.add_section(section_name, self.default_config)
+            config.set_section(section_name, self.default_config)
 
         self.config = section
 

@@ -94,6 +94,11 @@ class MenuTree(Mixin):
         dup = copy.deepcopy(self)
         dup._items = []
         return dup
+
+    def as_menu_item(self):
+        new_item = MenuItem(short_name=self.get_short_name())
+        new_item._items = self._items
+        return new_item
         
     def pretty_print(self):
         """ Textual representation of the tree. This method is recursive
