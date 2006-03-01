@@ -20,7 +20,13 @@ class PlayingEvent(event_dispatcher.Event):
 
 class PausedEvent(event_dispatcher.Event):
     name = "player.paused"
+
+    def __init__(self, playable):
+        self.playable = playable
     
+
+class StoppedEvent(event_dispatcher.Event):
+    name = "player.stopped"
 
 class NewPlayerEvent(event_dispatcher.Event):
     name = "player_manager.new_player"

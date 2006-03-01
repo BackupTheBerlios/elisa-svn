@@ -19,7 +19,7 @@ class PicturesTreePlugin(TreePlugin):
 
     def __init__(self, application):
         TreePlugin.__init__(self, application)
-        self.set_short_name("Pictures menu")
+        self.set_short_name("pictures")
         self.load_root_directory()
         print repr(self)
 
@@ -43,7 +43,7 @@ class PicturesTreePlugin(TreePlugin):
             if self._match_hidden(path):
                 continue
             
-            #FIXME: do not work with directory with same name in different level
+            # FIXME: do not work with directory with same name in different level
             if os.path.isdir(path) or elisa.utils.misc.file_is_picture(path):
                 item = MenuItem(short_name=os.path.basename(path))
                 if os.path.isdir(path):

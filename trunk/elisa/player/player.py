@@ -11,6 +11,16 @@ _player_manager = None
 
 class _PlayerManager(event_dispatcher.EventDispatcher):
 
+    """
+    TODO:
+
+    - more player management methods
+      * resume(player)
+      * ...
+    - more events!
+      
+    """
+
     def __init__(self):
         self.players = []
 
@@ -19,6 +29,8 @@ class _PlayerManager(event_dispatcher.EventDispatcher):
         self.fire_event(events.NewPlayerEvent(player))
         
     def fullscreen(self, player):
+        """ Switch the player to fullscreen mode and suspend all other players.
+        """
         for p in self.players:
             if p != player and p.get_state() == p.PLAYING:
                 p.save()
@@ -60,10 +72,7 @@ class Player(event_dispatcher.EventDispatcher):
         #caps = AUDIO_CAPS
         
         self._sink = VideoSinkBin(caps)
-        #self._playbin.set_property("video-sink", self._sink)
-        
-        self._videowidth = None
-        self._videoheight = None   
+        self._playbin.set_property("video-sink", self._sink)
 
         if self._uri:
             self.add_playable(Playable(self._uri))
@@ -102,54 +111,94 @@ class Player(event_dispatcher.EventDispatcher):
         return True
 
     def on_message(self, bus, msg, extra=None):
+        """ Callback used by Gstreamer messaging system
+        """
         #print bus, msg
         return True
 
     def get_id(self):
+        """ Return the player id as an integer
+        """
         return id(self)
 
     def get_video_width(self):
+        """ Return the width of the playing video. If we're playing
+        non-video data, return None.
+        """
         return self._sink.get_width()
 
     def get_video_height(self):
+        """ Return the width of the playing video. If we're playing
+        non-video data, return None.
+        """
         return self._sink.get_height()
             
     def play_uri(self, uri):
+        """ Play the media identified the its uri string
+        """
+        # stop the player
         self.stop()
+
+        # reset the sink
+        self._sink.set_width(None)
+        self._sink.set_height(None)
+
+        # play the new uri
         self._playbin.set_property('uri', uri)
         self.play()
+
+        # setup the gobject idle loop
         if self._g_timeout_id:
             gobject.source_remove(self._g_timeout_id)
         self._g_timeout_id = gobject.timeout_add(1, self.idle)
 
     def play(self):
+        """ Set the player state to playing mode and fire a Playing
+        event holding the current playing item of the queue.
+        """
         self._playbin.set_state(gst.STATE_PLAYING)
         self.fire_event(events.PlayingEvent(self.get_current_item()))
         
     def pause(self):
+        """ Set the player state to paused mode and fire a Paused
+        event holding the current playing item of the queue.
+        """
         self._playbin.set_state(gst.STATE_PAUSED)
-        self.fire_event(events.PausedEvent())
+        self.fire_event(events.PausedEvent(self.get_current_item()))
 
     def stop(self):
+        """ Set the player state to stopped mode and fire a Stopped
+        event.
+        """
         self._playbin.set_state(gst.STATE_READY)
+        self.fire_event(events.StoppedEvent())
 
     def seek_forward(self, seconds):
+        """ Seek the current playing item some seconds
+        forward. Seconds are supplied as integers. If the resulting
+        location is valid within the playing item's length, the seek is
+        performed. Otherwise, nothing happens.
+        """
         playable = self.get_current_item()
         new_location = playable.get_status() + seconds
         if new_location <= playable.get_length():
             self.seek_to_location(new_location)
             
     def seek_backward(self, seconds):
+        """ Seek the current playing item some seconds
+        backward. Seconds are supplied as integers. If the resulting
+        location is valid, the seek is performed. Otherwise, nothing
+        happens.
+        """
         playable = self.get_current_item()
         new_location = playable.get_status() - seconds
         if new_location > 0:
             self.seek_to_location(new_location)
         
     def seek_to_location(self, location):
+        """ Seek to an absolute location in the current playing item.
+        @param location: time to seek to, in seconds
         """
-        @param location: time to seek to, in nanoseconds
-        """
-        print "seeking to %s" % location
         location *= gst.SECOND
         event = self._playbin.seek(1.0, gst.FORMAT_TIME,
                                    gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
@@ -157,13 +206,20 @@ class Player(event_dispatcher.EventDispatcher):
                                    gst.SEEK_TYPE_NONE, 0)
 
     def save(self):
-        print 'saving'
+        """ Store informations about the current playing item in some
+        instance variables:
+
+        - _saved_item_index : current position of the playing queue
+        - _saved_status : playing position of the current playing item
+        """
         self._saved_item_index = self._current_item_index
         self._saved_status = self.get_status()
 
     def load(self):
+        """ Fetch saved states of the player and restore them. See
+        save() method to know about saved/restored informations.
+        """
         if self._saved_item_index >= 0 and self._saved_status:
-            print 'loading'
             self._current_item_index = self._saved_item_index
             item = self._queue[self._current_item_index]
             self.play_uri(item.get_uri())
@@ -173,27 +229,37 @@ class Player(event_dispatcher.EventDispatcher):
             self._saved_status = None
             
     def add_playable(self, playable):
+        """ Add a new item in the end of the playing queue. 
+        """
         self._queue.append(playable)
 
     def remove_playable_with_id_from_queue(self, playable_id):
+        """ Remove a playable from the queue, given its id (see
+        Playable.get_id()).
+        """
         for playable in self._queue:
             if playable.get_id() == playable_id:
                 self._queue.remove(playable)
                 break
 
     def next(self):
+        """ Move forward to the next item in the playing queue. If the
+        end of queue is reached, an IndexError is raised.
+        """
         new_index = self._current_item_index + 1
         try:
             new_item = self._queue[new_index]
         except IndexError:
-            print self._queue
             raise IndexError, "end of queue reached"
         else:
-            print new_item
             self._current_item_index = new_index
             self.play_uri(new_item.get_uri())
 
     def previous(self):
+        """ Move backward to the previous item in the playing
+        queue. If the beginning of the queue is reached an IndexError
+        is raised.
+        """
         new_index = self._current_item_index - 1
         if new_index < 0:
             raise IndexError, "can't go prior to the first queue's item"
@@ -202,6 +268,8 @@ class Player(event_dispatcher.EventDispatcher):
         self.play_uri(new_item.get_uri())
 
     def get_current_item(self):
+        """ Return the item of the playing queue which is currently selected
+        """
         return self._queue[self._current_item_index]
 
     def get_status(self):
@@ -221,6 +289,12 @@ class Player(event_dispatcher.EventDispatcher):
         return (position, duration)
 
     def get_state(self):
+        """ Fetch the current state of the player, can be one of:
+
+        - Player.PLAYING
+        - Player.PAUSED
+        - Player.STOPPED
+        """
         return self._playbin.get_state()
 
     def fullscreen(self):
@@ -280,10 +354,11 @@ class Playable:
         position = self.get_status()
         duration = self.get_length()
         if position != gst.CLOCK_TIME_NONE:
-            status = "%02d:%02d / %02d:%02d" % (position / 60, position % 60,
-                                                duration / 60, duration % 60)
+            status = "%02d:%02d:%02d / %02d:%02d:%02d" % (position / 360, position / 60,
+                                                          position % 60,
+                                                          duration / 360, duration / 60,
+                                                          duration % 60)
             print '\r %s (%s)' % (status,self.get_uri()),
-
 
 class VideoSinkBin(gst.Bin):
 
@@ -294,12 +369,12 @@ class VideoSinkBin(gst.Bin):
         gobject.threads_init()
         self._mutex = mutex()
         gst.Bin.__init__(self)
-        self._capsfilter = gst.element_factory_make("capsfilter", "capsfilter")
+        self._capsfilter = gst.element_factory_make('capsfilter', 'capsfilter')
 
         self.set_caps(needed_caps)
         self.add(self._capsfilter)
         
-        fakesink = gst.element_factory_make('fakesink','fakesink')
+        fakesink = gst.element_factory_make('fakesink', 'fakesink')
         fakesink.set_property("sync", True)
         self.add(fakesink)
         self._capsfilter.link(fakesink)
@@ -330,15 +405,21 @@ class VideoSinkBin(gst.Bin):
         return frame
         
     def buffer_probe(self, pad, buffer):
-        if self._width == None or self._height == None:
+        if self.get_width() == None or self.get_height() == None:
             caps = pad.get_negotiated_caps()
             if caps != None:
                 s = caps[0]
-                self._width = s['width']
-                self._height = s['height']
-        if self._width != None and self._height != None:
+                self.set_width(s['width'])
+                self.set_height(s['height'])
+        if self.get_width() != None and self.get_height() != None:
             self.set_current_frame(buffer)
         return True
+
+    def set_width(self, width):
+        self._width = width
+
+    def set_height(self, height):
+        self._height = height
         
     def get_height(self):
         return self._height
@@ -350,6 +431,10 @@ gobject.type_register(VideoSinkBin)
 
 
 if __name__ == '__main__':
+
+    # usage:
+    # player.py uri1 uri2
+    
     manager = PlayerManager()
     mainloop = gobject.MainLoop()
 
@@ -357,6 +442,7 @@ if __name__ == '__main__':
         print 'start playing : %s' % event
 
     """
+    # one player per uri
     for uri in sys.argv[1:]:
     
         p = Player(uri)
@@ -365,6 +451,7 @@ if __name__ == '__main__':
         p.play()
     """
 
+    # one player for all uris => use the queue
     p = Player()
     p.register('player.playing', on_play)
     manager.add_player(p)
@@ -372,7 +459,5 @@ if __name__ == '__main__':
     for uri in sys.argv[1:]:
         p.add_playable(Playable(uri))
 
-
     p.next()
-    
     mainloop.run()

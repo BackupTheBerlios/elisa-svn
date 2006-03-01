@@ -109,7 +109,8 @@ class Application(window.Window):
             new_item = tree.as_menu_item()
             # TODO: set the plugin's icon
             #       use pkg_resources to find icon's path
-            # new_item.set_picture_path()
+            path = 'elisa/skins/default_skin/default_pictures/%s.png' % tree.get_name()
+            new_item.set_picture_path(path)
             self._tree_data.add_item(new_item)
 
     def register_plugin(self, in_plugin):
