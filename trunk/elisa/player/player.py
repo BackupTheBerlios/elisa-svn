@@ -2,7 +2,7 @@
 import pygst
 pygst.require('0.10')
 import gst
-import gobject, sys
+import gobject, sys, time
 from mutex import mutex
 from elisa.utils import event_dispatcher
 from elisa.player import events
@@ -49,28 +49,78 @@ class Player(event_dispatcher.EventDispatcher):
         self._current_item_index = -1
         self._saved_item_index = None
         self._saved_status = None
-
+        self._g_timeout_id = None
         self._playbin = gst.element_factory_make('playbin', 'playbin')
+
+        bus = self._playbin.get_bus()
+        bus.add_signal_watch()
+        bus.connect('message', self.on_message)
 
         caps = VIDEO_CAPS
         #caps = AUDIO_CAPS
         
         self._sink = VideoSinkBin(caps)
-        self._playbin.set_property("video-sink", self._sink)
+        #self._playbin.set_property("video-sink", self._sink)
         
         self._videowidth = None
         self._videoheight = None   
 
         if self._uri:
-            self.add_to_queue(Playable(self._uri))
+            self.add_playable(Playable(self._uri))
             self.next()
+
+    def idle(self):
+        position, duration = self.get_status()
+
+        current_item = self.get_current_item()
+        current_item.set_length(duration)
+        current_item.set_status(position)
+
+        ###################################################
+        # TODO: disable this when integrated in boxwidget
+        current_item.print_status()
+
+        if position == 5:
+            self.seek_forward(10)
+##         elif position == 20:
+##             #self.seek_backward(19)
+##             self.save()
+##         elif position == 30:
+##             self.load()
+
+##         print self.get_video_width()
+
+        if position == 30 and self._current_item_index == 0:
+            self.next()
+        elif position == 25 and self._current_item_index == 1:
+            self.previous()
+
+        ###################################################
+            
+        time.sleep(0.1)
+        sys.stdout.flush()
+        return True
+
+    def on_message(self, bus, msg, extra=None):
+        #print bus, msg
+        return True
 
     def get_id(self):
         return id(self)
+
+    def get_video_width(self):
+        return self._sink.get_width()
+
+    def get_video_height(self):
+        return self._sink.get_height()
             
     def play_uri(self, uri):
+        self.stop()
         self._playbin.set_property('uri', uri)
         self.play()
+        if self._g_timeout_id:
+            gobject.source_remove(self._g_timeout_id)
+        self._g_timeout_id = gobject.timeout_add(1, self.idle)
 
     def play(self):
         self._playbin.set_state(gst.STATE_PLAYING)
@@ -83,34 +133,46 @@ class Player(event_dispatcher.EventDispatcher):
     def stop(self):
         self._playbin.set_state(gst.STATE_READY)
 
-    def seek(self, location):
+    def seek_forward(self, seconds):
+        playable = self.get_current_item()
+        new_location = playable.get_status() + seconds
+        if new_location <= playable.get_length():
+            self.seek_to_location(new_location)
+            
+    def seek_backward(self, seconds):
+        playable = self.get_current_item()
+        new_location = playable.get_status() - seconds
+        if new_location > 0:
+            self.seek_to_location(new_location)
+        
+    def seek_to_location(self, location):
         """
         @param location: time to seek to, in nanoseconds
         """
-        gst.debug("seeking to %r" % location)
-        event = gst.event_new_seek(1.0, gst.FORMAT_TIME,
+        print "seeking to %s" % location
+        location *= gst.SECOND
+        event = self._playbin.seek(1.0, gst.FORMAT_TIME,
                                    gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
                                    gst.SEEK_TYPE_SET, location,
                                    gst.SEEK_TYPE_NONE, 0)
 
-        res = self._playbin.send_event(event)
-        if res:
-            gst.info("setting new stream time to 0")
-            self._playbin.set_new_stream_time(0L)
-        else:
-            gst.error("seek to %r failed" % location)
-
     def save(self):
+        print 'saving'
         self._saved_item_index = self._current_item_index
         self._saved_status = self.get_status()
 
     def load(self):
-        if self._saved_item_index and self._saved_status:
-            item = self._queue[self._saved_item_index]
+        if self._saved_item_index >= 0 and self._saved_status:
+            print 'loading'
+            self._current_item_index = self._saved_item_index
+            item = self._queue[self._current_item_index]
             self.play_uri(item.get_uri())
-            # TODO: set_status() on the item
+            position, duration = self._saved_status
+            self.seek_to_location(position)
+            self._saved_item_index = None
+            self._saved_status = None
             
-    def add_to_queue(self, playable):
+    def add_playable(self, playable):
         self._queue.append(playable)
 
     def remove_playable_with_id_from_queue(self, playable_id):
@@ -127,16 +189,17 @@ class Player(event_dispatcher.EventDispatcher):
             print self._queue
             raise IndexError, "end of queue reached"
         else:
-            self.play_uri(new_item.get_uri())
+            print new_item
             self._current_item_index = new_index
+            self.play_uri(new_item.get_uri())
 
     def previous(self):
         new_index = self._current_item_index - 1
         if new_index < 0:
             raise IndexError, "can't go prior to the first queue's item"
         new_item = self._queue[new_index]
-        self.play_uri(new_item.get_uri())
         self._current_item_index = new_index
+        self.play_uri(new_item.get_uri())
 
     def get_current_item(self):
         return self._queue[self._current_item_index]
@@ -145,14 +208,16 @@ class Player(event_dispatcher.EventDispatcher):
         "Returns a (position, duration) tuple"
         try:
             position, format = self._playbin.query_position(gst.FORMAT_TIME)
+            position /= gst.SECOND
         except:
             position = gst.CLOCK_TIME_NONE
 
         try:
             duration, format = self._playbin.query_duration(gst.FORMAT_TIME)
+            duration /= gst.SECOND
         except:
             duration = gst.CLOCK_TIME_NONE
-
+            
         return (position, duration)
 
     def get_state(self):
@@ -169,10 +234,6 @@ class Playable:
     - fill infos in:
       * audio capabilities
       * video capabilities
-      * length
-    - somehow setup a callback system to call:
-      * set_status()
-      during playback via the player
       
     """
 
@@ -182,9 +243,9 @@ class Playable:
         self._name = name
         self._contains_audio = contains_audio
         self._contains_video = contains_video
-        self._length = length
         self.set_status(0)
-
+        self.set_length(length)
+        
     def __repr__(self):
         return "%s (%s)" % (self.get_name(), self.get_uri())
         
@@ -212,6 +273,17 @@ class Playable:
     def get_length(self):
         return self._length
     
+    def set_length(self, length):
+        self._length = length
+
+    def print_status(self):
+        position = self.get_status()
+        duration = self.get_length()
+        if position != gst.CLOCK_TIME_NONE:
+            status = "%02d:%02d / %02d:%02d" % (position / 60, position % 60,
+                                                duration / 60, duration % 60)
+            print '\r %s (%s)' % (status,self.get_uri()),
+
 
 class VideoSinkBin(gst.Bin):
 
@@ -284,11 +356,23 @@ if __name__ == '__main__':
     def on_play(event):
         print 'start playing : %s' % event
 
+    """
     for uri in sys.argv[1:]:
     
         p = Player(uri)
         p.register('player.playing', on_play)
         manager.add_player(p)
         p.play()
+    """
 
+    p = Player()
+    p.register('player.playing', on_play)
+    manager.add_player(p)
+    
+    for uri in sys.argv[1:]:
+        p.add_playable(Playable(uri))
+
+
+    p.next()
+    
     mainloop.run()
