@@ -4,22 +4,16 @@ from elisa.player.player import Player
 
 class SurfacePlayer(Surface, Player):
 
-    def get_width(self):
+    def get_size(self):
         pass
-
-    def get_height(self):
-        pass
-
+    
     def fullscreen(self):
         pass
 
 class MiniSurfacePlayer(SurfacePlayer):
 
-    def get_width(self):
-        " return fixed width "
-
-    def get_height(self):
-        " return fixed height "
+    def get_size(self):
+        " return fixed width/height "
 
     def fullscreen(self):
         " do nothing to switch to fullscreen "

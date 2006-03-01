@@ -50,13 +50,12 @@ class Player(event_dispatcher.EventDispatcher):
         self._saved_item_index = None
         self._saved_status = None
 
-
         self._playbin = gst.element_factory_make('playbin', 'playbin')
 
         caps = VIDEO_CAPS
         #caps = AUDIO_CAPS
         
-        #self._sink = VideoSinkBin(caps)
+        self._sink = VideoSinkBin(caps)
         #self._playbin.set_property("video-sink", self._sink)
         
         self._videowidth = None
@@ -75,7 +74,7 @@ class Player(event_dispatcher.EventDispatcher):
 
     def play(self):
         self._playbin.set_state(gst.STATE_PLAYING)
-        self.fire_event(events.PlayingEvent())
+        self.fire_event(events.PlayingEvent(self.get_current_item()))
         
     def pause(self):
         self._playbin.set_state(gst.STATE_PAUSED)
@@ -115,7 +114,10 @@ class Player(event_dispatcher.EventDispatcher):
         self._queue.append(playable)
 
     def remove_playable_with_id_from_queue(self, playable_id):
-        pass
+        for playable in self._queue:
+            if playable.get_id() == playable_id:
+                self._queue.remove(playable)
+                break
 
     def next(self):
         new_index = self._current_item_index + 1
@@ -182,6 +184,9 @@ class Playable:
         self._contains_video = contains_video
         self._length = length
         self.set_status(0)
+
+    def __repr__(self):
+        return "%s (%s)" % (self.get_name(), self.get_uri())
         
     def get_id(self):
         return id(self)
@@ -276,11 +281,13 @@ if __name__ == '__main__':
     manager = PlayerManager()
     mainloop = gobject.MainLoop()
 
-    #uri = sys.argv[-1]
+    def on_play(event):
+        print 'start playing : %s' % event
 
     for uri in sys.argv[1:]:
     
         p = Player(uri)
+        p.register('player.playing', on_play)
         manager.add_player(p)
         p.play()
 

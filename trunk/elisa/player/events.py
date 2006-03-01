@@ -12,6 +12,12 @@ TODO:
 class PlayingEvent(event_dispatcher.Event):
     name = "player.playing"
 
+    def __init__(self, playable):
+        self.playable = playable
+
+    def __str__(self):
+        return 'Playing : %r' % repr(self.playable)
+
 class PausedEvent(event_dispatcher.Event):
     name = "player.paused"
     

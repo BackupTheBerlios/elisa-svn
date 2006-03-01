@@ -20,8 +20,11 @@ class EventDispatcher:
         self.callbacks[event_name].remove(callback)
 
     def fire_event(self, event):
-
-        for callback in self.callbacks[event.get_name()]:
+        try:
+            callbacks = self.callbacks[event.get_name()]
+        except KeyError:
+            callbacks = []
+        for callback in callbacks:
             callback(event)
         
 ################################################################################
