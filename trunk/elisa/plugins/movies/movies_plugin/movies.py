@@ -9,6 +9,12 @@ import re
 class MoviesTreePlugin(TreePlugin):
     """
     movies plugin_tree
+
+    TODO:
+
+    - create the thumbnail of each video item and display it instead of the dummy "movie"
+      icon.
+      
     """
 
     __implements__ = IPlugin

@@ -1,4 +1,4 @@
-from elisa.utils import event_dispatcher
+from elisa.utils.event_dispatcher import Event
 
 """
 TODO:
@@ -9,7 +9,7 @@ TODO:
 
 """
 
-class PlayingEvent(event_dispatcher.Event):
+class PlayingEvent(Event):
     name = "player.playing"
 
     def __init__(self, playable):
@@ -18,17 +18,16 @@ class PlayingEvent(event_dispatcher.Event):
     def __str__(self):
         return 'Playing : %r' % repr(self.playable)
 
-class PausedEvent(event_dispatcher.Event):
+class PausedEvent(Event):
     name = "player.paused"
 
     def __init__(self, playable):
         self.playable = playable
     
-
-class StoppedEvent(event_dispatcher.Event):
+class StoppedEvent(Event):
     name = "player.stopped"
 
-class NewPlayerEvent(event_dispatcher.Event):
+class NewPlayerEvent(Event):
     name = "player_manager.new_player"
 
     def __init__(self, player):

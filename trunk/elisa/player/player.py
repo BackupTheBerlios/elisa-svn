@@ -7,6 +7,15 @@ from mutex import mutex
 from elisa.utils import event_dispatcher
 from elisa.player import events
 
+"""
+TODO:
+
+- validate that gobject.timeout_add() works correctly with the
+  application main loop (twisted) or find a better way 
+
+  
+"""
+
 _player_manager = None
 
 class _PlayerManager(event_dispatcher.EventDispatcher):
@@ -79,6 +88,10 @@ class Player(event_dispatcher.EventDispatcher):
             self.next()
 
     def idle(self):
+        """ Convenient method called by gobject.timeout_add loop. Used
+        to update the current playing item status, lenght and
+        capabilities.
+        """
         position, duration = self.get_status()
 
         current_item = self.get_current_item()
@@ -107,7 +120,6 @@ class Player(event_dispatcher.EventDispatcher):
         ###################################################
             
         time.sleep(0.1)
-        sys.stdout.flush()
         return True
 
     def on_message(self, bus, msg, extra=None):
@@ -134,7 +146,7 @@ class Player(event_dispatcher.EventDispatcher):
         return self._sink.get_height()
             
     def play_uri(self, uri):
-        """ Play the media identified the its uri string
+        """ Play the media identified by its uri string
         """
         # stop the player
         self.stop()
@@ -359,6 +371,7 @@ class Playable:
                                                           duration / 360, duration / 60,
                                                           duration % 60)
             print '\r %s (%s)' % (status,self.get_uri()),
+        sys.stdout.flush()
 
 class VideoSinkBin(gst.Bin):
 
