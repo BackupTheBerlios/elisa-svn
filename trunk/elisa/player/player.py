@@ -4,29 +4,28 @@ pygst.require('0.10')
 import gst
 import gobject, sys
 from mutex import mutex
+from elisa.utils import event_dispatcher
+from elisa.player import events
 
 _player_manager = None
 
-class _PlayerManager:
+class _PlayerManager(event_dispatcher.EventDispatcher):
 
     def __init__(self):
         self.players = []
 
     def add_player(self, player):
         self.players.append(player)
-
+        self.fire_event(events.NewPlayerEvent(player))
+        
     def fullscreen(self, player):
         for p in self.players:
-            if p != player and p.get_state() == gst.STATE_PLAYING:
+            if p != player and p.get_state() == p.PLAYING:
                 p.save()
                 p.stop()
         player.fullscreen()
+
                 
-
-    def play(self, player_id=None):
-        if not player_id:
-            
-
 def PlayerManager():
     global _player_manager
     if not _player_manager:
@@ -38,7 +37,11 @@ VIDEO_CAPS="video/x-raw-rgb,bpp=24,depth=24"
 # unused
 AUDIO_CAPS="audio/x-raw-int,rate=44100"
 
-class Player:
+class Player(event_dispatcher.EventDispatcher):
+
+    PLAYING = gst.STATE_PLAYING
+    PAUSED = gst.STATE_PAUSED
+    STOPPED = gst.STATE_READY
 
     def __init__(self, uri=''):
         self._uri = uri
@@ -53,8 +56,8 @@ class Player:
         caps = VIDEO_CAPS
         #caps = AUDIO_CAPS
         
-        self._sink = VideoSinkBin(caps)
-        self._playbin.set_property("video-sink", self._sink)
+        #self._sink = VideoSinkBin(caps)
+        #self._playbin.set_property("video-sink", self._sink)
         
         self._videowidth = None
         self._videoheight = None   
@@ -72,9 +75,11 @@ class Player:
 
     def play(self):
         self._playbin.set_state(gst.STATE_PLAYING)
-
+        self.fire_event(events.PlayingEvent())
+        
     def pause(self):
         self._playbin.set_state(gst.STATE_PAUSED)
+        self.fire_event(events.PausedEvent())
 
     def stop(self):
         self._playbin.set_state(gst.STATE_READY)
@@ -271,10 +276,12 @@ if __name__ == '__main__':
     manager = PlayerManager()
     mainloop = gobject.MainLoop()
 
-    uri = sys.argv[-1]
+    #uri = sys.argv[-1]
+
+    for uri in sys.argv[1:]:
     
-    p = Player(uri)
-    manager.add_player(p)
-    p.play()
+        p = Player(uri)
+        manager.add_player(p)
+        p.play()
 
     mainloop.run()
