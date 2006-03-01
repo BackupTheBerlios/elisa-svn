@@ -56,7 +56,7 @@ class Player(event_dispatcher.EventDispatcher):
         #caps = AUDIO_CAPS
         
         self._sink = VideoSinkBin(caps)
-        #self._playbin.set_property("video-sink", self._sink)
+        self._playbin.set_property("video-sink", self._sink)
         
         self._videowidth = None
         self._videoheight = None   
