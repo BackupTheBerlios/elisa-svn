@@ -84,8 +84,7 @@ class Player(event_dispatcher.EventDispatcher):
         self._playbin.set_property("video-sink", self._sink)
 
         if self._uri:
-            self.add_playable(Playable(self._uri))
-            self.next()
+            self.play_uri(self._uri)
 
     def idle(self):
         """ Convenient method called by gobject.timeout_add loop. Used
@@ -172,8 +171,17 @@ class Player(event_dispatcher.EventDispatcher):
         self._sink.set_width(None)
         self._sink.set_height(None)
 
+        # TODO: detect whether file is local or remote
+        if not uri.startswith('file://'):
+            uri = "file://%s" % uri
+
         # play the new uri
         self._playbin.set_property('uri', uri)
+        print uri
+
+        self.add_playable(Playable(uri))
+        #self.next()
+
         self.play()
 
         # setup the gobject idle loop
@@ -299,7 +307,10 @@ class Player(event_dispatcher.EventDispatcher):
     def get_current_item(self):
         """ Return the item of the playing queue which is currently selected
         """
-        return self._queue[self._current_item_index]
+        try:
+            return self._queue[self._current_item_index]
+        except IndexError:
+            import pdb; pdb.set_trace()
 
     def get_status(self):
         "Returns a (position, duration) tuple"
@@ -481,6 +492,7 @@ if __name__ == '__main__':
         p.play()
     """
 
+    #"""
     # one player for all uris => use the queue
     p = Player()
     p.register('player.playing', on_play)
@@ -490,4 +502,6 @@ if __name__ == '__main__':
         p.add_playable(Playable(uri))
 
     p.next()
+    #"""
+    
     mainloop.run()
