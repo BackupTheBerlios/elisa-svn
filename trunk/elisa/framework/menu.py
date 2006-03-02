@@ -124,6 +124,10 @@ class MenuItem(Mixin):
         self.set_selected_callback(None, ())
         self.set_unselected_callback(None, ())
         self.set_action_callback(None, ())
+
+    def on_message(self, message, sender):
+        if message.get_type() == 'action':
+            self.call_action_callback()
         
     def pretty_print(self):
         """ Textual representation of the item """

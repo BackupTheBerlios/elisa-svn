@@ -25,7 +25,6 @@ class Application(window.Window):
         Application._application = self
         self.set_config(config_filename)
         self.set_exception_hook()
-        self.set_bus(message_bus.MessageBus())
         
         logger = log.Logger()
         config = self.get_config()
@@ -38,6 +37,9 @@ class Application(window.Window):
             logger.disable_console_output()
 
         logger.info("Using config file : %s" % config.get_filename())
+
+        bus = message_bus.MessageBus()
+        bus.register(menu.MenuItem, menu.MenuItem.on_message)
 
         window.Window.__init__(self)
         self._plugin_tree_list = []
@@ -68,12 +70,6 @@ class Application(window.Window):
         instance.
         """
         return self._config
-
-    def get_bus(self):
-        return self._bus
-
-    def set_bus(self, bus):
-        self._bus = bus
 
     def set_exception_hook(self):
         """ Override the default system exception hook with our
@@ -130,10 +126,6 @@ class Application(window.Window):
     def create_menu(self):
         """Create menu from plugin list
         """
-        
-        # only one plugin for the moment.
-        # new_root = self._plugin_tree_list[0]
-        
         self._tree_data = menu.MenuTree('root')
 
         for tree in self._plugin_tree_list:
@@ -161,7 +153,7 @@ class Application(window.Window):
 
     def refresh(self):
         window.Window.refresh(self)
-        self.get_bus().dispatch_messages()
+        message_bus.MessageBus().dispatch_messages()
             
     def close(self):
         """ Close the application. Good idea to save the configuration

@@ -1,6 +1,8 @@
 from elisa.framework.message import Message
 
-class MessageBus:
+_bus = None
+
+class _MessageBus:
 
     # list of (message, sender, receiver) tuples
     queue = []
@@ -24,6 +26,12 @@ class MessageBus:
             if result == False:
                 self.queue = []
                 break
+
+def MessageBus():
+    global _bus
+    if not _bus:
+        _bus = _MessageBus()
+    return _bus
 
 if __name__ == '__main__':
     

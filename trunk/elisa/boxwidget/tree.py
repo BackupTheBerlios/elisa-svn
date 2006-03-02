@@ -1,4 +1,11 @@
 from elisa.boxwidget import surface, events, treelevel
+from elisa.framework import message_bus
+
+class ActionMessage(message_bus.Message):
+
+    def __init__(self):
+        message_bus.Message.__init__(self, 'action','foo')
+
 
 class Tree(surface.Surface):
 
@@ -30,8 +37,10 @@ class Tree(surface.Surface):
                 self.select_next_level()
             if event.get_simple_event() == events.SE_OK:
                 _treeitem_surface = self.get_current_level_surface().get_selected_item()
-                _treeitem_surface.get_menuitem_data().call_action_callback()
-            
+                #_treeitem_surface.get_menuitem_data().call_action_callback()
+                bus = message_bus.MessageBus()
+                bus.send_message(ActionMessage(), self, _treeitem_surface.get_menuitem_data())
+                
         #return surface.Surface.on_event(self, event)
         return True
         
