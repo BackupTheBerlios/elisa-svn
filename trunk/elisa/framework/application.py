@@ -1,5 +1,5 @@
 
-from elisa.framework import config, log, menu
+from elisa.framework import config, log, menu, message_bus
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
 from elisa.boxwidget import window, tree, surface_player
@@ -25,6 +25,7 @@ class Application(window.Window):
         Application._application = self
         self.set_config(config_filename)
         self.set_exception_hook()
+        self.set_bus(message_bus.MessageBus())
         
         logger = log.Logger()
         config = self.get_config()
@@ -67,6 +68,12 @@ class Application(window.Window):
         instance.
         """
         return self._config
+
+    def get_bus(self):
+        return self._bus
+
+    def set_bus(self, bus):
+        self._bus = bus
 
     def set_exception_hook(self):
         """ Override the default system exception hook with our
