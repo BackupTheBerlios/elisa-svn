@@ -20,7 +20,7 @@ class TreeItem(surface.Surface):
             (_x,_y,_z) = self.get_location()
             self._font.set_text(self._menuitem_data.get_short_name())
             (_xf,_yf,_zf) = self._font.get_size()
-            self._font.set_location(_x + 64 - _xf/2 , _y + 88, 2.4)
+            self._font.set_location(_x + 64 - _xf/2, _y + 88, 2.4)
             
     def hide_label(self):
         if self._font != None: self._font.hide()

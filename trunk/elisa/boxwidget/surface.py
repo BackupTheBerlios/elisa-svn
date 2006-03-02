@@ -32,10 +32,14 @@ class Surface(object):
         self._surface_impl.set_size(self._width, self._height)
 
     def create_player(self):
+        """create player if needed only (for video surface)
+        """
         if self._player == None:
             self._player = Player()
         
     def get_player(self):
+        """return player if created, or None
+        """
         return self._player
 
     def pretty_print(self, deep = 0):
@@ -90,8 +94,8 @@ class Surface(object):
             self._surface_impl.set_background_from_file(path_and_file_name)
             self._background_is_movie = False
     
-    def set_background_from_buffer(self, buffer, width, height):
-         self._surface_impl.set_background_from_buffer(buffer, width, height)
+    def set_background_from_buffer(self, buffer, width, height, flip):
+         self._surface_impl.set_background_from_buffer(buffer, width, height, flip)
     
     def get_background_file(self):
         """
@@ -175,7 +179,7 @@ class Surface(object):
             _videowidth = self._player.get_video_width()
             _videoheight = self._player.get_video_height() 
             if _frame != None and _videoheight != None and _videowidth != None:
-                self.set_background_from_buffer(_frame, _videowidth, _videoheight)
+                self.set_background_from_buffer(_frame, _videowidth, _videoheight, True)
             
         for surface in self._surface_list:
             surface.refresh()

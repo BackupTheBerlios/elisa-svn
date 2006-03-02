@@ -64,9 +64,14 @@ class Control(object):
         self._Surface.SetTextureOrder(0)
         self._Surface.SetBackgroundImageFromFile(PathAndFileName, UseAlpha)
     
-    def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False, UseExistingTexture = True):
+    def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False, UseExistingTexture = True, Flip = False):
         if UseExistingTexture == False: self._Surface.RecreateTexture()
-        self._Surface.SetTextureOrder(1)
+        
+        if Flip == True:
+            self._Surface.SetTextureOrder(1)
+        else:
+            self._Surface.SetTextureOrder(0)
+            
         self._Surface.SetBackgroundImageFromBuffer( buffer, width, height, UseAlpha)
         
     def GetBackgroundImage(self):
