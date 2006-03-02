@@ -21,7 +21,6 @@ class PicturesTreePlugin(TreePlugin):
         TreePlugin.__init__(self, application)
         self.set_short_name("pictures")
         self.load_root_directory()
-        print repr(self)
 
     def load_root_directory(self):
         """

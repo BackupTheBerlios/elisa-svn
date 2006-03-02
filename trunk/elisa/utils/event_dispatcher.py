@@ -32,6 +32,9 @@ class EventDispatcher:
 
 if __name__ == '__main__':
 
+    class MyEvent(Event):
+        name = "foo_bar"
+
     def my_callback(event):
         print 'event catched: %r' % event
 
@@ -42,5 +45,5 @@ if __name__ == '__main__':
     dispatcher.register('foo_bar', my_callback)
     dispatcher.register('foo_bar', other_callback)
 
-    dispatcher.fire_event(Event('foo_bar'))
+    dispatcher.fire_event(MyEvent())
 
