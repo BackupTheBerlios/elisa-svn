@@ -14,8 +14,7 @@ class Application(window.Window):
     Main box application class
     """
 
-    def __init__(self, config_file_name=config.CONFIG_FILE):
-        self.set_config(config_file_name)
+    def __init__(self):
         self.set_exception_hook()
 
         logger = log.Logger()
@@ -28,21 +27,16 @@ class Application(window.Window):
         else:
             logger.disable_console_output()
 
-        logger.info("Using config file : %s" % config_file_name)
+        logger.info("Using config file : %s" % config.get_filename())
 
         window.Window.__init__(self)
         self._plugin_tree_list = []
-        
-    def set_config(self, config_file_name):
-        """ Load the config stored in the file `config_file_name`
-        """
-        self._config = config.Config(config_file_name)
 
     def get_config(self):
         """ Return the application's config which is a `config.Config`
         instance.
         """
-        return self._config
+        return config.Config()
 
     def set_exception_hook(self):
         """ Override the default system exception hook with our

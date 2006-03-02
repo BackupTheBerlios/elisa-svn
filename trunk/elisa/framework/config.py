@@ -3,7 +3,9 @@ from elisa.framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 
-class Config:
+_config = None
+
+class _Config:
     """ Elisa's configuration system
 
     Each configuration is stored in a text file. The configuration is
@@ -14,9 +16,12 @@ class Config:
     """
     
     def __init__(self, config_file=CONFIG_FILE):
-
+        self._filename = config_file
         self._config = ConfigObj(config_file)
         self._logger = Logger()
+
+    def get_filename(self):
+        return self._filename
                     
     def get_option(self, key, section='general', default=None):
         """ Fetch the option value stored in the given section, at the
@@ -64,3 +69,9 @@ class Config:
         """
         if self._config.has_key(section_name):
             del self._config[section_name]
+
+def Config():
+    global _config
+    if not _config:
+        _config = _Config()
+    return _config
