@@ -2,7 +2,8 @@
 from elisa.framework import config, log, menu
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
-from elisa.boxwidget import window, tree
+from elisa.boxwidget import window, tree, surface_player
+from elisa.player import player
 
 from sets import Set
 
@@ -31,7 +32,17 @@ class Application(window.Window):
 
         window.Window.__init__(self)
         self._plugin_tree_list = []
+        self._player_manager = player.PlayerManager()
+        self._player_surface = surface_player.SurfacePlayer(None)
+        self._player_surface.set_location(0, 0, 0)
+        self._player_surface.set_size(800, 600)
+        self._player_surface.set_back_color(0, 0, 0)
+        self.add_surface(self._player_surface)
 
+    def set_background_from_widget(self, _surface):
+    """show same background in fullscreen than _surface (video or picture)
+    """
+    
     def get_config(self):
         """ Return the application's config which is a `config.Config`
         instance.
