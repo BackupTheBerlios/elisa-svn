@@ -3,9 +3,7 @@ from elisa.framework.log import Logger
 
 CONFIG_FILE = "elisa.conf"
 
-_config = None
-
-class _Config:
+class Config:
     """ Elisa's configuration system
 
     Each configuration is stored in a text file. The configuration is
@@ -70,8 +68,3 @@ class _Config:
         if self._config.has_key(section_name):
             del self._config[section_name]
 
-def Config():
-    global _config
-    if not _config:
-        _config = _Config()
-    return _config

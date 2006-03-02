@@ -15,7 +15,8 @@ class Application(window.Window):
     Main box application class
     """
 
-    def __init__(self):
+    def __init__(self, config_filename=config.CONFIG_FILE):
+        self.set_config(config_filename)
         self.set_exception_hook()
 
         logger = log.Logger()
@@ -40,14 +41,17 @@ class Application(window.Window):
         self.add_surface(self._player_surface)
 
     def set_background_from_widget(self, _surface):
-    """show same background in fullscreen than _surface (video or picture)
-    """
+        """show same background in fullscreen than _surface (video or picture)
+        """
+
+    def set_config(self, filename):
+        self._config = config.Config(filename)
     
     def get_config(self):
         """ Return the application's config which is a `config.Config`
         instance.
         """
-        return config.Config()
+        return self._config
 
     def set_exception_hook(self):
         """ Override the default system exception hook with our
