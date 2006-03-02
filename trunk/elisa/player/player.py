@@ -102,8 +102,8 @@ class Player(event_dispatcher.EventDispatcher):
         # TODO: disable this when integrated in boxwidget
         current_item.print_status()
 
-        if position == 5:
-            self.seek_forward(10)
+##         if position == 5:
+##             self.seek_forward(10)
 ##         elif position == 20:
 ##             #self.seek_backward(19)
 ##             self.save()
@@ -112,22 +112,39 @@ class Player(event_dispatcher.EventDispatcher):
 
 ##         print self.get_video_width()
 
-        if position == 30 and self._current_item_index == 0:
-            self.next()
-        elif position == 25 and self._current_item_index == 1:
-            self.previous()
+##         if position == 30 and self._current_item_index == 0:
+##             self.next()
+##         elif position == 25 and self._current_item_index == 1:
+##             self.previous()
 
         ###################################################
             
         time.sleep(0.1)
         return True
 
-    def on_message(self, bus, msg, extra=None):
+    def on_message(self, bus, message, extra=None):
         """ Callback used by Gstreamer messaging system
         """
-        #print bus, msg
-        return True
+        t = message.type
+        if t == gst.MESSAGE_ERROR:
+            err, debug = message.parse_error()
+            print "Error: %s" % err, debug
+            if self.on_eos:
+                self.on_eos()
+        elif t == gst.MESSAGE_EOS:
+            if self.on_eos:
+                self.on_eos()
 
+    def on_eos(self):
+        try:
+            self.next()
+        except IndexError:
+            # TODO:
+            #  - drop this when itegrated in Application
+            global mainloop
+            mainloop.quit()
+            self.stop()
+            
     def get_id(self):
         """ Return the player id as an integer
         """
@@ -160,8 +177,6 @@ class Player(event_dispatcher.EventDispatcher):
         self.play()
 
         # setup the gobject idle loop
-        if self._g_timeout_id:
-            gobject.source_remove(self._g_timeout_id)
         self._g_timeout_id = gobject.timeout_add(1, self.idle)
 
     def play(self):
@@ -182,6 +197,8 @@ class Player(event_dispatcher.EventDispatcher):
         """ Set the player state to stopped mode and fire a Stopped
         event.
         """
+        if self._g_timeout_id:
+            gobject.source_remove(self._g_timeout_id)
         self._playbin.set_state(gst.STATE_READY)
         self.fire_event(events.StoppedEvent())
 
