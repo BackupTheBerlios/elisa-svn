@@ -1,4 +1,27 @@
 from elisa.framework.message import Message
+import os, sys
+
+def calling_frame():
+    """ Calling sys frame """
+    f = sys._getframe()
+
+    while True:
+        if is_user_source_file(f.f_code.co_filename):
+            return f
+        f = f.f_back
+
+def is_user_source_file(filename):
+    return os.path.normcase(filename) != _srcfile
+
+def _current_source_file():
+    base, ext = os.path.splitext(__file__)
+    if ext in ('.pyc', '.pyo'):
+        return '%s.py' % base
+    else:
+        return __file__
+
+_srcfile = os.path.normcase(_current_source_file())
+
 
 _bus = None
 
@@ -10,12 +33,16 @@ class _MessageBus:
     # mapping of class -> callback
     callbacks = {}
     
-    def send_message(self, message, sender, receiver):
+    def send_message(self, message, receiver):
         assert isinstance(message, Message)
+        frame = calling_frame()
+        sender = frame.f_locals['self']
         self.queue.insert(0, (message, sender, receiver))
 
-    def register(self, obj, callback):
-        self.callbacks[obj] = callback
+    def register(self, callback):
+        #import pdb; pdb.set_trace()
+        klass = callback.im_class
+        self.callbacks[klass] = callback
 
     def dispatch_messages(self):
         while self.queue:
@@ -46,7 +73,7 @@ if __name__ == '__main__':
 
     f = Foo()
     b = Bar()
-    bus.register(Bar, Bar.on_message)
+    bus.register(Bar.on_message)
 
     for i in range(5):
         data = '%s. Hello you' % i
