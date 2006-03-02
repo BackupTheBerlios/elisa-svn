@@ -61,10 +61,11 @@ class MoviesTreePlugin(TreePlugin):
                 if os.path.isdir(path):
                     picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
                 else:
-                    picture_path = path
+                    picture_path = os.path.abspath(path)
                     item.set_action_callback(self._appli.set_background_from_menuitem,(item,))
                     
                 item.set_picture_path(picture_path)
+                #item.set_picture_path()
 
                 if is_movie:
                     self.add_action_menu(item)
