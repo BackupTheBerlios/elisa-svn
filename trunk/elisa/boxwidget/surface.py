@@ -1,6 +1,7 @@
 from elisa.boxwidget.bindings import testgl_impl
 from elisa.player.player import Player
 from elisa.framework.log import Logger
+from elisa.framework.message_bus import MessageBus
 
 import elisa.utils.misc
 
@@ -13,6 +14,8 @@ class Surface(object):
         self._logger = Logger()
         self._name=name
         self._logger.debug('Surface.__init__()', self)
+        self._message_bus = MessageBus()
+        self._message_bus.register(self, self.on_message)
         self._surface_impl = testgl_impl._testGL_Surface_Impl()
         self._surface_list = []
         self._parentsurface = None
@@ -51,20 +54,13 @@ class Surface(object):
         for surface in self._surface_list:
             representation += "\n" + surface.pretty_print(deep)
         return representation
-        
-    def fire_event(self, event): 
-        #self._logger.debug('Surface.fire_event()', self)
-        for child_surface in self._surface_list:
-                if child_surface.fire_event(event) == False:
-                    break
-        return self.on_event(event)
     
-    def on_event(self, event):
+    def on_message(self, (receiver, message, sender):
         """
         called if new event is fire
         if return False, event will not fired to next event
         """
-        self._logger.debug('Surface.on_event(' + str(event) + ')', self)
+        self._logger.debug('Surface.on_message(' + str(event) + ')', self)
         return True
             
     def _get_surface_impl(self):

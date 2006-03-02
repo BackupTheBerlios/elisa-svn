@@ -1,6 +1,7 @@
-from elisa.boxwidget import surface, eventsmanager, events
+from elisa.boxwidget import surface, eventsmanager, inputevent
 from elisa.boxwidget.bindings import testgl_impl
 from elisa.framework.log import Logger
+from elisa.framework.message_bus import MessageBus
 
 from twisted.internet import reactor, task
 
@@ -12,6 +13,8 @@ class Window(object):
     def __init__(self):
         self._logger = Logger()
         self._logger.debug('Window.__init__()', self)
+        self._message_bus = MessageBus()
+        self._message_bus.register(self, self.on_message)
         self._window_impl = testgl_impl._testGL_Window_Impl()
         self._events_manager = eventsmanager.EventsManager()
         self._focusedsurface = None
@@ -60,27 +63,25 @@ class Window(object):
         """
         self._logger.debug_verbose('Window.refresh()', self)
         
-        for current_event in self._events_manager.get_event_queue():
-            #notify child widget about event
-            for child_surface in self._surface_list:
-                if child_surface.fire_event(current_event) == False:
-                    break
-
-            if self.on_event(current_event) == True:
-                e = current_event.get_simple_event()
-                if e == events.SE_QUIT:
-                    self.close()
+        self._events_manager.process_input_events()
+        self._message_bus.dispatch_messages()
         
         for surface in self._surface_list:
             surface.refresh()
         self._window_impl.refresh()
    
-    def on_event(self, event):
+    def on_message(self, receiver, message, sender):
         """
         called if new event is fire
         if return False, event will not fired to next event
         """
-        self._logger.debug('Window.on_event(' + str(event) + ')', self)
+        self._logger.debug('Window.on_message(' + str(event) + ')', self)
+        
+            if isinstance(message, InputEvent):
+                e = message.get_simple_event()
+                if e == inputevent.SE_QUIT:
+                    self.close()
+                
         return True
              
     def close(self):
