@@ -43,6 +43,6 @@ class TreeItem(surface.Surface):
             self.hide_label()
         else:
             self.set_alpha_level(100)
-            if self._menuitem_data.get_level() != None: 
+            if self._menuitem_data.get_items() != []: 
                 self.show_down_arrow()
             self.show_label()
