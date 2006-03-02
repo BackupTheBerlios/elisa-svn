@@ -51,6 +51,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
     def SetTextureOrder(self, order):
         if order == 1 or order == 0:
               self._TextureOrder = order
+              self._refresh_surface_with_same_texture()
         
     def _SetTextureID(self, textureid):
         #print "set textureid to " + str(textureid) + " on " + str(self)
@@ -85,24 +86,10 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             self._BufferHeight = self._BackgroundImage.size[1]  
             self._RefreshTexture = True
 
-    def SetBackgroundImageFromBuffer2(self, buffer, width, height, UseAlpha=False):
-        isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
-        self._ImageBuffer = buffer
-        self._BufferWidth = width
-        self._BufferHeight = height
-        if buffer == None:
-            self._RefreshTexture = False
-        else:    
-            if UseAlpha == True:
-                self._Format = GL_RGBA
-            else:
-                self._Format = GL_RGB
-                
-            self._RefreshTexture = True
     
     def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False):
         isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
-        self._ImageBuffer = buffer.data
+        self._ImageBuffer = buffer
         self._BufferWidth = width
         self._BufferHeight = height
         
@@ -120,7 +107,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
     
     #FIXME : allow different image size. actually, all image must have the same size.
     def LoadTexture(self):
-    
+
+        
         CreateTexture = False
                       
         TextureSize = 64
@@ -136,7 +124,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             self._TextureID = glGenTextures(1)
             self._refresh_surface_with_same_texture()
             CreateTexture = True    
-
+        
         glBindTexture(GL_TEXTURE_2D, self._TextureID)
         
         if CreateTexture == True: 

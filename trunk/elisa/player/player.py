@@ -455,8 +455,8 @@ class VideoSinkBin(gst.Bin):
                 s = caps[0]
                 self.set_width(s['width'])
                 self.set_height(s['height'])
-        if self.get_width() != None and self.get_height() != None:
-            self.set_current_frame(buffer)
+        if self.get_width() != None and self.get_height() != None and buffer != None:
+            self.set_current_frame(buffer.data)
         return True
 
     def set_width(self, width):

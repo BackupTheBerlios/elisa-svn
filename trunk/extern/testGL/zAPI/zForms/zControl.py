@@ -61,11 +61,13 @@ class Control(object):
         
     def SetBackgroundImageFromFile(self, PathAndFileName, UseAlpha=False):
         self._BackgroundImagePath = PathAndFileName
+        self._Surface.SetTextureOrder(0)
         self._Surface.SetBackgroundImageFromFile(PathAndFileName, UseAlpha)
     
     def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False, UseExistingTexture = True):
         if UseExistingTexture == False: self._Surface.RecreateTexture()
-        self._Surface.SetBackgroundImageFromBuffer2( buffer, width, height, UseAlpha)
+        self._Surface.SetTextureOrder(1)
+        self._Surface.SetBackgroundImageFromBuffer( buffer, width, height, UseAlpha)
         
     def GetBackgroundImage(self):
         return self._BackgroundImage   
