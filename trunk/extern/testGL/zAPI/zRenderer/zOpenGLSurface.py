@@ -122,11 +122,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
     def LoadTexture(self):
     
         CreateTexture = False
-               
-        if self._TextureID == None:
-            self._TextureID = glGenTextures(1)
-            CreateTexture = True
-               
+                      
         TextureSize = 64
         
         if self._BufferWidth > 0 and self._BufferHeight > 0 : 
@@ -134,7 +130,12 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
                 TextureSize = TextureSize * 2         
          
         self._XTextureRatio = self._BufferWidth / float(TextureSize);
-        self._YTextureRatio = self._BufferHeight / float(TextureSize);      
+        self._YTextureRatio = self._BufferHeight / float(TextureSize);  
+        
+        if self._TextureID == None:
+            self._TextureID = glGenTextures(1)
+            self._refresh_surface_with_same_texture()
+            CreateTexture = True    
 
         glBindTexture(GL_TEXTURE_2D, self._TextureID)
         
@@ -149,8 +150,6 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
             #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
             glTexImage2D (GL_TEXTURE_2D, 0, self._Format, TextureSize, TextureSize, 0, self._Format, GL_UNSIGNED_BYTE, None)        glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, self._BufferWidth, self._BufferHeight, self._Format, GL_UNSIGNED_BYTE, self._ImageBuffer) 
-        
-        self._refresh_surface_with_same_texture()
         
     def Render(self):
         glPushMatrix()

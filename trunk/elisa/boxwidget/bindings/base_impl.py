@@ -40,7 +40,7 @@ class _Base_Surface_Impl(object):
     
     def set_background_from_surface(self, impl_surface): pass
     
-    def SetBackgroundImageFromBuffer(self, buffer, width, height): pass
+    def set_background_from_buffer(self, buffer, width, height): pass
   
   
 class _Base_EventsManager_Impl(object):

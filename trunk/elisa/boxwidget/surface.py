@@ -27,6 +27,7 @@ class Surface(object):
         self._visible = True
         self._visible_r = True
         self._player = None
+        self._background_is_movie = False
         
         self._surface_impl.set_size(self._width, self._height)
 
@@ -84,9 +85,13 @@ class Surface(object):
         if elisa.utils.misc.file_is_movie(path_and_file_name):
             self.create_player()
             self.get_player().play_uri(path_and_file_name)
+            self._background_is_movie = True
         else:
             self._surface_impl.set_background_from_file(path_and_file_name)
-     
+            self._background_is_movie = False
+    
+    def set_background_from_buffer(self, buffer, width, height):
+         self._surface_impl.set_background_from_buffer(buffer, width, height)
     
     def get_background_file(self):
         """
@@ -164,6 +169,14 @@ class Surface(object):
         refresh surface
         """
         self._logger.debug_verbose('Surface.refresh()', self)
+        
+        if self._background_is_movie == True and self._player != None:
+            _frame = self._player.get_current_frame()
+            _videowidth = self._player.get_video_width()
+            _videoheight = self._player.get_video_height() 
+            if _frame != None and _videoheight != None and _videowidth != None:
+                self.set_background_from_buffer(_frame, _videowidth, _videoheight)
+            
         for surface in self._surface_list:
             surface.refresh()
                     
