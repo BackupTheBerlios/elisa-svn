@@ -144,6 +144,9 @@ class Player(event_dispatcher.EventDispatcher):
             mainloop.quit()
             self.stop()
 
+    def close(self):
+        self._playbin.set_state(gst.STATE_NULL)
+
     def get_current_frame(self):
         return self._sink.get_current_frame()
             
