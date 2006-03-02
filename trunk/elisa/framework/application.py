@@ -158,6 +158,10 @@ class Application(window.Window):
         self.add_surface(self._treewidget)
         
         window.Window.run(self)
+
+    def refresh(self):
+        window.Window.refresh(self)
+        self.get_bus().dispatch_messages()
             
     def close(self):
         """ Close the application. Good idea to save the configuration

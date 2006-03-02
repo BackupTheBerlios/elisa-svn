@@ -19,7 +19,11 @@ class MessageBus:
         while self.queue:
             message, sender, receiver = self.queue.pop()
             callback = self.callbacks.get(receiver.__class__, lambda x,y: None)
-            callback(receiver, message, sender)
+            result = callback(receiver, message, sender)
+            # flush the queue and exit if callback returned False
+            if result == False:
+                self.queue = []
+                break
 
 if __name__ == '__main__':
     
