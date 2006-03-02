@@ -28,10 +28,11 @@ class Tree(surface.Surface):
     def get_current_level_id(self):
         return self._current_level_id()
         
-    def on_message(self, (receiver, message, sender):
-        self._logger.debug('Tree.on_event(' + str(event) + ')', self)
+    def on_message(self, receiver, message, sender):
+        self._logger.debug('Tree.on_event(' + str(message) + ')', self)
         if self.visible(True) == True and self._drawing_next_level==False and self._drawing_previous_level==False :
-            if message.get_type() == 'input':
+            event = message.get_data()
+            if isinstance(event, events.InputEvent):
                 if event.get_simple_event() == events.SE_UP:
                     self.select_previous_level()
                 if event.get_simple_event() == events.SE_DOWN:
@@ -40,7 +41,7 @@ class Tree(surface.Surface):
                     _treeitem_surface = self.get_current_level_surface().get_selected_item()
                     #_treeitem_surface.get_menuitem_data().call_action_callback()
                     bus = message_bus.MessageBus()
-                    bus.send_message(ActionMessage(), self, _treeitem_surface.get_menuitem_data())
+                    bus.send_message(ActionMessage(), _treeitem_surface.get_menuitem_data())
                 
         #return surface.Surface.on_event(self, event)
         return True

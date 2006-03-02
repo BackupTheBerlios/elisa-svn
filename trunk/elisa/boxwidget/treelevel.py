@@ -79,16 +79,17 @@ class TreeLevel(surface.Surface):
                 return surface_item
         return None
             
-    def on_message(self, (receiver, message, sender):
+    def on_message(self, receiver, message, sender):
         _parent = self.get_parent()
         if _parent != None and _parent.get_current_level_surface() == self:
-            if message.get_type() == 'input':
+            event = message.get_data()
+            if isinstance(event, events.InputEvent):
                 if event.get_simple_event() == events.SE_LEFT:
                     self.select_previous_item()
                 if event.get_simple_event() == events.SE_RIGHT:
                     self.select_next_item()
             
-        return surface.Surface.on_event(self, event)
+        return surface.Surface.on_message(self, receiver, message, sender)
     
     
     def update_row(self):

@@ -38,8 +38,6 @@ class Application(window.Window):
 
         logger.info("Using config file : %s" % config.get_filename())
 
-        bus = message_bus.MessageBus()
-        bus.register(menu.MenuItem, menu.MenuItem.on_message)
 
         window.Window.__init__(self)
         self._plugin_tree_list = []

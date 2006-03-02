@@ -1,4 +1,4 @@
-from elisa.boxwidget import surface, eventsmanager, inputevent
+from elisa.boxwidget import surface, eventsmanager, events
 from elisa.boxwidget.bindings import testgl_impl
 from elisa.framework.log import Logger
 from elisa.framework.message_bus import MessageBus
@@ -75,12 +75,12 @@ class Window(object):
         called if new event is fire
         if return False, event will not fired to next event
         """
-        self._logger.debug('Window.on_message(' + str(event) + ')', self)
-        
-            if isinstance(message, InputEvent):
-                e = message.get_simple_event()
-                if e == inputevent.SE_QUIT:
-                    self.close()
+        self._logger.debug('Window.on_message(' + str(message) + ')', self)
+        event = message.get_data()
+        if isinstance(event, events.InputEvent):
+            e = event.get_simple_event()
+            if e == events.SE_QUIT:
+                self.close()
                 
         return True
              

@@ -33,27 +33,41 @@ class _MessageBus:
     # mapping of class -> callback
     callbacks = {}
     
-    def send_message(self, message, receiver):
+    def send_message(self, message, receiver=None):
         assert isinstance(message, Message)
         frame = calling_frame()
         sender = frame.f_locals['self']
         self.queue.insert(0, (message, sender, receiver))
 
-    def register(self, callback):
-        #import pdb; pdb.set_trace()
+    def register(self, instance, callback):
+        #
         klass = callback.im_class
-        self.callbacks[klass] = callback
+        self.callbacks[klass] = (callback, instance)
 
     def dispatch_messages(self):
         while self.queue:
             message, sender, receiver = self.queue.pop()
-            callback = self.callbacks.get(receiver.__class__, lambda x,y: None)
-            result = callback(receiver, message, sender)
-            # flush the queue and exit if callback returned False
-            if result == False:
-                self.queue = []
-                break
-
+            if receiver:
+                # dispatch to receiver
+                callback, instance = self.callbacks.get(receiver.__class__,
+                                                        lambda x,y: None)
+                result = callback(receiver, message, sender)
+                # flush the queue and exit if callback returned False
+                if result == False:
+                    self.queue = []
+                    break
+            else:
+                # broadcast to all registered entities
+                for receiver, callback in self.callbacks.iteritems():
+                    callback, instance = self.callbacks.get(receiver, lambda x,y: None)
+                    #import pdb; pdb.set_trace()
+                    #print callback
+                    result = callback(instance, message, sender)
+                    # flush the queue and exit if callback returned False
+                    if result == False:
+                        self.queue = []
+                        break
+                    
 def MessageBus():
     global _bus
     if not _bus:

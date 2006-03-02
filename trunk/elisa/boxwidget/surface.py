@@ -55,12 +55,12 @@ class Surface(object):
             representation += "\n" + surface.pretty_print(deep)
         return representation
     
-    def on_message(self, (receiver, message, sender):
+    def on_message(self, receiver, message, sender):
         """
         called if new event is fire
         if return False, event will not fired to next event
         """
-        self._logger.debug('Surface.on_message(' + str(event) + ')', self)
+        self._logger.debug('Surface.on_message(' + str(message) + ')', self)
         return True
             
     def _get_surface_impl(self):

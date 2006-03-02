@@ -82,37 +82,45 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
     def __init__(self):
         self._logger = Logger()
         self._logger.debug('_testGL_EventsManager_Impl.__init__()', self)
-        self._eventqueue = []
-        
-    def get_event_queue(self):
-        self._eventqueue = []
+        #self._eventqueue = []
+
+    def process_input_events(self):
+        events = []
         for pyevent in pygame.event.get():
             _boxevent = self.pygame_event_converter(pyevent)
             if _boxevent != None:
-                self._eventqueue.append(_boxevent)
+                events.append(_boxevent)
+        return events
+    
+##     def get_event_queue(self):
+##         self._eventqueue = []
+##         for pyevent in pygame.event.get():
+##             _boxevent = self.pygame_event_converter(pyevent)
+##             if _boxevent != None:
+##                 self._eventqueue.append(_boxevent)
         
-        return self._eventqueue
+##         return self._eventqueue
             
     def pygame_event_converter(self, pyevent):
     
         self._logger.debug_verbose  ('_testGL_EventsManager_Impl.pygame_event_converter()', self)
         if pyevent.type == pygame.QUIT:   
-            return events.Events(events.DEV_SYSTEM, events.EVENT_QUIT, events.SE_QUIT)
+            return events.InputEvent(events.DEV_SYSTEM, events.EVENT_QUIT, events.SE_QUIT)
         if pyevent.type == pygame.KEYDOWN:
             if pyevent.key == pygame.K_LEFT:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_LEFT, events.SE_LEFT)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_LEFT, events.SE_LEFT)
             if pyevent.key == pygame.K_RIGHT:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_RIGHT, events.SE_RIGHT)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_RIGHT, events.SE_RIGHT)
             if pyevent.key == pygame.K_UP:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_UP, events.SE_UP)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_UP, events.SE_UP)
             if pyevent.key == pygame.K_DOWN:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_DOWN, events.SE_DOWN)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_DOWN, events.SE_DOWN)
             if pyevent.key == pygame.K_RETURN:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_RETURN, events.SE_OK)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_RETURN, events.SE_OK)
             if pyevent.key == pygame.K_SPACE:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_SPACE, events.SE_MENU)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_SPACE, events.SE_MENU)
             if pyevent.key == pygame.K_ESCAPE:
-                return events.Events(events.DEV_KEYBOARD, events.KEY_ESCAPE, events.SE_QUIT)
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_ESCAPE, events.SE_QUIT)
                 
         return None
 

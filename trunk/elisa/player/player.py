@@ -99,7 +99,7 @@ class Player(event_dispatcher.EventDispatcher):
 
         ###################################################
         # TODO: disable this when integrated in boxwidget
-        #current_item.print_status()
+        current_item.print_status()
 
 ##         if position == 5:
 ##             self.seek_forward(10)
