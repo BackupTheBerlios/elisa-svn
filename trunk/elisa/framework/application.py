@@ -22,10 +22,9 @@ class Application(window.Window):
         return Application._application    
     
     def __init__(self, config_filename=config.CONFIG_FILE):
+        Application._application = self
         self.set_config(config_filename)
         self.set_exception_hook()
-        
-        Application._application = self
         
         logger = log.Logger()
         config = self.get_config()

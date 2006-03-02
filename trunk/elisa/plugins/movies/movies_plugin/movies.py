@@ -1,6 +1,7 @@
 
 from elisa.framework.plugin import IPlugin, TreePlugin
 from elisa.framework.menu import MenuTree, MenuItem
+from elisa.framework import application
 import elisa.utils.misc
 
 import os
@@ -23,11 +24,13 @@ class MoviesTreePlugin(TreePlugin):
     name = "movies"
     default_config = {'root_directory':'sample_data/movies'}
 
-    def __init__(self, application):
-        TreePlugin.__init__(self, application)
+    def __init__(self, _application):
+        TreePlugin.__init__(self, _application)
         self.set_short_name("videos")
+        #FIXME move static call in get_application of TreePlugin 
+        self._appli = application.Application.get_application()
         self.load_root_directory()
-
+        
     def load_root_directory(self):
         """
         Create the whole directory tree menu from the root directory
@@ -58,7 +61,9 @@ class MoviesTreePlugin(TreePlugin):
                 if os.path.isdir(path):
                     picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
                 else:
-                    picture_path = 'elisa/skins/default_skin/default_pictures/movie.png'
+                    picture_path = path
+                    item.set_action_callback(self._appli.set_background_from_menuitem,(item,))
+                    
                 item.set_picture_path(picture_path)
 
                 if is_movie:

@@ -73,6 +73,9 @@ class _testGL_Surface_Impl(base_impl._Base_Surface_Impl):
         
     def set_background_from_surface(self, impl_surface):
         self._surface_native.set_background_from_surface( impl_surface.get_native_surface() )  
+        
+    def SetBackgroundImageFromBuffer(self, buffer, width, height):
+        self._surface_native(buffer, width, height)
 
 class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
 

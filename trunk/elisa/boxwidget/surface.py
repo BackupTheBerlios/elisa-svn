@@ -1,6 +1,8 @@
 from elisa.boxwidget.bindings import testgl_impl
-
+from elisa.player.player import Player
 from elisa.framework.log import Logger
+
+import elisa.utils.misc
 
 class Surface(object):  
     """
@@ -24,8 +26,16 @@ class Surface(object):
         self._window = None
         self._visible = True
         self._visible_r = True
+        self._player = None
         
         self._surface_impl.set_size(self._width, self._height)
+
+    def create_player(self):
+        if self._player == None:
+            self._player = Player()
+        
+    def get_player(self):
+        return self._player
 
     def pretty_print(self, deep = 0):
         """ Textual representation of the tree. This method is recursive
@@ -70,7 +80,12 @@ class Surface(object):
         """
         self._logger.debug('Surface.set_background_from_file()', self)
         self._background_image_path = path_and_file_name
-        self._surface_impl.set_background_from_file(path_and_file_name)
+               
+        if elisa.utils.misc.file_is_movie(path_and_file_name):
+            self.create_player()
+            self.get_player().play_uri(path_and_file_name)
+        else:
+            self._surface_impl.set_background_from_file(path_and_file_name)
      
     
     def get_background_file(self):
