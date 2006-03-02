@@ -42,7 +42,15 @@ class TreeLevel(surface.Surface):
 
     def get_menuitem_list(self):
         return self._menuitem_list
-        
+       
+    def get_itemsurface_from_menuitem(self, menuitem):
+        """return item surface from menuitem object in current surface only
+        """
+        for surface_item in self._surface_items:
+            if surface_item.get_menuitem_data() == menuitem:
+                return surface_item
+        return None
+            
     def on_event(self, event):
         _parent = self.get_parent()
         if _parent != None and _parent.get_current_level_surface() == self:

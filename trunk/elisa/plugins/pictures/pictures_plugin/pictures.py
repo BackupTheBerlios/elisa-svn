@@ -1,6 +1,7 @@
 
 from elisa.framework.plugin import IPlugin, TreePlugin
 from elisa.framework.menu import MenuTree, MenuItem
+from elisa.framework import application
 import elisa.utils.misc
 
 import os
@@ -36,6 +37,8 @@ class PicturesTreePlugin(TreePlugin):
         Create the tree menu for a given directory full name
         
         """
+        _appli = application.Application.get_application()
+               
         for filename in filenames:
             path = os.path.join(dir_name, filename)
 
@@ -49,6 +52,7 @@ class PicturesTreePlugin(TreePlugin):
                     item.set_picture_path('elisa/skins/default_skin/default_pictures/folder.png')
                 else:
                     item.set_picture_path(path)
+                    item.set_action_callback(_appli.set_background_from_menuitem,(item,))
                 
                 parent = self.get_item_with_name(os.path.basename(dir_name))
                 if not parent:

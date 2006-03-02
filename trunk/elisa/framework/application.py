@@ -15,10 +15,18 @@ class Application(window.Window):
     Main box application class
     """
 
+    _application = None
+    
+    @staticmethod
+    def get_application():
+        return Application._application    
+    
     def __init__(self, config_filename=config.CONFIG_FILE):
         self.set_config(config_filename)
         self.set_exception_hook()
-
+        
+        Application._application = self
+        
         logger = log.Logger()
         config = self.get_config()
         
@@ -40,10 +48,18 @@ class Application(window.Window):
         self._player_surface.set_back_color(0, 0, 0)
         self.add_surface(self._player_surface)
 
-    def set_background_from_widget(self, _surface):
+    def set_background_from_surface(self, surface):
         """show same background in fullscreen than _surface (video or picture)
         """
+        self._player_surface.set_background_from_surface(surface)
+        self._player_surface.set_back_color(255.0, 255.0, 255.0)
 
+    def set_background_from_menuitem(self, menuitem):
+        """show same background in fullscreen than _surface (video or picture)
+        """
+        surface = self._treewidget.get_current_level_surface().get_itemsurface_from_menuitem(menuitem)
+        self.set_background_from_surface(surface)
+        
     def set_config(self, filename):
         self._config = config.Config(filename)
     

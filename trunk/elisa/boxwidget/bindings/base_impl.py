@@ -16,8 +16,8 @@ class _Base_Window_Impl(object):
     def add_surface(self, impl_surface): pass
 
     def remove_surface(self, impl_surface): pass
-
-
+    
+    
 class _Base_Surface_Impl(object):
 
     def __init__(self): pass
@@ -37,6 +37,8 @@ class _Base_Surface_Impl(object):
     def hide(self): pass
 
     def show(self): pass
+    
+    def set_background_from_surface(self, impl_surface): pass
   
   
 class _Base_EventsManager_Impl(object):

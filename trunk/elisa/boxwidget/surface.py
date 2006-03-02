@@ -71,7 +71,8 @@ class Surface(object):
         self._logger.debug('Surface.set_background_from_file()', self)
         self._background_image_path = path_and_file_name
         self._surface_impl.set_background_from_file(path_and_file_name)
-        
+     
+    
     def get_background_file(self):
         """
         return path and filename of background image
@@ -111,6 +112,9 @@ class Surface(object):
     def _refresh_location(self):
         self._logger.debug_verbose('Surface._refresh_location()', self)
         self.set_location(self._x, self._y, self._z)
+    
+    def set_background_from_surface(self, surface):
+        self._surface_impl.set_background_from_surface(surface._get_surface_impl())
     
     def get_location(self):
         """ 
