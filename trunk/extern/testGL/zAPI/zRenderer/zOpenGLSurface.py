@@ -27,11 +27,39 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         self._screenwidth, self._screenheight = constants.GetWindowSize()
         self._ApplyCoordinateTrans = ApplyCoordinateTrans
         self._renderer = None
+        self._same_texture_surface_list = []
+    
+    def add_surface_with_same_texture(self, surface):
+        #print "add_surface_with_same_texture( " + str(surface) + " ) on " + str(self)
+        self._same_texture_surface_list.append(surface)
+        surface._SetTextureID(self._TextureID)
+        surface.SetTextureOrder(self._TextureOrder)
+        surface._SetTextureRatio(self._XTextureRatio, self._YTextureRatio)
+        
+    def remove_surface_with_same_texture(self, surface):
+        if surface in self._same_texture_surface_list:
+            self._same_texture_surface_list.remove(surface)
+    
+    def _refresh_surface_with_same_texture(self):
+        #print "Start refresh on " + str(self)
+        for surface in self._same_texture_surface_list:
+            #print "refresh " + str(surface) + " to " + str(self._TextureID)
+            surface._SetTextureID(self._TextureID)
+            surface.SetTextureOrder(self._TextureOrder)
+            surface._SetTextureRatio(self._XTextureRatio, self._YTextureRatio)
         
     def SetTextureOrder(self, order):
         if order == 1 or order == 0:
               self._TextureOrder = order
         
+    def _SetTextureID(self, textureid):
+        #print "set textureid to " + str(textureid) + " on " + str(self)
+        self._TextureID = textureid
+     
+    def _SetTextureRatio(self, x, y):
+       self._XTextureRatio = x
+       self._YTextureRatio = y
+             
     def SetBackgroundImageFromFile(self, FileName, UseAlpha=False):
         isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, FileName, UseAlpha=False)
@@ -122,6 +150,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
             glTexImage2D (GL_TEXTURE_2D, 0, self._Format, TextureSize, TextureSize, 0, self._Format, GL_UNSIGNED_BYTE, None)        glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, self._BufferWidth, self._BufferHeight, self._Format, GL_UNSIGNED_BYTE, self._ImageBuffer) 
         
+        self._refresh_surface_with_same_texture()
+        
     def Render(self):
         glPushMatrix()
       
@@ -137,7 +167,10 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         if self._TextureID != None:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self._TextureID)
-
+            #print "texture loaded: " + str(self._TextureID)
+        #else:
+            #print "texture not loaded: " + str(self._TextureID) + " on " + str(self)
+        
         XTextureOffsetPercent = 0.0
         YTextureOffsetPercent = 0.0
         XTextureOffset = -XTextureOffsetPercent * self._XTextureRatio / 100.0

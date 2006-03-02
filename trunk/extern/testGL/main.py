@@ -54,8 +54,9 @@ class MyClass(zForm.Form):
         self._ctl.SetSize(300, 40)
         self._ctl.SetText("ctl")
         self._ctl.SetLocation(120.0, 80.0, 2.0)
-        self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
+        #self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
         self.AddControl(self._ctl)
+        self._ctl.set_background_from_surface(self._ctl2)
 
         self._ctl3 = zVideo.Video()
         self._ctl3.SetSize(640, 352)

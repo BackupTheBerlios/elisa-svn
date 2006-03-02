@@ -18,9 +18,12 @@ class Control(object):
         self._Rotate = zPoint3D.Point3D()
         self._Visible = True
         self._Form = None
-
+        
     def _SetForm(self, in_form):
         self._Form = in_form
+    
+    def set_background_from_surface(self, surface):
+        surface.GetSurface().add_surface_with_same_texture( self.GetSurface())   
         
     def GetForm(self):
         return self._Form
@@ -44,6 +47,7 @@ class Control(object):
         self._Surface.SetAlpha(level)
        
     def SetText(self, v):
+        #print "set text to " + str(v) + " on " + str(self._Surface)
         self._Text=v
     
     def GetText(self):

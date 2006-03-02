@@ -139,9 +139,12 @@ class Form(zControl.Control):
         for control in self._SortedControlCollection:
             if isinstance(control,list) == True:
                 for control2 in control:
+                    #print "draw " + str(control2.GetText())
                     if control2.Visible(): control2.Draw()
             else:
-                if control2.Visible(): control.Draw()
+                if control2.Visible(): 
+                    #print "draw " + str(control2.GetText())
+                    control.Draw()
             
     def Draw(self):
         self._Renderer.DrawBackground();
