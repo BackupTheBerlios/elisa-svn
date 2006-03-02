@@ -143,6 +143,9 @@ class Player(event_dispatcher.EventDispatcher):
             global mainloop
             mainloop.quit()
             self.stop()
+
+    def get_current_frame(self):
+        return self._sink.get_current_frame()
             
     def get_id(self):
         """ Return the player id as an integer
