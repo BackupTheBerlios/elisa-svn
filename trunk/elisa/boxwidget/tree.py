@@ -40,6 +40,9 @@ class Tree(surface.Surface):
                 if sender == _selected_treeitem_data:
                     if message.get_action() == 'SHOW_PICTURE':
                         self._appli.set_background_from_surface(_selected_treeitem_surface)
+                    if message.get_action() == 'SHOW_MOVIE': pass
+                        #_selected_treeitem_surface.set_background_from_file(message.get_data())
+                        #self._appli.set_background_from_surface(_selected_treeitem_surface)
                                     
                     
         return surface.Surface.on_message(self, receiver, message, sender)

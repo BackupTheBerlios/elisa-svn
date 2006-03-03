@@ -1,6 +1,7 @@
 
 from elisa.framework.plugin import IPlugin, TreePlugin
 from elisa.framework.menu import MenuTree, MenuItem
+from elisa.framework import message_bus
 import elisa.utils.misc
 
 import os
@@ -59,7 +60,7 @@ class MoviesTreePlugin(TreePlugin):
                     picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
                 else:
                     picture_path = os.path.abspath('elisa/skins/default_skin/default_pictures/movie.png')
-                    #item.set_action_callback(self.play_movie,(item, os.path.abspath(path),))
+                    item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",os.path.abspath(path)))
                     
                 item.set_picture_path(picture_path)
                 
