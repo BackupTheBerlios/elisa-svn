@@ -1,7 +1,6 @@
 
 from elisa.framework.plugin import IPlugin, TreePlugin
 from elisa.framework.menu import MenuTree, MenuItem
-from elisa.framework import application
 import elisa.utils.misc
 
 import os
@@ -27,8 +26,6 @@ class MoviesTreePlugin(TreePlugin):
     def __init__(self, _application):
         TreePlugin.__init__(self, _application)
         self.set_short_name("videos")
-        #FIXME move static call in get_application of TreePlugin 
-        self._appli = application.Application.get_application()
         self.load_root_directory()
         
     def load_root_directory(self):
@@ -74,7 +71,7 @@ class MoviesTreePlugin(TreePlugin):
                     parent = self
                 parent.add_item(item)
 
-        
+    
     def _match_hidden(self, path):
         return re.match(".*/\..*", path)
 

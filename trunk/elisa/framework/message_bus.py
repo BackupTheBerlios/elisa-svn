@@ -1,4 +1,3 @@
-from elisa.framework.message import Message
 import os, sys
 import copy
 
@@ -35,7 +34,7 @@ class _MessageBus:
     callbacks = {}
 
     def send_message(self, message, receiver=None):
-        assert isinstance(message, Message)
+        assert isinstance(message, Message), message
         frame = calling_frame()
         sender = frame.f_locals['self']
         self.queue.insert(0, (message, sender, receiver))
@@ -72,6 +71,22 @@ def MessageBus():
     if not _bus:
         _bus = _MessageBus()
     return _bus
+
+class Message(object): pass
+
+class ActionMessage(Message):
+
+    def __init__(self, action, data):
+        Message.__init__(self)
+        self._action = action
+        self._data = data
+        
+    def get_action(self):
+        return self._action
+        
+    def get_data(self):
+        return self._data
+
 
 if __name__ == '__main__':
     

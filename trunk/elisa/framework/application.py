@@ -1,5 +1,5 @@
 
-from elisa.framework import config, log, menu, message_bus
+from elisa.framework import config, log, menu, message_bus, common
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
 from elisa.boxwidget import window, tree, surface_player
@@ -14,15 +14,9 @@ class Application(window.Window):
     """
     Main box application class
     """
-
-    _application = None
-    
-    @staticmethod
-    def get_application():
-        return Application._application    
-    
+     
     def __init__(self, config_filename=config.CONFIG_FILE):
-        Application._application = self
+        common._set_application(self)
         self.set_config(config_filename)
         self.set_exception_hook()
         

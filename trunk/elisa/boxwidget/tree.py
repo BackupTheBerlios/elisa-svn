@@ -1,17 +1,12 @@
 from elisa.boxwidget import surface, events, treelevel
-from elisa.framework import message_bus
-
-class ActionMessage(message_bus.Message):
-
-    def __init__(self):
-        message_bus.Message.__init__(self, 'action','foo')
-
+from elisa.framework import message_bus, common
 
 class Tree(surface.Surface):
 
     def __init__(self, menutree_root, name):
         surface.Surface.__init__(self, name)
 
+        self._appli = common.get_application()
         self._drawing_next_level = False
         self._drawing_previous_level = False
         self._level_to_draw = None
@@ -31,20 +26,23 @@ class Tree(surface.Surface):
     def on_message(self, receiver, message, sender):
         self._logger.debug('Tree.on_event(' + str(message) + ')', self)
         if self.visible(True) == True and self._drawing_next_level==False and self._drawing_previous_level==False :
-            event = message.get_data()
-            if isinstance(event, events.InputEvent):
-                if event.get_simple_event() == events.SE_UP:
+            _selected_treeitem_surface = self.get_current_level_surface().get_selected_item()
+            _selected_treeitem_data = _selected_treeitem_surface.get_menuitem_data()
+            
+            if isinstance(message, events.InputEvent):
+                if message.get_simple_event() == events.SE_UP:
                     self.select_previous_level()
-                if event.get_simple_event() == events.SE_DOWN:
+                if message.get_simple_event() == events.SE_DOWN:
                     self.select_next_level()
-                if event.get_simple_event() == events.SE_OK:
-                    _treeitem_surface = self.get_current_level_surface().get_selected_item()
-                    #_treeitem_surface.get_menuitem_data().call_action_callback()
-                    bus = message_bus.MessageBus()
-                    bus.send_message(ActionMessage(), _treeitem_surface.get_menuitem_data())
-                
-        #return surface.Surface.on_event(self, event)
-        return True
+                if message.get_simple_event() == events.SE_OK:
+                    _selected_treeitem_data.fire_action_message()
+            elif isinstance(message, message_bus.ActionMessage):
+                if sender == _selected_treeitem_data:
+                    if message.get_action() == 'SHOW_PICTURE':
+                        self._appli.set_background_from_surface(_selected_treeitem_surface)
+                                    
+                    
+        return surface.Surface.on_message(self, receiver, message, sender)
         
     def select_previous_level(self):
         self._logger.debug('Tree.select_previous_level()', self)
@@ -52,7 +50,7 @@ class Tree(surface.Surface):
         _selected_menuitem_data = _current_treelevel_surface.get_selected_item().get_menuitem_data()
         if self._current_level_id > 0:
             self._current_level_id -= 1
-            _selected_menuitem_data.call_unselected_callback()
+            _selected_menuitem_data.fire_unselected_message()
             self.remove_surface(_current_treelevel_surface)
             self._treelevel_surface_list.remove(_current_treelevel_surface)
             self._drawing_previous_level = True

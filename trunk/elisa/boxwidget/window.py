@@ -76,9 +76,8 @@ class Window(object):
         if return False, event will not fired to next event
         """
         self._logger.debug('Window.on_message(' + str(message) + ')', self)
-        event = message.get_data()
-        if isinstance(event, events.InputEvent):
-            e = event.get_simple_event()
+        if isinstance(message, events.InputEvent):
+            e = message.get_simple_event()
             if e == events.SE_QUIT:
                 self.close()
                 

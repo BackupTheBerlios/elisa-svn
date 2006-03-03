@@ -1,3 +1,5 @@
+from elisa.framework.message_bus import Message
+
 #Main device
 DEV_KEYBOARD = "DEV_KEYBOARD"
 DEV_SYSTEM = "DEV_SYSTEM"
@@ -21,7 +23,7 @@ SE_LEFT = "SE_LEFT"
 SE_RIGHT = "SE_RIGHT"
 SE_QUIT = "SE_QUIT"
 
-class InputEvent(object):
+class InputEvent(Message):
     """
     single event class handler
     """

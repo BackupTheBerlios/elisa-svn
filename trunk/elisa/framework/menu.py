@@ -117,20 +117,19 @@ class MenuItem(Mixin):
     """
     
     def __init__(self, parent=None, short_name="None"):
+        self._bus = message_bus.MessageBus()
+        self._bus.register(self, self.on_message)
         self._items = []
         self.set_parent(parent)
         self.set_short_name(short_name)
         self.set_help_string("")
         self.set_picture_path(None)
-        self.set_selected_callback(None, ())
-        self.set_unselected_callback(None, ())
-        self.set_action_callback(None, ())
-        bus = message_bus.MessageBus()
-        bus.register(self, self.on_message)
+        self.set_selected_message(message_bus.Message(), None)
+        self.set_unselected_message( message_bus.Message(), None)
+        self.set_action_message( message_bus.Message(), None)
 
     def on_message(self, receiver, message, sender):
-        if message.get_type() == 'action':
-            self.call_action_callback()
+        return True
         
     def pretty_print(self):
         """ Textual representation of the item """
@@ -193,50 +192,32 @@ class MenuItem(Mixin):
         """complete path of picture shown in menu"""
         return self._picture_path
 
-    def set_selected_callback(self, callback, args):
-        """callback called when menu item is selected"""
-        self._selected_callback = callback
-        self._selected_callback_args = args
+    def set_selected_message(self, message, receiver=None):
+        """message called when menu item is selected"""
+        self._selected_message = message
+        self._selected_receiver = receiver
         
-    def get_selected_callback(self):
-        """callback called when menu item is selected"""
-        return (self._selected_callback, self._selected_callback_args)
+    def fire_selected_message(self):
+        """message called when menu item is selected"""
+        self._bus.send_message(self._selected_message, self._selected_receiver)
 
-    def set_action_callback(self, callback, args):
-        """callback called when menu item is activated"""
-        self._action_callback = callback
-        self._action_callback_args = args
+    def set_action_message(self, message, receiver=None):
+        """message called when menu item is activated"""
+        self._action_message = message
+        self._action_receiver = receiver
         
-    def get_action_callback(self):
-        """callback called when menu item is activated"""
-        return (self._action_callback, self._action_callback_args)
+    def fire_action_message(self):
+        """message called when menu item is activated"""
+        self._bus.send_message(self._action_message, self._action_receiver)
 
-    def set_unselected_callback(self, callback, args):
-        """callback called when menu item is unselected"""
-        self._unselected_callback = callback
-        self._unselected_callback_args = args
+    def set_unselected_message(self, message, receiver=None):
+        """message called when menu item is unselected"""
+        self._unselected_message = message
+        self._unselected_receiver = receiver
         
-    def get_unselected_callback(self):
-        """callback called when menu item is unselected"""
-        return (self._unselected_callback, self._unselected_callback_args)
-
-    def call_selected_callback(self):
-        """callback called when menu item is selected"""
-        callback, args = self.get_selected_callback()
-        if callable(callback):
-            callback(*args)
-
-    def call_unselected_callback(self):
-        """callback called when menu item is selected"""
-        callback, args = self.get_unselected_callback()
-        if callable(callback):
-            callback(*args)
-
-    def call_action_callback(self):
-        """callback called when menu item is selected"""
-        callback, args = self.get_action_callback()
-        if callable(callback):
-            callback(*args)
+    def fire_unselected_message(self):
+        """message called when menu item is unselected"""
+        self._bus.send_message(self._unselected_message, self._unselected_receiver)
 
 if __name__ == '__main__':
     root = MenuTree()
