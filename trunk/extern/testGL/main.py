@@ -54,22 +54,31 @@ class MyClass(zForm.Form):
         self._ctl.SetSize(300, 40)
         self._ctl.SetText("ctl")
         self._ctl.SetLocation(120.0, 80.0, 2.0)
-        #self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
+        self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
         self.AddControl(self._ctl)
-        self._ctl.set_background_from_surface(self._ctl2)
+        #self._ctl.set_background_from_surface(self._ctl2)
 
         self._ctl3 = zVideo.Video()
         self._ctl3.SetSize(640, 352)
         self._ctl3.SetText("ctl2")
         self._ctl3.SetLocation(100.0, 100.0, 1.0)
         self._ctl3.SetBackColor(255, 255, 255)
-        self._ctl3.SetURI("file:///home/yoyo/temp/Le-roi-lion.avi")
+        #self._ctl3.SetURI("file:///home/yoyo/temp/Le-roi-lion.avi")
         self._ctl3.SetAlpha(150)
         self._ctl3.Play()
         #self._ctl3.Hide()
         self.AddControl(self._ctl3)
         #self._ctl3.Show()
         
+        self._cpt = 0
+        
+    def Refresh(self):
+        zForm.Form.Refresh(self)
+        self._cpt += 1
+        
+        if self._cpt == 200:
+            print "go"
+            self._ctl.set_background_from_surface(self._ctl2)   
            
 if __name__ == '__main__': 
     

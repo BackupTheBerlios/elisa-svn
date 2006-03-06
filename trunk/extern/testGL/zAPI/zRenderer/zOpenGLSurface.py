@@ -24,6 +24,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         self._Format=GL_RGB
         self._BufferWidth=None
         self._BufferHeight=None
+        self._CurrentTextureWidth=None
+        self._CurrentTextureHeight=None
         self._screenwidth, self._screenheight = constants.GetWindowSize()
         self._ApplyCoordinateTrans = ApplyCoordinateTrans
         self._renderer = None
@@ -120,10 +122,13 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         self._XTextureRatio = self._BufferWidth / float(TextureSize);
         self._YTextureRatio = self._BufferHeight / float(TextureSize);  
         
-        if self._TextureID == None:
+        if self._TextureID == None or self._CurrentTextureWidth != self._BufferWidth or self._CurrentTextureHeight != self._BufferHeight:
             self._TextureID = glGenTextures(1)
             self._refresh_surface_with_same_texture()
-            CreateTexture = True    
+            CreateTexture = True  
+            self._CurrentTextureWidth = self._BufferWidth
+            self._CurrentTextureHeight = self._BufferHeight
+            print "CREATE NEW TEXTURE %s"%  self._TextureID
         
         glBindTexture(GL_TEXTURE_2D, self._TextureID)
         
