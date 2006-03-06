@@ -62,7 +62,8 @@ class MoviesTreePlugin(TreePlugin):
                     picture_path = os.path.abspath('elisa/skins/default_skin/default_pictures/movie.png')
                     #item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",))
                     item.set_target_path(os.path.abspath(path))
-                    item.set_action_callback(self.play_movie, item)
+                    #item.set_unselected_callback(self.pause_movie)
+                    item.set_action_callback(self.play_movie)
                     
                 item.set_icon_path(picture_path)
                 
@@ -82,7 +83,8 @@ class MoviesTreePlugin(TreePlugin):
         
         play = MenuItem(short_name="Play")
         play.set_icon_path('elisa/skins/default_skin/default_pictures/rightarrow.png')
-
+        play.set_action_callback(self.play_parent_movie)
+        
         remove = MenuItem(short_name="Remove")
         remove.set_icon_path('elisa/skins/default_skin/default_pictures/trash.png')
 
@@ -90,7 +92,12 @@ class MoviesTreePlugin(TreePlugin):
         menu_item.add_item(remove)
 
     def play_movie(self, surface):
-        # XXX: need a player here ?
         menu_item = surface.get_menuitem_data()
-        #self.get_application().set_background_from_file(menu_item.get_target_path())
+        #parent = menu_item.get_parent()
+        #import pdb; pdb.set_trace()
+        surface.set_background_from_file(menu_item.get_target_path())
         self.get_application().set_background_from_surface(surface)
+
+    def play_parent_movie(self, surface):
+        pass
+    

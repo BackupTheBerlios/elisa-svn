@@ -55,7 +55,7 @@ class Tree(surface.Surface):
         
         if self._current_level_id > 0:
             self._current_level_id -= 1
-            selected_menuitem_data.fire_unselected()
+            selected_menuitem_data.fire_unselected(selected_menuitem_surface)
             self.remove_surface(current_treelevel_surface)
             self._treelevel_surface_list.remove(current_treelevel_surface)
             self._drawing_previous_level = True

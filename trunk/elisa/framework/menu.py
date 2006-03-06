@@ -219,14 +219,12 @@ class MenuItem(Mixin):
         if callable(self.selected_callback):
             self.selected_callback(*args)
 
-    def set_action_callback(self, callback, *args):
+    def set_action_callback(self, callback):
         """callback called when menu item is activated"""
         self.action_callback = callback
-        self.action_callback_args = args
         
     def fire_action(self, *args):
         """message called when menu item is activated"""
-        #print args, self.action_callback_args
         if callable(self.action_callback):
             self.action_callback(*args)
         

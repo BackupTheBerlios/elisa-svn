@@ -5,4 +5,6 @@
 
 # extern/testGL/zAPI/zForms/
 
-epydoc --html --debug --no-private -o docs  elisa/framework/ elisa/boxwidget/ elisa/player/ elisa/utils
+# 
+
+epydoc --html --debug -o docs elisa/framework/  elisa/player/ elisa/utils  elisa/boxwidget/ 
