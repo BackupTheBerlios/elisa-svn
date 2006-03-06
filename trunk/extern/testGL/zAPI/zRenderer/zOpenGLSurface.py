@@ -128,7 +128,6 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             CreateTexture = True  
             self._CurrentTextureWidth = self._BufferWidth
             self._CurrentTextureHeight = self._BufferHeight
-            print "CREATE NEW TEXTURE %s"%  self._TextureID
         
         glBindTexture(GL_TEXTURE_2D, self._TextureID)
         
