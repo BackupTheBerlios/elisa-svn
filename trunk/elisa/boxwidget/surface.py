@@ -62,6 +62,8 @@ class Surface(object):
         """
         self._logger.debug('Surface.on_message(' + str(message) + ')', self)
         return True
+    
+    def close(self): pass
             
     def _get_surface_impl(self):
         self._logger.debug('Surface._get_surface_impl()', self)

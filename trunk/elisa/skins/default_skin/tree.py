@@ -58,8 +58,10 @@ class Tree(surface.Surface):
             self._current_level_id -= 1
             selected_menuitem_data.fire_unselected(selected_menuitem_surface)
             self.remove_surface(current_treelevel_surface)
+            current_treelevel_surface.close()
             self._treelevel_surface_list.remove(current_treelevel_surface)
             self._drawing_previous_level = True
+            
     
     def select_next_level(self):
         self._logger.debug('Tree.select_next_level()', self)

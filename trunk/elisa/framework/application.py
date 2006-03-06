@@ -44,6 +44,9 @@ class Application(window.Window):
         
         self._menu_renderer = None
 
+    def get_menu_renderer(self):
+        return self._menu_renderer
+        
     def set_background_from_surface(self, surface):
         """show same background in fullscreen than _surface (video or picture)
         """
@@ -124,7 +127,7 @@ class Application(window.Window):
     def create_menu(self):
         """Create menu from plugin list
         """
-        self._tree_data = menu.MenuTree('root')
+        self._menu_renderer = menu_renderer.MenuRenderer()
 
         for tree in self._plugin_tree_list:
             new_item = tree.as_menu_item()
@@ -132,8 +135,8 @@ class Application(window.Window):
             #       use pkg_resources to find icon's path
             path = 'elisa/skins/default_skin/default_pictures/%s.png' % tree.get_name()
             new_item.set_icon_path(path)
-            self._tree_data.add_item(new_item)
-
+            self._menu_renderer.add_menu_item(new_item)
+   
     def register_plugin(self, in_plugin):
         """ Add the given plugin instance to our internal plugins list.
         """
@@ -142,7 +145,6 @@ class Application(window.Window):
     def run(self):
         """ Execute the application. Start main loop.
         """
-        self._menu_renderer = menu_renderer.MenuRenderer(self._tree_data)
         self._menu_widget = self._menu_renderer.get_menu_widget()
         self._menu_widget.set_size(500, 100)
         self._menu_widget.set_initial_location(105.0, 450.0, 2.0)

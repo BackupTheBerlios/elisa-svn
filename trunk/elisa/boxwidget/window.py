@@ -87,6 +87,7 @@ class Window(object):
         """
         close window
         """
+        #FIXME : close also added surface
         self._logger.debug('Window.close()', self)
         reactor.stop()
   

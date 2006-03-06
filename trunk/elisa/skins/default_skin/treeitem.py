@@ -1,9 +1,11 @@
 from elisa.boxwidget import surface
+from elisa.framework import common
 
 class TreeItem(surface.Surface): 
 
     def __init__(self, menuitem_data, font = None):
         surface.Surface.__init__(self, menuitem_data.get_short_name())
+        self._appli = common.get_application()
         self._menuitem_data = menuitem_data
         self._arrow_surface = surface.Surface(self._menuitem_data.get_short_name() + str(' arrow'))
         self._arrow_surface.set_back_color(255,255,255)

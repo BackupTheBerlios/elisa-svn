@@ -1,4 +1,5 @@
 from elisa.boxwidget import surface, events, surface, fontsurface
+from elisa.framework import common
 from elisa.skins.default_skin import treeitem
 
 class TreeLevel(surface.Surface):
@@ -7,6 +8,7 @@ class TreeLevel(surface.Surface):
         surface.Surface.__init__(self, name)
             
         self._menuitem_list = menuitem_list
+        self._appli = common.get_application()
         
         #list composed of sublist [item,surface]
         #rank are the same as visual rank
@@ -45,7 +47,7 @@ class TreeLevel(surface.Surface):
         self._font = fontsurface.FontSurface('treelevel font')
         self._font.set_font_size(36)
         self._font.hide()
-        self._items_surface.    add_surface(self._font)
+        self._items_surface.add_surface(self._font)
         
         self._move_items_offset = 0
         self._fist_item = 0
@@ -58,17 +60,20 @@ class TreeLevel(surface.Surface):
             _i += 150
             s.set_background_from_file(item.get_icon_path())
             self._items_surface.add_surface(s)
+            self._appli.get_menu_renderer().add_menuitem_surface(item, s)
             self._surface_items.append(s)
             self._current_rank = 0
 
-        current_itemsurface = self._surface_items[self._current_rank]
-        current_itemdata = current_itemsurface.get_menuitem_data()
-        current_itemsurface.set_status(1)
-        #current_itemdata.call_selected_callback()
-        
-        #self.update_row()
-        
+        if self._surface_items != []:
+            current_itemsurface = self._surface_items[self._current_rank]
+            current_itemdata = current_itemsurface.get_menuitem_data()
+            current_itemsurface.set_status(1)
 
+    def close(self):
+        for item in self._menuitem_list:
+            self._appli.get_menu_renderer().remove_menuitem(item)
+        surface.Surface.close(self)
+        
     def get_menuitem_list(self):
         return self._menuitem_list
        
@@ -177,4 +182,6 @@ class TreeLevel(surface.Surface):
         surface.Surface.refresh(self)
             
     def get_selected_item(self):
+        if self._surface_items == []:
+            return None
         return self._surface_items[self._current_rank]
