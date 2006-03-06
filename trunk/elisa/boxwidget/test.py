@@ -35,5 +35,7 @@ class w (window.Window):
         if self.is_d==False:
             self.is_d = True
             self.remove_surface(self.s)
-t = w()
-t.run()
+
+if __name__ == '__main__':
+    t = w()
+    t.run()

@@ -4,7 +4,7 @@ pygst.require('0.10')
 import gst
 import gobject, sys, time
 from mutex import mutex
-from elisa.utils import event_dispatcher
+from elisa.framework.message_bus import MessageBus
 from elisa.player import events
 
 """
@@ -18,7 +18,7 @@ TODO:
 
 _player_manager = None
 
-class _PlayerManager(event_dispatcher.EventDispatcher):
+class _PlayerManager:
 
     """
     TODO:
@@ -32,10 +32,17 @@ class _PlayerManager(event_dispatcher.EventDispatcher):
 
     def __init__(self):
         self.players = []
+        self.get_bus().register(self, self.on_message)
 
+    def get_bus(self):
+        return MessageBus()
+
+    def on_message(self, receiver, message, sender):
+        return True
+        
     def add_player(self, player):
         self.players.append(player)
-        self.fire_event(events.NewPlayerEvent(player))
+        self.get_bus().send_message(events.NewPlayerEvent(player))
         
     def fullscreen(self, player):
         """ Switch the player to fullscreen mode and suspend all other players.
@@ -58,7 +65,7 @@ VIDEO_CAPS="video/x-raw-rgb,bpp=24,depth=24"
 # unused
 AUDIO_CAPS="audio/x-raw-int,rate=44100"
 
-class Player(event_dispatcher.EventDispatcher):
+class Player:
 
     PLAYING = gst.STATE_PLAYING
     PAUSED = gst.STATE_PAUSED
@@ -73,9 +80,11 @@ class Player(event_dispatcher.EventDispatcher):
         self._g_timeout_id = None
         self._playbin = gst.element_factory_make('playbin', 'playbin')
 
-        bus = self._playbin.get_bus()
-        bus.add_signal_watch()
-        bus.connect('message', self.on_message)
+        gst_bus = self._playbin.get_bus()
+        gst_bus.add_signal_watch()
+        gst_bus.connect('message', self.on_message)
+
+        self.get_bus().register(self, self.on_elisa_message)
 
         caps = VIDEO_CAPS
         #caps = AUDIO_CAPS
@@ -85,6 +94,10 @@ class Player(event_dispatcher.EventDispatcher):
 
         if self._uri:
             self.play_uri(self._uri)
+
+    def get_bus(self):
+        return MessageBus()
+
 
     def idle(self):
         """ Convenient method called by gobject.timeout_add loop. Used
@@ -100,6 +113,7 @@ class Player(event_dispatcher.EventDispatcher):
         ###################################################
         # TODO: disable this when integrated in boxwidget
         current_item.print_status()
+        self.get_bus().dispatch_messages()
 
 ##         if position == 5:
 ##             self.seek_forward(10)
@@ -133,6 +147,9 @@ class Player(event_dispatcher.EventDispatcher):
         elif t == gst.MESSAGE_EOS:
             if self.on_eos:
                 self.on_eos()
+
+    def on_elisa_message(self, receiver, message, sender):
+        return True
 
     def on_eos(self):
         try:
@@ -198,14 +215,14 @@ class Player(event_dispatcher.EventDispatcher):
         event holding the current playing item of the queue.
         """
         self._playbin.set_state(gst.STATE_PLAYING)
-        self.fire_event(events.PlayingEvent(self.get_current_item()))
+        self.get_bus().send_message(events.PlayingEvent(self.get_current_item()))
         
     def pause(self):
         """ Set the player state to paused mode and fire a Paused
         event holding the current playing item of the queue.
         """
         self._playbin.set_state(gst.STATE_PAUSED)
-        self.fire_event(events.PausedEvent(self.get_current_item()))
+        self.get_bus().send_message(events.PausedEvent(self.get_current_item()))
 
     def stop(self):
         """ Set the player state to stopped mode and fire a Stopped
@@ -214,7 +231,7 @@ class Player(event_dispatcher.EventDispatcher):
         if self._g_timeout_id:
             gobject.source_remove(self._g_timeout_id)
         self._playbin.set_state(gst.STATE_READY)
-        self.fire_event(events.StoppedEvent())
+        self.get_bus().send_message(events.StoppedEvent())
 
     def seek_forward(self, seconds):
         """ Seek the current playing item some seconds
@@ -485,8 +502,13 @@ if __name__ == '__main__':
     manager = PlayerManager()
     mainloop = gobject.MainLoop()
 
-    def on_play(event):
-        print 'start playing : %s' % event
+    bus = MessageBus()
+
+    def on_message(receiver, message, sender):
+        print 'got message : %s' % message
+
+    bus.register(lambda x: None, on_message)
+
 
     """
     # one player per uri
@@ -501,7 +523,7 @@ if __name__ == '__main__':
     #"""
     # one player for all uris => use the queue
     p = Player()
-    p.register('player.playing', on_play)
+    #p.register('player.playing', on_play)
     manager.add_player(p)
     
     for uri in sys.argv[1:]:

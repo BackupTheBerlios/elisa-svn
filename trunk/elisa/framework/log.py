@@ -1,6 +1,7 @@
 
 import logging
 import sys, os
+import copy
 
 # Python 2.3 compat
 if sys.version_info[:2] == (2,3):
@@ -46,6 +47,7 @@ class ElisaLogRecord(logging.LogRecord):
     
     def __init__(self, *args, **kwargs):
         logging.LogRecord.__init__(self, *args, **kwargs)
+        self.classname = calling_class_name()
         self.funcname = calling_func_name()
         self.argnames = calling_args()
         
@@ -76,7 +78,18 @@ class ElisaFormatter(logging.Formatter):
         else:
             formatted = self.get_alternate_formatter().format(record)
         return formatted
-            
+
+def calling_class_name():
+    """ Calling class name """
+    f = calling_frame()
+    args = copy.copy(f.f_locals)
+    #import pdb; pdb.set_trace()
+    instance = args.get('self','')
+    name = ''
+    if instance:
+        name = '%s.' % instance.__class__.__name__
+    return name
+
 def calling_func_name():
     """ Calling function name """
     f = calling_frame()
@@ -85,7 +98,15 @@ def calling_func_name():
 def calling_args():
     """ Calling function arguments as dictionnary """
     f = calling_frame()
-    return f.f_locals
+    args = copy.copy(f.f_locals)
+    if 'self' in args.keys():
+        del args['self']
+    if args:
+        args_values = 'args: '
+        args_values += ', '.join([ '%s=%s' % (a,v) for (a,v) in args.iteritems() ])
+    else:
+        args_values = ''
+    return args_values
 
 def calling_frame():
     """ Calling sys frame """
@@ -136,9 +157,10 @@ class _Logger:
 
 
     def __init__(self):
-        default_format = '%(asctime)s.%(msecs)-4d %(levelname)-8s %(message)s'
-        format = default_format + ' in %(funcname)s(%(argnames)s)'
-        datefmt = '%a, %d %b %Y %H:%M:%S'
+        common = '%(asctime)s.%(msecs)-4d %(levelname)-8s '
+        default_format = common + '%(message)s'
+        format = common + '[%(classname)s%(funcname)s] %(message)s %(argnames)s'
+        datefmt = '%d/%m/%Y %H:%M:%S'
         fname = 'elisa.log'
 
         formatter = ElisaFormatter(format, datefmt)
