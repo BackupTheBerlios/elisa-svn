@@ -2,24 +2,6 @@
 import logging
 import sys, os
 import copy
-
-# Python 2.3 compat
-if sys.version_info[:2] == (2,3):
-    logging.getLoggerClass = lambda : logging._loggerClass
-    
-    def basicConfig(stream=None):
-        """
-        Ripped from logging.__init__ and adapted to support stream
-        keyword argument.
-        """
-        root = logging.getLogger()
-        if len(root.handlers) == 0:
-            hdlr = logging.StreamHandler(strm=stream)
-            fmt = logging.Formatter(logging.BASIC_FORMAT)
-            hdlr.setFormatter(fmt)
-            root.addHandler(hdlr)
-           
-    logging.basicConfig = basicConfig
     
 logger = None
 
