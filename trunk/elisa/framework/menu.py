@@ -48,10 +48,10 @@ class Mixin:
 
         return None
 
-    def __repr__(self):
-        items = self.get_items()
-        name = self.get_short_name()
-        return "%s (%s items)" % (name, len(items))
+##     def __repr__(self):
+##         items = self.get_items()
+##         name = self.get_short_name()
+##         return "%s (%s items)" % (name, len(items))
 
     def get_tree_from_item(self, parent_item=None, root_level=False):
         """ Create a new MenuTree starting at parent and including all
@@ -81,7 +81,7 @@ class MenuTree(Mixin):
     def __init__(self, short_name="MenuTree"):
         self._items = []
         self.set_short_name(short_name)
-
+        
     def get_parent(self):
         return None
 
@@ -123,10 +123,12 @@ class MenuItem(Mixin):
         self.set_parent(parent)
         self.set_short_name(short_name)
         self.set_help_string("")
-        self.set_picture_path(None)
-        self.set_selected_message(message_bus.Message(), None)
-        self.set_unselected_message( message_bus.Message(), None)
-        self.set_action_message( message_bus.Message(), None)
+        self.set_icon_path(None)
+        self.set_target_path(None)
+        #self.set_picture_path(None)
+        self.set_selected_callback(None)
+        self.set_unselected_callback(None)
+        self.set_action_callback(None)
 
     def on_message(self, receiver, message, sender):
         return True
@@ -184,40 +186,58 @@ class MenuItem(Mixin):
         """helpstring shown on box when item is selected"""        
         return self._help_string
 
-    def set_picture_path(self, path):
-        """complete path of picture shown in menu"""        
-        self._picture_path = path
+##     def set_picture_path(self, path):
+##         """complete path of picture shown in menu"""        
+##         self._picture_path = path
 
-    def get_picture_path(self):
-        """complete path of picture shown in menu"""
-        return self._picture_path
+##     def get_picture_path(self):
+##         """complete path of picture shown in menu"""
+##         return self._picture_path
 
-    def set_selected_message(self, message, receiver=None):
+    def set_icon_path(self, path):
+        """ """
+        self._icon_path = path
+
+    def get_icon_path(self):
+        """ """
+        return self._icon_path
+
+    def set_target_path(self, path):
+        """ """
+        self._target_path = path
+
+    def get_target_path(self):
+        """ """
+        return self._target_path
+
+    def set_selected_callback(self, callback):
         """message called when menu item is selected"""
-        self._selected_message = message
-        self._selected_receiver = receiver
+        self.selected_callback = callback
         
-    def fire_selected_message(self):
+    def fire_selected(self, *args):
         """message called when menu item is selected"""
-        self._bus.send_message(self._selected_message, self._selected_receiver)
+        if callable(self.selected_callback):
+            self.selected_callback(*args)
 
-    def set_action_message(self, message, receiver=None):
-        """message called when menu item is activated"""
-        self._action_message = message
-        self._action_receiver = receiver
+    def set_action_callback(self, callback, *args):
+        """callback called when menu item is activated"""
+        self.action_callback = callback
+        self.action_callback_args = args
         
-    def fire_action_message(self):
+    def fire_action(self, *args):
         """message called when menu item is activated"""
-        self._bus.send_message(self._action_message, self._action_receiver)
-
-    def set_unselected_message(self, message, receiver=None):
-        """message called when menu item is unselected"""
-        self._unselected_message = message
-        self._unselected_receiver = receiver
+        #print args, self.action_callback_args
+        if callable(self.action_callback):
+            self.action_callback(*args)
         
-    def fire_unselected_message(self):
+    def set_unselected_callback(self, callback):
         """message called when menu item is unselected"""
-        self._bus.send_message(self._unselected_message, self._unselected_receiver)
+        self.unselected_callback = callback
+        
+    def fire_unselected(self, *args):
+        """message called when menu item is unselected"""
+        if callable(self.unselected_callback):
+            self.unselected_callback(*args)
 
 if __name__ == '__main__':
     root = MenuTree()

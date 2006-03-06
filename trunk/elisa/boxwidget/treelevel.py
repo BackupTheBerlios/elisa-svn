@@ -55,7 +55,7 @@ class TreeLevel(surface.Surface):
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
-            s.set_background_from_file(item.get_picture_path())
+            s.set_background_from_file(item.get_icon_path())
             self._items_surface.add_surface(s)
             self._surface_items.append(s)
             self._current_rank = 0

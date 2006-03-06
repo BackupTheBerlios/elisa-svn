@@ -60,9 +60,11 @@ class MoviesTreePlugin(TreePlugin):
                     picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
                 else:
                     picture_path = os.path.abspath('elisa/skins/default_skin/default_pictures/movie.png')
-                    item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",os.path.abspath(path)))
+                    #item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",))
+                    item.set_target_path(os.path.abspath(path))
+                    item.set_action_callback(self.play_movie, item)
                     
-                item.set_picture_path(picture_path)
+                item.set_icon_path(picture_path)
                 
                 if is_movie:
                     self.add_action_menu(item)
@@ -79,10 +81,16 @@ class MoviesTreePlugin(TreePlugin):
     def add_action_menu(self, menu_item):
         
         play = MenuItem(short_name="Play")
-        play.set_picture_path('elisa/skins/default_skin/default_pictures/rightarrow.png')
+        play.set_icon_path('elisa/skins/default_skin/default_pictures/rightarrow.png')
 
         remove = MenuItem(short_name="Remove")
-        remove.set_picture_path('elisa/skins/default_skin/default_pictures/trash.png')
+        remove.set_icon_path('elisa/skins/default_skin/default_pictures/trash.png')
 
         menu_item.add_item(play)
         menu_item.add_item(remove)
+
+    def play_movie(self, surface):
+        # XXX: need a player here ?
+        menu_item = surface.get_menuitem_data()
+        #self.get_application().set_background_from_file(menu_item.get_target_path())
+        self.get_application().set_background_from_surface(surface)

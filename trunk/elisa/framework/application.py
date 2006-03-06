@@ -108,13 +108,17 @@ class Application(window.Window):
             self.register_plugin(plugin_class(self))
             logger.info("Loaded the plugin '%s'" % entrypoint.name)
 
+        # compare the loaded plugins with desired plugins to load
         loaded = [ plugin.get_name() for plugin in self._plugin_tree_list ]
         s1 = Set(loaded)
         s2 = Set(plugin_names)
         if not s2.issubset(s1):
             logger.info("Plugins not found : %s" % ', '.join(list(s2-s1)))
-        
 
+        # re-order plugins list to match the order in config
+        mapped_plugins = dict([ (p.get_name(), p) for p in self._plugin_tree_list ])
+        self._plugin_tree_list = [ mapped_plugins[name] for name in plugin_names ]
+            
     def create_menu(self):
         """Create menu from plugin list
         """
@@ -125,7 +129,7 @@ class Application(window.Window):
             # TODO: set the plugin's icon
             #       use pkg_resources to find icon's path
             path = 'elisa/skins/default_skin/default_pictures/%s.png' % tree.get_name()
-            new_item.set_picture_path(path)
+            new_item.set_icon_path(path)
             self._tree_data.add_item(new_item)
 
     def register_plugin(self, in_plugin):
@@ -153,3 +157,4 @@ class Application(window.Window):
         """
         window.Window.close(self)
         self.get_config().write()
+        

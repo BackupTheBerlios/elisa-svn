@@ -25,9 +25,9 @@ class Tree(surface.Surface):
         
     def on_message(self, receiver, message, sender):
         self._logger.debug('Tree.on_event(' + str(message) + ')', self)
-        if self.visible(True) == True and self._drawing_next_level==False and self._drawing_previous_level==False :
-            _selected_treeitem_surface = self.get_current_level_surface().get_selected_item()
-            _selected_treeitem_data = _selected_treeitem_surface.get_menuitem_data()
+        if self.visible(True) and not self._drawing_next_level and not self._drawing_previous_level :
+            selected_treeitem_surface = self.get_current_level_surface().get_selected_item()
+            selected_treeitem_data = selected_treeitem_surface.get_menuitem_data()
             
             if isinstance(message, events.InputEvent):
                 if message.get_simple_event() == events.SE_UP:
@@ -35,40 +35,43 @@ class Tree(surface.Surface):
                 if message.get_simple_event() == events.SE_DOWN:
                     self.select_next_level()
                 if message.get_simple_event() == events.SE_OK:
-                    _selected_treeitem_data.fire_action_message()
-            elif isinstance(message, message_bus.ActionMessage):
-                if sender == _selected_treeitem_data:
-                    if message.get_action() == 'SHOW_PICTURE':
-                        self._appli.set_background_from_surface(_selected_treeitem_surface)
-                    if message.get_action() == 'SHOW_MOVIE': pass
-                        #_selected_treeitem_surface.set_background_from_file(message.get_data())
-                        #self._appli.set_background_from_surface(_selected_treeitem_surface)
+                    selected_treeitem_data.fire_action(selected_treeitem_surface)
+##             elif isinstance(message, message_bus.ActionMessage):
+##                 if sender == _selected_treeitem_data:
+##                     if message.get_action() == 'SHOW_PICTURE':
+##                         self._appli.set_background_from_surface(_selected_treeitem_surface)
+##                     if message.get_action() == 'SHOW_MOVIE': pass
+##                         #
+##                         #self._appli.set_background_from_surface(_selected_treeitem_surface)
                                     
                     
         return surface.Surface.on_message(self, receiver, message, sender)
         
     def select_previous_level(self):
         self._logger.debug('Tree.select_previous_level()', self)
-        _current_treelevel_surface = self.get_current_level_surface()
-        _selected_menuitem_data = _current_treelevel_surface.get_selected_item().get_menuitem_data()
+        current_treelevel_surface = self.get_current_level_surface()
+        selected_menuitem_surface = current_treelevel_surface.get_selected_item()
+        selected_menuitem_data = selected_menuitem_surface.get_menuitem_data()
+        
         if self._current_level_id > 0:
             self._current_level_id -= 1
-            _selected_menuitem_data.fire_unselected_message()
-            self.remove_surface(_current_treelevel_surface)
-            self._treelevel_surface_list.remove(_current_treelevel_surface)
+            selected_menuitem_data.fire_unselected()
+            self.remove_surface(current_treelevel_surface)
+            self._treelevel_surface_list.remove(current_treelevel_surface)
             self._drawing_previous_level = True
     
     def select_next_level(self):
         self._logger.debug('Tree.select_next_level()', self)
-        _treeitem_surface = self.get_current_level_surface().get_selected_item()
-        _next_level_data = _treeitem_surface.get_menuitem_data().get_items()
-        if _next_level_data != []:
+        treeitem_surface = self.get_current_level_surface().get_selected_item()
+        next_level_data = treeitem_surface.get_menuitem_data().get_items()
+        if next_level_data != []:
             self._current_level_id += 1
-            _next_level_surface = treelevel.TreeLevel(_next_level_data, "treelevel rank " + str(self._current_level_id) )
-            self._treelevel_surface_list.append(_next_level_surface)
+            name = "treelevel rank " + str(self._current_level_id)
+            next_level_surface = treelevel.TreeLevel(next_level_data, name)
+            self._treelevel_surface_list.append(next_level_surface)
             self._drawing_next_level = True
-            self._level_to_draw = _next_level_surface
-    
+            self._level_to_draw = next_level_surface
+            
     def set_location(self, x, y, z):
         surface.Surface.set_location(self, x, y, z)
     
