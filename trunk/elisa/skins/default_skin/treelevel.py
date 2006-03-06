@@ -1,4 +1,5 @@
-from elisa.boxwidget import surface, treeitem, events, surface, fontsurface
+from elisa.boxwidget import surface, events, surface, fontsurface
+from elisa.skins.default_skin import treeitem
 
 class TreeLevel(surface.Surface):
 

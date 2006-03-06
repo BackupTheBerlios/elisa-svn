@@ -2,7 +2,7 @@
 from elisa.framework import config, log, menu, message_bus, common
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
-from elisa.boxwidget import window, tree, surface_player
+from elisa.boxwidget import window, surface_player, menu_renderer
 from elisa.player import player
 
 from sets import Set
@@ -41,6 +41,8 @@ class Application(window.Window):
         self._player_surface.set_size(800, 600)
         self._player_surface.set_back_color(0, 0, 0)
         self.add_surface(self._player_surface)
+        
+        self._menu_renderer = None
 
     def set_background_from_surface(self, surface):
         """show same background in fullscreen than _surface (video or picture)
@@ -51,7 +53,7 @@ class Application(window.Window):
     def set_background_from_menuitem(self, menuitem):
         """show same background in fullscreen than _surface (video or picture)
         """
-        surface = self._treewidget.get_current_level_surface().get_itemsurface_from_menuitem(menuitem)
+        surface = self._menu_widget.get_current_level_surface().get_itemsurface_from_menuitem(menuitem)
         self.set_background_from_surface(surface)
         
     def set_config(self, filename):
@@ -140,10 +142,11 @@ class Application(window.Window):
     def run(self):
         """ Execute the application. Start main loop.
         """
-        self._treewidget = tree.Tree(self._tree_data, "main menu Tree")
-        self._treewidget.set_size(500, 100)
-        self._treewidget.set_initial_location(105.0, 450.0, 2.0)
-        self.add_surface(self._treewidget)
+        self._menu_renderer = menu_renderer.MenuRenderer(self._tree_data)
+        self._menu_widget = self._menu_renderer.get_menu_widget()
+        self._menu_widget.set_size(500, 100)
+        self._menu_widget.set_initial_location(105.0, 450.0, 2.0)
+        self.add_surface(self._menu_widget)
         
         window.Window.run(self)
 

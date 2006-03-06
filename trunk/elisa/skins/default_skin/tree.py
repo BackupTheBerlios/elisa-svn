@@ -1,4 +1,5 @@
-from elisa.boxwidget import surface, events, treelevel
+from elisa.skins.default_skin import treelevel
+from elisa.boxwidget import events, surface
 from elisa.framework import message_bus, common
 
 class Tree(surface.Surface):
