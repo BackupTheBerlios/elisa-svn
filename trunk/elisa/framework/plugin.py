@@ -27,7 +27,7 @@ class IPlugin:
 class ExtensionPoint(property):
 
     def __init__(self, interface):
-        property.__init__(self, fget=self.get_extensions)
+        property.__init__(self)
         self.interface = interface
 
     def _get_cached_extensions(self):
@@ -40,7 +40,7 @@ class ExtensionPoint(property):
                         self._matched_extensions.append(plugin)
         return self._matched_extensions
         
-    def get_extensions(self, master_plugin):
+    def __get__(self, master_plugin, typ):
         extensions = self._get_cached_extensions()
         for extension in extensions:
             extension.set_master_plugin(master_plugin)
