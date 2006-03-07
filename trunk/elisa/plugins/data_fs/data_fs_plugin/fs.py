@@ -9,8 +9,8 @@ class DataFSPlugin(Plugin):
 
     name = 'fs'
 
-    def load_directory(self, name, item_filter=None, folder_icon_path=None,
-                       item_action=None, item_icon_path=None):
+    def load_location(self, name, item_filter=None, folder_icon_path=None,
+                      item_action=None, item_icon_path=None, action_menu=None):
         if not os.path.isdir(name):
             return
         
@@ -18,6 +18,7 @@ class DataFSPlugin(Plugin):
         self.folder_icon_path = folder_icon_path
         self.item_action = item_action
         self.item_icon_path = item_icon_path
+        self.action_menu = action_menu
         os.path.walk(name, self._load_sub_directory, None)
 
     def _load_sub_directory(self, app, dir_name, filenames):
@@ -44,9 +45,8 @@ class DataFSPlugin(Plugin):
                     
                 item.set_icon_path(icon_path)
 
-                if self.item_filter(path):
-                    # TODO: add action sub-menu
-                    pass
+                if self.item_filter(path) and self.action_menu:
+                    self.action_menu(item)
                 
                 master = self.get_master_plugin()
                 parent = master.get_item_with_name(os.path.basename(dir_name))
