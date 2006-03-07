@@ -2,9 +2,16 @@
 import pygst
 pygst.require('0.10')
 import gst
-import gobject, sys, time
+import gobject, sys, os
 from mutex import mutex
-from elisa.framework.message_bus import MessageBus
+
+# XXX: this is crap
+try:
+    from elisa.framework.message_bus import MessageBus
+except ImportError:
+    sys.path.append(os.path.abspath("%s/../../.." % __file__))
+    from elisa.framework.message_bus import MessageBus
+
 from elisa.player import events
 from elisa.framework import log
 
@@ -78,7 +85,7 @@ class Player:
         caps = VIDEO_CAPS
         
         self._sink = VideoSinkBin(caps)
-        self._playbin.set_property("video-sink", self._sink)
+        #self._playbin.set_property("video-sink", self._sink)
 
         if self._uri:
             self.play_uri(self._uri)
@@ -96,9 +103,9 @@ class Player:
         current_item.set_length(duration)
         current_item.set_status(position)
 
-        current_item.print_status()
+        #current_item.print_status()
 
-        time.sleep(0.1)
+        #time.sleep(0.1)
         return True
 
     def on_message(self, bus, message, extra=None):
@@ -458,7 +465,7 @@ gobject.type_register(VideoSinkBin)
 
 
 if __name__ == '__main__':
-
+    
     # usage:
     # player.py uri1 uri2
     
@@ -486,7 +493,6 @@ if __name__ == '__main__':
     #"""
     # one player for all uris => use the queue
     p = Player()
-    #p.register('player.playing', on_play)
     manager.add_player(p)
     
     for uri in sys.argv[1:]:
