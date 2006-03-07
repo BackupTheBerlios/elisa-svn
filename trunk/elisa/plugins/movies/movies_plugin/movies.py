@@ -1,5 +1,7 @@
 
-from elisa.framework.plugin import IPlugin, TreePlugin
+from elisa.framework.plugin import IPlugin, TreePlugin, ExtensionPoint
+from elisa.framework.extension_points import IDataAccess
+
 from elisa.framework.menu import MenuTree, MenuItem
 from elisa.framework import message_bus
 import elisa.utils.misc
@@ -20,6 +22,8 @@ class MoviesTreePlugin(TreePlugin):
 
     __implements__ = IPlugin
 
+    data_access = ExtensionPoint(IDataAccess)
+
     
     name = "movies"
     default_config = {'root_directory':'sample_data/movies'}
@@ -27,57 +31,69 @@ class MoviesTreePlugin(TreePlugin):
     def __init__(self, _application):
         TreePlugin.__init__(self, _application)
         self.set_short_name("videos")
-        self.load_root_directory()
-        
-    def load_root_directory(self):
-        """
-        Create the whole directory tree menu from the root directory
-        (which is referenced in the plugin's config.
-        
-        """
+        #self.load_root_directory()
+
+        folder_image = 'elisa/skins/default_skin/default_pictures/folder.png'
+        movie_image = 'elisa/skins/default_skin/default_pictures/movie.png'
         root = self.get_config().get('root_directory')
-        os.path.walk(root, self._load_sub_directory, None)
+        for data_loader in self.data_access:
+            for location in (root,):
+                data_loader.load_directory(location,
+                                           item_filter=elisa.utils.misc.file_is_movie,
+                                           folder_icon_path=folder_image,
+                                           item_icon_path=movie_image,
+                                           item_action=self.play_movie)
 
-    def _load_sub_directory(self, app, dir_name, filenames):
-        """
-        Create the tree menu for a given directory full name
         
-        """
-        for filename in filenames:
-            path = os.path.join(dir_name, filename)
+##     def load_root_directory(self):
+##         """
+##         Create the whole directory tree menu from the root directory
+##         (which is referenced in the plugin's config.
+        
+##         """
+##         root = self.get_config().get('root_directory')
+##         os.path.walk(root, self._load_sub_directory, None)
 
-            if self._match_hidden(path):
-                continue
+##     def _load_sub_directory(self, app, dir_name, filenames):
+##         """
+##         Create the tree menu for a given directory full name
+        
+##         """
+##         for filename in filenames:
+##             path = os.path.join(dir_name, filename)
 
-            is_dir = os.path.isdir(path)
-            is_movie = elisa.utils.misc.file_is_movie(path)
+##             if self._match_hidden(path):
+##                 continue
+
+##             is_dir = os.path.isdir(path)
+##             is_movie = elisa.utils.misc.file_is_movie(path)
             
-            # FIXME: do not work with directory with same name in different level
-            if is_dir or is_movie:
-                item = MenuItem(short_name=os.path.basename(path))
+##             # FIXME: do not work with directory with same name in different level
+##             if is_dir or is_movie:
+##                 item = MenuItem(short_name=os.path.basename(path))
 
-                if os.path.isdir(path):
-                    picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
-                else:
-                    picture_path = os.path.abspath('elisa/skins/default_skin/default_pictures/movie.png')
-                    #item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",))
-                    item.set_target_path(os.path.abspath(path))
-                    #item.set_unselected_callback(self.pause_movie)
-                    item.set_action_callback(self.play_movie)
+##                 if os.path.isdir(path):
+##                     picture_path = 'elisa/skins/default_skin/default_pictures/folder.png'
+##                 else:
+##                     picture_path = os.path.abspath('elisa/skins/default_skin/default_pictures/movie.png')
+##                     #item.set_action_message(message_bus.ActionMessage("SHOW_MOVIE",))
+##                     item.set_target_path(os.path.abspath(path))
+##                     #item.set_unselected_callback(self.pause_movie)
+##                     item.set_action_callback(self.play_movie)
                     
-                item.set_icon_path(picture_path)
+##                 item.set_icon_path(picture_path)
                 
-                if is_movie:
-                    self.add_action_menu(item)
+##                 if is_movie:
+##                     self.add_action_menu(item)
                 
-                parent = self.get_item_with_name(os.path.basename(dir_name))
-                if not parent:
-                    parent = self
-                parent.add_item(item)
+##                 parent = self.get_item_with_name(os.path.basename(dir_name))
+##                 if not parent:
+##                     parent = self
+##                 parent.add_item(item)
 
     
-    def _match_hidden(self, path):
-        return re.match(".*/\..*", path)
+##     def _match_hidden(self, path):
+##         return re.match(".*/\..*", path)
 
     def add_action_menu(self, menu_item):
         
