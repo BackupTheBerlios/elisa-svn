@@ -4,6 +4,7 @@ pygst.require('0.10')
 import gst
 import gobject, sys, os
 from mutex import mutex
+from elisa.boxwidget import texture
 
 # XXX: this is crap
 try:
@@ -52,7 +53,24 @@ class _PlayerManager:
                 p.stop()
         player.fullscreen()
 
-                
+    def refresh(self):
+        for p in self.players:
+            p.refresh()
+            
+    def get_player(self, uri):
+        for p in self.players:
+            if p.get_uri() == uri:
+                return p
+        new_p = Player(uri)
+        self.add_player(new_p)
+        return new_p
+
+    def uri_is_attached(self, uri):
+        for p in self.players:
+            if p.get_uri() == uri:
+                return True
+        return False
+                               
 def PlayerManager():
     global _player_manager
     if not _player_manager:
@@ -75,6 +93,8 @@ class Player:
         self._saved_status = None
         self._g_timeout_id = None
         self._playbin = gst.element_factory_make('playbin', 'playbin')
+        self._texture = texture.Texture()
+        self._texture.set_flip_buffer(True)
 
         gst_bus = self._playbin.get_bus()
         gst_bus.add_signal_watch()
@@ -88,8 +108,11 @@ class Player:
         self._playbin.set_property("video-sink", self._sink)
 
         if self._uri:
-            self.play_uri(self._uri)
+            self.set_uri(self._uri)
 
+    def get_texture(self):
+        return self._texture
+        
     def get_bus(self):
         return MessageBus()
 
@@ -105,7 +128,15 @@ class Player:
 
         #current_item.print_status()
 
-        #time.sleep(0.1)
+        if self._texture.is_init()==False:
+             (width, height) = (self.get_video_width(), self.get_video_height() )
+             if width != None and height != None:
+                self._texture.init_texture(width, height)
+                
+        if self._texture.is_init()==True:
+            frame = self.get_current_frame()
+            if frame != None:
+                self._texture.set_buffer(frame)
         return True
 
     def on_message(self, bus, message, extra=None):
@@ -156,10 +187,14 @@ class Player:
         non-video data, return None.
         """
         return self._sink.get_height()
-            
-    def play_uri(self, uri):
+
+    def get_uri(self):
+        return self._uri
+                    
+    def set_uri(self, uri):
         """ Play the media identified by its uri string
         """
+        self._uri = uri
         # stop the player
         self.stop()
 
@@ -176,10 +211,11 @@ class Player:
         print uri
 
         self.add_playable(Playable(uri))
-        #self.next()
 
+    def play_uri(self, uri):
+        self.set_uri(uri)
         self.play()
-
+        
     def play(self):
         """ Set the player state to playing mode and fire a Playing
         event holding the current playing item of the queue.

@@ -18,13 +18,11 @@ class Control(object):
         self._Rotate = zPoint3D.Point3D()
         self._Visible = True
         self._Form = None
+        self._surface_texture_source = None
         
     def _SetForm(self, in_form):
         self._Form = in_form
-    
-    def set_background_from_surface(self, surface):
-        surface.GetSurface().add_surface_with_same_texture( self.GetSurface())   
-        
+                
     def GetForm(self):
         return self._Form
         
@@ -52,7 +50,13 @@ class Control(object):
     
     def GetText(self):
         return self._Text
+    
+    def GetTexture(self):
+        return self._Surface.GetTexture()
         
+    def SetTexture(self, texture):
+        self._Surface.SetTexture(texture)
+            
     def GetSurface(self):
         return self._Surface
         
@@ -65,14 +69,13 @@ class Control(object):
         self._Surface.SetBackgroundImageFromFile(PathAndFileName, UseAlpha)
     
     def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False, UseExistingTexture = True, Flip = False):
-        if UseExistingTexture == False: self._Surface.RecreateTexture()
         
         if Flip == True:
             self._Surface.SetTextureOrder(1)
         else:
             self._Surface.SetTextureOrder(0)
             
-        self._Surface.SetBackgroundImageFromBuffer( buffer, width, height, UseAlpha)
+        self._Surface.SetBackgroundImageFromBuffer(buffer, width, height, UseAlpha)
         
     def GetBackgroundImage(self):
         return self._BackgroundImage   

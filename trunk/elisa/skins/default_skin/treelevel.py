@@ -55,12 +55,17 @@ class TreeLevel(surface.Surface):
         _i = 10
         for item in self._menuitem_list:
             s = treeitem.TreeItem(item, self._font)
+            self._appli.get_menu_renderer().add_menuitem_surface(item, s)
+            if self._appli.get_player_manager().uri_is_attached(item.get_target_path()) == True:
+                #Movie is playing
+                p = self._appli.get_player_manager().get_player(item.get_target_path())
+                s.set_texture(p.get_texture())
+            else:
+                s.set_background_from_file(item.get_icon_path())
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
-            s.set_background_from_file(item.get_icon_path())
             self._items_surface.add_surface(s)
-            self._appli.get_menu_renderer().add_menuitem_surface(item, s)
             self._surface_items.append(s)
             self._current_rank = 0
 

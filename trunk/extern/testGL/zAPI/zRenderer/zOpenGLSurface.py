@@ -1,7 +1,7 @@
 from extern.testGL.common import constants
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from extern.testGL.zAPI.zRenderer import zBaseClass
+from extern.testGL.zAPI.zRenderer import zBaseClass, zOpenGLTexture
 from extern.testGL.zAPI.zDrawing import zRectangle3D
 from extern.testGL.zAPI.zDrawing.zPoint3D import Point3D
 from Image import *
@@ -15,134 +15,53 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         
         zBaseClass.SurfaceBase.__init__(self)
         self._TextureOrder = 0
-        self._BackgroundImage = None
-        self._RefreshTexture = False
-        self._TextureID = None
-        self._XTextureRatio = 1.0
-        self._YTextureRatio = 1.0
-        self._ImageBuffer=True
-        self._Format=GL_RGB
-        self._BufferWidth=None
-        self._BufferHeight=None
-        self._CurrentTextureWidth=None
-        self._CurrentTextureHeight=None
         self._screenwidth, self._screenheight = constants.GetWindowSize()
         self._ApplyCoordinateTrans = ApplyCoordinateTrans
         self._renderer = None
-        self._same_texture_surface_list = []
-    
-    def add_surface_with_same_texture(self, surface):
-        #print "add_surface_with_same_texture( " + str(surface) + " ) on " + str(self)
-        self._same_texture_surface_list.append(surface)
-        surface._SetTextureID(self._TextureID)
-        surface.SetTextureOrder(self._TextureOrder)
-        surface._SetTextureRatio(self._XTextureRatio, self._YTextureRatio)
+        self._texture = None
         
-    def remove_surface_with_same_texture(self, surface):
-        if surface in self._same_texture_surface_list:
-            self._same_texture_surface_list.remove(surface)
-    
-    def _refresh_surface_with_same_texture(self):
-        #print "Start refresh on " + str(self)
-        for surface in self._same_texture_surface_list:
-            #print "refresh " + str(surface) + " to " + str(self._TextureID)
-            surface._SetTextureID(self._TextureID)
-            surface.SetTextureOrder(self._TextureOrder)
-            surface._SetTextureRatio(self._XTextureRatio, self._YTextureRatio)
-        
-    def SetTextureOrder(self, order):
-        if order == 1 or order == 0:
-              self._TextureOrder = order
-              self._refresh_surface_with_same_texture()
-        
-    def _SetTextureID(self, textureid):
-        #print "set textureid to " + str(textureid) + " on " + str(self)
-        self._TextureID = textureid
-     
-    def _SetTextureRatio(self, x, y):
-       self._XTextureRatio = x
-       self._YTextureRatio = y
-             
     def SetBackgroundImageFromFile(self, FileName, UseAlpha=False):
-        isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, FileName, UseAlpha=False)
    
-        if FileName == None:
-            self._BackgroundImage = None
-            self._RefreshTexture = False
-        else:    
-            self._BackgroundImage = open(FileName)
+        if FileName != None: 
+            _BackgroundImage = open(FileName)
             #Alpha is allowed only for png images
             s = len(FileName)
             ext = FileName[s-3:s]
             if ext not in ('PNG','png'): UseAlpha=False
             
             if UseAlpha == True:
-                self._Format = GL_RGBA
-                self._ImageBuffer = self._BackgroundImage.tostring("raw", "RGBA", 0, -1)
+                _format = GL_RGBA
+                _ImageBuffer = _BackgroundImage.tostring("raw", "RGBA", 0, -1)
             else:
-                self._Format = GL_RGB
-                self._ImageBuffer = self._BackgroundImage.tostring("raw", "RGB", 0, -1)
+                _format = GL_RGB
+                _ImageBuffer = _BackgroundImage.tostring("raw", "RGB", 0, -1)
 
-            self._BufferWidth = self._BackgroundImage.size[0]
-            self._BufferHeight = self._BackgroundImage.size[1]  
-            self._RefreshTexture = True
+            if self._texture == None or self.texture.get_size() != (_BackgroundImage.size[0], _BackgroundImage.size[1]):
+                self._texture = zOpenGLTexture.OpenGLTexture()
+                self._texture.init_texture(_BackgroundImage.size[0], _BackgroundImage.size[1], _format, _ImageBuffer)
+            else:
+                self._texture.set_buffer(_ImageBuffer)
 
-    
     def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False):
-        isinstance(UseAlpha, bool)," UseAlpha need Boolean as parameter"
-        self._ImageBuffer = buffer
-        self._BufferWidth = width
-        self._BufferHeight = height
-        
-        if buffer == None:
-            self._RefreshTexture = False
-        else:    
+        if self._texture == None or self._texture.get_size() != (width, height):
             if UseAlpha == True:
-                self._Format = GL_RGBA
+                _format = GL_RGBA
             else:
-                self._Format = GL_RGB
-                
-            self._RefreshTexture = True
-
-    def RecreateTexture(self): self._TextureID = None
+                _format = GL_RGB
+            self._texture = zOpenGLTexture.OpenGLTexture()
+            self._texture.init_texture(width, height, _format, buffer)
+        else:
+            self._texture.set_buffer(buffer)
     
-    #FIXME : allow different image size. actually, all image must have the same size.
-    def LoadTexture(self):
-
+    def SetTextureOrder(self, order):
+        if order == 1 or order == 0:
+              self._TextureOrder = order
         
-        CreateTexture = False
-                      
-        TextureSize = 64
-        
-        if self._BufferWidth > 0 and self._BufferHeight > 0 : 
-            while ((TextureSize) < self._BufferWidth or (TextureSize) < self._BufferHeight):
-                TextureSize = TextureSize * 2         
-         
-        self._XTextureRatio = self._BufferWidth / float(TextureSize);
-        self._YTextureRatio = self._BufferHeight / float(TextureSize);  
-        
-        if self._TextureID == None or self._CurrentTextureWidth != self._BufferWidth or self._CurrentTextureHeight != self._BufferHeight:
-            self._TextureID = glGenTextures(1)
-            self._refresh_surface_with_same_texture()
-            CreateTexture = True  
-            self._CurrentTextureWidth = self._BufferWidth
-            self._CurrentTextureHeight = self._BufferHeight
-        
-        glBindTexture(GL_TEXTURE_2D, self._TextureID)
-        
-        if CreateTexture == True: 
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-            #glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-            #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-            glTexImage2D (GL_TEXTURE_2D, 0, self._Format, TextureSize, TextureSize, 0, self._Format, GL_UNSIGNED_BYTE, None)        glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, self._BufferWidth, self._BufferHeight, self._Format, GL_UNSIGNED_BYTE, self._ImageBuffer) 
-        
+    def _SetTextureID(self, textureid):
+        #print "set textureid to " + str(textureid) + " on " + str(self)
+        self._TextureID = textureid
+              
     def Render(self):
         glPushMatrix()
       
@@ -151,48 +70,47 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         r,g,b,a = self.GetBackColorWithAlpha()
         glColorf(r/255.0, g/255.0, b/255.0, a/255.0)
         
-        if self._RefreshTexture == True:
-            self._RefreshTexture = False
-            self.LoadTexture()
-            
-        if self._TextureID != None:
-            glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, self._TextureID)
-            #print "texture loaded: " + str(self._TextureID)
-        #else:
-            #print "texture not loaded: " + str(self._TextureID) + " on " + str(self)
-        
+        (_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
+        if self._texture != None:
+            self._texture.set_texture()
+            (_XTextureRatio, _YTextureRatio) = self._texture.get_ratio()
+            if self._texture.get_flip_buffer() == False:
+                self._TextureOrder = 0
+            else:
+                self._TextureOrder = 1
+
         XTextureOffsetPercent = 0.0
         YTextureOffsetPercent = 0.0
-        XTextureOffset = -XTextureOffsetPercent * self._XTextureRatio / 100.0
-        YTextureOffset = -YTextureOffsetPercent * self._YTextureRatio / 100.0      
+        
+        XTextureOffset = -XTextureOffsetPercent * _XTextureRatio / 100.0
+        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0      
         
         #FIXME : use lists
         if self._TextureOrder == 1:
             #Texture for normal coordinate system
             glBegin(GL_QUADS)
-            glTexCoord2f(self._XTextureRatio+XTextureOffset,YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset,YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)
             glTexCoord2f(XTextureOffset,YTextureOffset)
             glVertex3f(0.0, 0.0, 0.0)
-            glTexCoord2f(XTextureOffset,self._YTextureRatio+YTextureOffset)
+            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(0.0, 1.0, 0.0)
-            glTexCoord2f(self._XTextureRatio+XTextureOffset,self._YTextureRatio+YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(1.0, 1.0, 0.0)            glEnd()
         else:
             #Texture for Videos    
             glBegin(GL_QUADS)
-            glTexCoord2f(self._XTextureRatio+XTextureOffset,YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset,YTextureOffset)
             glVertex3f(1.0, 1.0, 0.0)
             glTexCoord2f(XTextureOffset,YTextureOffset)
             glVertex3f(0.0, 1.0, 0.0)
-            glTexCoord2f(XTextureOffset,self._YTextureRatio+YTextureOffset)
+            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(0.0, 0.0, 0.0) 
-            glTexCoord2f(self._XTextureRatio+XTextureOffset,self._YTextureRatio+YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)            glEnd() 
         
-        if self._TextureID != None :#and self._BackgroundImage != None :
-            glDisable(GL_TEXTURE_2D)
+        if self._texture != None :
+            self._texture.unset_texture()
             
         glPopMatrix()
         
@@ -227,7 +145,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         glRotatef(Rotate.y, 0.0, 1.0, 0.0)
         glRotatef(Rotate.z, 0.0, 0.0, 1.0)
 
-
-
+    def GetTexture(self):
+        return self._texture
         
-
+    def SetTexture(self, texture):
+        self._texture = texture

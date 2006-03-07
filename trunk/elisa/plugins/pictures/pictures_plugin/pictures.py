@@ -30,4 +30,4 @@ class PicturesTreePlugin(TreePlugin):
                                           item_action=self.show_picture)
 
     def show_picture(self, surface):
-        self.get_application().set_background_from_surface(surface)
+        self.get_application().set_background_texture(surface.get_texture())

@@ -1,7 +1,10 @@
 from elisa.boxwidget import events
 from elisa.boxwidget.bindings import base_impl
 from extern.testGL.zAPI.zForms import zForm, zPictureBox, zFont
+from extern.testGL.zAPI.zRenderer import zOpenGLTexture
 from elisa.framework.log import Logger
+from OpenGL.GL import *
+from OpenGL.GLU import *
 
 import pygame
 from pygame.locals import *
@@ -71,18 +74,20 @@ class _testGL_Surface_Impl(base_impl._Base_Surface_Impl):
     def show(self):
         self._surface_native.Show()
         
-    def set_background_from_surface(self, impl_surface):
-        self._surface_native.set_background_from_surface( impl_surface.get_native_surface() )  
+    def set_texture(self, impl_texture):
+        self._surface_native.set_texture( impl_surface.get_native_surface())  
         
     def set_background_from_buffer(self, buffer, width, height, flip = False):
         self._surface_native.SetBackgroundImageFromBuffer(buffer, width, height, Flip=flip)
 
+    def set_texture(self, impl_texture):
+        self._surface_native.SetTexture(impl_texture.get_native_surface())
+    
 class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
 
     def __init__(self):
         self._logger = Logger()
         self._logger.debug('_testGL_EventsManager_Impl.__init__()', self)
-        #self._eventqueue = []
 
     def process_input_events(self):
         events = []
@@ -91,15 +96,6 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
             if _boxevent != None:
                 events.append(_boxevent)
         return events
-    
-##     def get_event_queue(self):
-##         self._eventqueue = []
-##         for pyevent in pygame.event.get():
-##             _boxevent = self.pygame_event_converter(pyevent)
-##             if _boxevent != None:
-##                 self._eventqueue.append(_boxevent)
-        
-##         return self._eventqueue
             
     def pygame_event_converter(self, pyevent):
     
@@ -162,3 +158,29 @@ class _testGL_Font_Impl(base_impl._Base_Font_Impl):
     def set_text(self, text):
         self._surface_native.SetText(text)
         
+class _testGL_Texture_Impl(object):
+
+    def __init__(self):
+        self._logger = Logger()
+        self._logger.debug('_testGL_Texture_Impl.__init__()', self)
+        
+        self._surface_native = zOpenGLTexture.OpenGLTexture()
+    
+    def init_texture(self, width, height, buffer=None, use_alpha=False):
+        if use_alpha == True:
+            _format = GL_RGBA
+        else:
+            _format = GL_RGB
+        self._surface_native.init_texture(width, height, _format, buffer)
+        
+    def get_native_surface(self):
+        return self._surface_native       
+                       
+    def set_buffer(self, buffer):
+        self._surface_native.set_buffer(buffer)
+        
+    def set_flip_buffer(self, flip):
+        self._surface_native.set_flip_buffer(flip)
+        
+    def get_size(self):
+        return self._surface_native.get_size()

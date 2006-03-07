@@ -1,7 +1,10 @@
 from elisa.boxwidget.bindings import testgl_impl
+from elisa.boxwidget import texture
 from elisa.player.player import Player
 from elisa.framework.log import Logger
 from elisa.framework.message_bus import MessageBus
+from Image import *
+from elisa.framework import common
 
 import elisa.utils.misc
 import time
@@ -30,22 +33,20 @@ class Surface(object):
         self._window = None
         self._visible = True
         self._visible_r = True
-        self._player = None
         self._background_is_movie = False
+        self._texture = None
+        self._appli = common.get_application()
         
         self._surface_impl.set_size(self._width, self._height)
 
-    def create_player(self):
-        """create player if needed only (for video surface)
-        """
-        if self._player == None:
-            self._player = Player()
+    def get_texture(self):
+        return self._texture
         
-    def get_player(self):
-        """return player if created, or None
-        """
-        return self._player
-
+    def set_texture(self, texture):
+        self._texture = texture
+        if texture != None:
+            self._surface_impl.set_texture(texture._get_surface_impl())  
+ 
     def pretty_print(self, deep = 0):
         """ Textual representation of the tree. This method is recursive
         """
@@ -67,10 +68,7 @@ class Surface(object):
     def close(self):
         for surface in self._surface_list:
             surface.close()
-            
-        if self._player != None:
-            self._player.close()
-            
+
     def _get_surface_impl(self):
         self._logger.debug('Surface._get_surface_impl()', self)
         return self._surface_impl
@@ -91,13 +89,40 @@ class Surface(object):
         self._background_image_path = path_and_file_name
                
         if elisa.utils.misc.file_is_movie(path_and_file_name):
-            self.create_player()
-            self.get_player().play_uri(path_and_file_name)
+            p = self._appli.get_player_manager().get_player(path_and_file_name)
+            p.play()
+            self.set_texture(p.get_texture())
             self._background_is_movie = True
         else:
-            self._surface_impl.set_background_from_file(path_and_file_name)
+            _texture = self.create_texture_from_picture(path_and_file_name)
+            self.set_texture(_texture)
             self._background_is_movie = False
     
+    def create_texture_from_picture(self, path_and_filename):
+        if path_and_filename != None: 
+            _picture_file = open(path_and_filename)
+            #Alpha is allowed only for png images
+            s = len(path_and_filename)
+            ext = path_and_filename[s-3:s]
+            if ext not in ('PNG','png'):
+                use_alpha=False
+            else:
+                use_alpha=True
+            
+            if use_alpha == True:
+                _buffer = _picture_file.tostring("raw", "RGBA", 0, -1)
+            else:
+                _buffer = _picture_file.tostring("raw", "RGB", 0, -1)
+
+            if self._texture == None or self.texture.get_size() != (_picture_file.size[0], _picture_file.size[1]):
+                _texture = texture.Texture()
+                _texture.init_texture(_picture_file.size[0], _picture_file.size[1], _buffer, use_alpha)
+            else:
+                self._texture.set_buffer(_ImageBuffer)
+                _texture = self._texture
+                
+        return _texture
+        
     def set_background_from_buffer(self, buffer, width, height, flip):
          self._surface_impl.set_background_from_buffer(buffer, width, height, flip)
     
@@ -178,19 +203,15 @@ class Surface(object):
         """
         self._logger.debug_verbose('Surface.refresh()', self)
         
-        if self._background_is_movie == True and self._player != None:
-            _frame = self._player.get_current_frame()
-            _videowidth = self._player.get_video_width()
-            _videoheight = self._player.get_video_height() 
-            if _frame != None and _videoheight != None and _videowidth != None:
-                self.set_background_from_buffer(_frame, _videowidth, _videoheight, True)
+        #if self._background_is_movie == True and self._player != None:
+        #    _frame = self._player.get_current_frame()
+        #    _videowidth = self._player.get_video_width()
+        #    _videoheight = self._player.get_video_height() 
+        #    if _frame != None and _videoheight != None and _videowidth != None:
+        #        self.set_background_from_buffer(_frame, _videowidth, _videoheight, True)
             
         for surface in self._surface_list:
             surface.refresh()
-
-        player = self.get_player()
-        if player:
-            player.refresh()
                     
     def add_surface(self, surface):
         self._logger.debug('Surface.add_surface(' + str(surface) + ')', self)

@@ -56,8 +56,9 @@ class MoviesTreePlugin(TreePlugin):
         menu_item = surface.get_menuitem_data()
         #parent = menu_item.get_parent()
         #import pdb; pdb.set_trace()
+        menu_renderer = self.get_application().get_menu_renderer()
         surface.set_background_from_file(menu_item.get_target_path())
-        self.get_application().set_background_from_surface(surface)
+        self.get_application().set_background_texture(surface.get_texture())
 
     def play_parent_movie(self, surface):
         menu_renderer = self.get_application().get_menu_renderer()
