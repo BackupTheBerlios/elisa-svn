@@ -6,15 +6,7 @@ import gobject, sys, time
 from mutex import mutex
 from elisa.framework.message_bus import MessageBus
 from elisa.player import events
-
-"""
-TODO:
-
-- validate that gobject.timeout_add() works correctly with the
-  application main loop (twisted) or find a better way 
-
-  
-"""
+from elisa.framework import log
 
 _player_manager = None
 
@@ -62,9 +54,6 @@ def PlayerManager():
 
 VIDEO_CAPS="video/x-raw-rgb,bpp=24,depth=24"
 
-# unused
-AUDIO_CAPS="audio/x-raw-int,rate=44100"
-
 class Player:
 
     PLAYING = gst.STATE_PLAYING
@@ -87,7 +76,6 @@ class Player:
         self.get_bus().register(self, self.on_elisa_message)
 
         caps = VIDEO_CAPS
-        #caps = AUDIO_CAPS
         
         self._sink = VideoSinkBin(caps)
         self._playbin.set_property("video-sink", self._sink)
@@ -98,10 +86,8 @@ class Player:
     def get_bus(self):
         return MessageBus()
 
-
-    def idle(self):
-        """ Convenient method called by gobject.timeout_add loop. Used
-        to update the current playing item status, lenght and
+    def refresh(self):
+        """ Used to update the current playing item status, lenght and
         capabilities.
         """
         position, duration = self.get_status()
@@ -110,28 +96,8 @@ class Player:
         current_item.set_length(duration)
         current_item.set_status(position)
 
-        ###################################################
-        # TODO: disable this when integrated in boxwidget
         current_item.print_status()
-        self.get_bus().dispatch_messages()
 
-##         if position == 5:
-##             self.seek_forward(10)
-##         elif position == 20:
-##             #self.seek_backward(19)
-##             self.save()
-##         elif position == 30:
-##             self.load()
-
-##         print self.get_video_width()
-
-##         if position == 30 and self._current_item_index == 0:
-##             self.next()
-##         elif position == 25 and self._current_item_index == 1:
-##             self.previous()
-
-        ###################################################
-            
         time.sleep(0.1)
         return True
 
@@ -149,16 +115,16 @@ class Player:
                 self.on_eos()
 
     def on_elisa_message(self, receiver, message, sender):
+        if isinstance(message, events.PlayerEvent):
+            logger = log.Logger()
+            logger.debug("Got message from player")
+            #print message
         return True
 
     def on_eos(self):
         try:
             self.next()
         except IndexError:
-            # TODO:
-            #  - drop this when itegrated in Application
-            global mainloop
-            mainloop.quit()
             self.stop()
 
     def close(self):
@@ -206,9 +172,6 @@ class Player:
         #self.next()
 
         self.play()
-
-        # setup the gobject idle loop
-        self._g_timeout_id = gobject.timeout_add(1, self.idle)
 
     def play(self):
         """ Set the player state to playing mode and fire a Playing

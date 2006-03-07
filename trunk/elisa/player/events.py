@@ -9,22 +9,25 @@ TODO:
 
 """
 
-class PlayingEvent(Message):
+class PlayerEvent(Message):
+    pass
+
+class PlayingEvent(PlayerEvent):
     name = "player.playing"
 
     def __init__(self, playable):
         self.playable = playable
 
-class PausedEvent(Message):
+class PausedEvent(PlayerEvent):
     name = "player.paused"
 
     def __init__(self, playable):
         self.playable = playable
     
-class StoppedEvent(Message):
+class StoppedEvent(PlayerEvent):
     name = "player.stopped"
 
-class NewPlayerEvent(Message):
+class NewPlayerEvent(PlayerEvent):
     name = "player_manager.new_player"
 
     def __init__(self, player):

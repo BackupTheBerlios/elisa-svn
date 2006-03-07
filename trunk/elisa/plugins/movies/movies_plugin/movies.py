@@ -99,5 +99,9 @@ class MoviesTreePlugin(TreePlugin):
         self.get_application().set_background_from_surface(surface)
 
     def play_parent_movie(self, surface):
-        pass
+        menu_renderer = self.get_application().get_menu_renderer()
+        menu_item = menu_renderer.get_menuitem_from_surface(surface)
+        parent_item = menu_item.get_parent()
+        parent_surface = menu_renderer.get_surface_from_menuitem(parent_item)
+        self.play_movie(parent_surface)
     

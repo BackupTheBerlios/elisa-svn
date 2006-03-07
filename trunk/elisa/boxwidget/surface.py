@@ -4,6 +4,7 @@ from elisa.framework.log import Logger
 from elisa.framework.message_bus import MessageBus
 
 import elisa.utils.misc
+import time
 
 class Surface(object):  
     """
@@ -181,6 +182,10 @@ class Surface(object):
             
         for surface in self._surface_list:
             surface.refresh()
+
+        player = self.get_player()
+        if player:
+            player.refresh()
                     
     def add_surface(self, surface):
         self._logger.debug('Surface.add_surface(' + str(surface) + ')', self)
