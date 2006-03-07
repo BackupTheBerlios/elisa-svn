@@ -64,7 +64,12 @@ class Surface(object):
         self._logger.debug('Surface.on_message(' + str(message) + ')', self)
         return True
     
-    def close(self): pass
+    def close(self):
+        for surface in self._surface_list:
+            surface.close()
+            
+        if self._player != None:
+            self._player.close()
             
     def _get_surface_impl(self):
         self._logger.debug('Surface._get_surface_impl()', self)

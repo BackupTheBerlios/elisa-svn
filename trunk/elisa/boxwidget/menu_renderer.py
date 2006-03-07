@@ -10,6 +10,7 @@ class MenuRenderer(object):
         self._menu_widget = None
         self._menuitem_to_surface = {}
         self.surface_to_menuitem = {}
+        self._undeletable_surface = []
     
     def add_menu_item(self, menu_item, parent=None):
         if parent == None:
@@ -40,3 +41,8 @@ class MenuRenderer(object):
     def get_surface_from_menuitem(self, menuitem):
         return self._menuitem_to_surface[menuitem]
         
+    def set_surface_deletable_state(self, surface, state):
+        if state == True and surface in self._undeletable_surface:
+            self._undeletable_surface.remove(surface)
+        elif state == False and surface not in self._undeletable_surface:
+            self._undeletable_surface.append(surface)

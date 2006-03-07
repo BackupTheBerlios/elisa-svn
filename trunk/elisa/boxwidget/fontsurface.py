@@ -64,6 +64,8 @@ class FontSurface(object):
         self._font_impl.set_alpha_level(level)
 
     
+    def close(self): pass
+    
     def set_size(self, width, height):
         """
         define the size in 2D plan

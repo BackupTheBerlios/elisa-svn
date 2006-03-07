@@ -90,6 +90,9 @@ class Window(object):
         #FIXME : close also added surface
         self._logger.debug('Window.close()', self)
         reactor.stop()
+
+        for surface in self._surface_list:
+            surface.close()
   
     def on_load(self):
         """
