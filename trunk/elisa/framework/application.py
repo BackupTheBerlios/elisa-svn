@@ -32,10 +32,11 @@ class Application(window.Window):
 
         logger.info("Using config file : %s" % config.get_filename())
 
-
         window.Window.__init__(self)
+        self._plugins = {}
         self._plugin_tree_list = []
         self._player_manager = player.PlayerManager()
+        
         self._player_surface = surface_player.SurfacePlayer(None)
         self._player_surface.set_location(0, 0, 0)
         self._player_surface.set_size(800, 600)
@@ -84,18 +85,24 @@ class Application(window.Window):
             exception_hook.set_exception_hook(mail_from, mail_to,
                                               mail_subject, smtp_server)
 
-    def load_plugins(self, plugin_names=None):
-        """ Add the plugins given their name. If no argument supplied,
-        we load the plugins referenced in the 'general' section of the config
+    def load_plugins(self):
 
+        for entry_point in ( 'plugins.data', 'plugins',):
+            self.load_plugins_for_entry_point('elisa.%s' % entry_point)
+
+    def load_plugins_for_entry_point(self, entry_point_name='elisa.plugins'):
+        """ Add the plugins given their entry point name.
         """
 
         logger = log.Logger()
-        
-        if not plugin_names:
-            plugin_names = self.get_config().get_option('plugins', default=[])
 
-        for entrypoint in pkg_resources.iter_entry_points('elisa.plugins'):
+        # drop the first part of the entry_point name
+        # elisa.plugins => plugins
+        conf_plugins_name = '.'.join(entry_point_name.split('.')[1:])
+        
+        plugin_names = self.get_config().get_option(conf_plugins_name, default=[])
+        
+        for entrypoint in pkg_resources.iter_entry_points(entry_point_name):
             if entrypoint.name not in plugin_names:
                 continue
             try:
@@ -110,24 +117,30 @@ class Application(window.Window):
             assert issubclass(plugin_class, Plugin), \
                    '%r is not a valid Plugin!' % plugin_class
 
-            self.register_plugin(plugin_class(self))
+            self.register_plugin(entry_point_name, plugin_class(self))
             logger.info("Loaded the plugin '%s'" % entrypoint.name)
 
-        # compare the loaded plugins with desired plugins to load
-        loaded = [ plugin.get_name() for plugin in self._plugin_tree_list ]
+        loaded = [ ]
+        for entry_point, plugins in self.get_plugins().iteritems():
+            loaded.extend(plugins)
+        loaded = [ p.get_name() for p in loaded ]
+        
         s1 = Set(loaded)
         s2 = Set(plugin_names)
         if not s2.issubset(s1):
             logger.info("Plugins not found : %s" % ', '.join(list(s2-s1)))
-
-        # re-order plugins list to match the order in config
-        mapped_plugins = dict([ (p.get_name(), p) for p in self._plugin_tree_list ])
-        self._plugin_tree_list = [ mapped_plugins[name] for name in plugin_names ]
             
     def create_menu(self):
         """Create menu from plugin list
         """
         self._menu_renderer = menu_renderer.MenuRenderer()
+
+        main_plugins = self.get_plugins()['elisa.plugins']
+        plugin_names = self.get_config().get_option('plugins', default=[])
+        
+        # re-order plugins list to match the order in config
+        mapped_plugins = dict([ (p.get_name(), p) for p in main_plugins ])
+        self._plugin_tree_list = [ mapped_plugins[name] for name in plugin_names ]
 
         for tree in self._plugin_tree_list:
             new_item = tree.as_menu_item()
@@ -137,10 +150,17 @@ class Application(window.Window):
             new_item.set_icon_path(path)
             self._menu_renderer.add_menu_item(new_item)
    
-    def register_plugin(self, in_plugin):
+    def register_plugin(self, entry_point_name, plugin):
         """ Add the given plugin instance to our internal plugins list.
         """
-        self._plugin_tree_list.append(in_plugin)
+        try:
+            self._plugins[entry_point_name].append(plugin)
+        except KeyError:
+            self._plugins[entry_point_name] = [plugin, ]
+        #self._plugin_tree_list.append(plugin)
+
+    def get_plugins(self):
+        return self._plugins
         
     def run(self):
         """ Execute the application. Start main loop.

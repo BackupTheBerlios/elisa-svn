@@ -1,4 +1,5 @@
 from elisa.framework import menu, log
+from elisa.framework import common
 
 from sets import Set
 import inspect
@@ -22,6 +23,28 @@ class IPlugin:
     You can declare the default methods each plugin should implement here.
     """
 
+
+class ExtensionPoint(property):
+
+    def __init__(self, interface):
+        property.__init__(self, fget=self.get_extensions)
+        self.interface = interface
+
+    def _get_cached_extensions(self):
+        if not hasattr(self, '_matched_extensions'):
+            appli = common.get_application()
+            self._matched_extensions = []
+            for entry_point_name, plugins in appli.get_plugins().iteritems():
+                for plugin in plugins:
+                    if plugin.implements(self.interface):
+                        self._matched_extensions.append(plugin)
+        return self._matched_extensions
+        
+    def get_extensions(self, master_plugin):
+        extensions = self._get_cached_extensions()
+        for extension in extensions:
+            extension.set_master_plugin(master_plugin)
+        return extensions
     
 class InterfaceChecker(type):
     """
@@ -68,6 +91,7 @@ class Plugin(object):
         Constructor
         """
         self.set_application(application)
+        self.set_master_plugin(None)
         self.logger = log.Logger()
         self.load_config()
 
@@ -105,6 +129,7 @@ class Plugin(object):
     def get_name(self):
         return self.name
 
+    @classmethod
     def implements(cls, interface):
         """
         Check the class implements the given interface which is searched
@@ -136,8 +161,12 @@ class Plugin(object):
             return False
 
         return find_interface(interface, cls.__implements__)
-    
-    implements = classmethod(implements)
+
+    def set_master_plugin(self, master):
+        self._master = master
+        
+    def get_master_plugin(self):
+        return self._master
     
 
 
@@ -150,9 +179,6 @@ class TreePlugin(Plugin, menu.MenuTree):
         """
         Plugin.__init__(self, application)
         menu.MenuTree.__init__(self)
-
-    def __repr__(self):
-        return menu.MenuTree.__repr__(self)
 
 class CustomPlugin(Plugin):
     " custom interface Plugin Class "

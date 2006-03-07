@@ -85,7 +85,7 @@ class Player:
         caps = VIDEO_CAPS
         
         self._sink = VideoSinkBin(caps)
-        #self._playbin.set_property("video-sink", self._sink)
+        self._playbin.set_property("video-sink", self._sink)
 
         if self._uri:
             self.play_uri(self._uri)

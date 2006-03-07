@@ -11,5 +11,5 @@ def file_is_picture(filename):
     return file_extension_matches(filename,('jpg', 'png', 'jpeg', 'gif'))
 
 def file_is_movie(filename):
-    return file_extension_matches(filename,('avi',))
+    return file_extension_matches(filename,('avi','mov'))
     
