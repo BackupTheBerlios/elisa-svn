@@ -2,7 +2,7 @@ from elisa.skins.default_skin import treelevel
 from elisa.boxwidget import events, surface
 from elisa.framework import message_bus, common
 
-class Tree(surface.Surface):
+class DefaultMenuWidget(surface.Surface):
 
     def __init__(self, menutree_root, name):
         surface.Surface.__init__(self, name)

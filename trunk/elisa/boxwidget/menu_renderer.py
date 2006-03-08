@@ -1,4 +1,4 @@
-from elisa.skins.default_skin.tree import Tree
+from elisa.skins.default_skin.default_menu_widget import DefaultMenuWidget
 from elisa.skins.default_skin.treeitem import TreeItem
 from elisa.framework.menu import MenuTree
 
@@ -8,6 +8,7 @@ class MenuRenderer(object):
         self._menu_tree = MenuTree('root')
         #self._menu_widget = Tree(self._menu_tree, "main menu renderer")
         self._menu_widget = None
+        self._skin = skin
         self._menuitem_to_surface = {}
         self.surface_to_menuitem = {}
     
@@ -21,7 +22,10 @@ class MenuRenderer(object):
     def get_menu_widget(self):
         #FIXME: created here because I can't refresh data after creation
         if self._menu_widget == None:
-            self._menu_widget = Tree(self._menu_tree, "main menu renderer")
+            if self._skin == "MCE":
+                self._menu_widget = MCEButton()
+            else:
+                self._menu_widget = DefaultMenuWidget(self._menu_tree, "main menu renderer")
             
         return self._menu_widget
         
