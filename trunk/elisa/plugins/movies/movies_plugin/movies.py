@@ -27,8 +27,8 @@ class MoviesTreePlugin(TreePlugin):
         TreePlugin.__init__(self, _application)
         self.set_short_name("videos")
 
-        folder_image = 'elisa/skins/default_skin/default_pictures/folder.png'
-        movie_image = 'elisa/skins/default_skin/default_pictures/movie.png'
+        folder_image = 'elisa/skins/default_skin/pictures/folder.png'
+        movie_image = 'elisa/skins/default_skin/pictures/movie.png'
         locations = self.get_config().get('locations')
         
         for data_loader in self.data_access:
@@ -43,11 +43,11 @@ class MoviesTreePlugin(TreePlugin):
     def add_action_menu(self, menu_item):
         
         play = MenuItem(short_name="Play")
-        play.set_icon_path('elisa/skins/default_skin/default_pictures/rightarrow.png')
+        play.set_icon_path('elisa/skins/default_skin/pictures/rightarrow.png')
         play.set_action_callback(self.play_parent_movie)
         
         remove = MenuItem(short_name="Remove")
-        remove.set_icon_path('elisa/skins/default_skin/default_pictures/trash.png')
+        remove.set_icon_path('elisa/skins/default_skin/pictures/trash.png')
 
         menu_item.add_item(play)
         menu_item.add_item(remove)

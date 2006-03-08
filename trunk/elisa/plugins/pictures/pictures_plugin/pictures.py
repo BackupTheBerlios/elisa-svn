@@ -19,7 +19,7 @@ class PicturesTreePlugin(TreePlugin):
         TreePlugin.__init__(self, _application)
         self.set_short_name("pictures")
         
-        folder_image = 'elisa/skins/default_skin/default_pictures/folder.png'
+        folder_image = 'elisa/skins/default_skin/pictures/folder.png'
         locations = self.get_config().get('locations')
         
         for data_loader in self.data_access:

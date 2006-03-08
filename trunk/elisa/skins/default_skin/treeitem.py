@@ -11,7 +11,7 @@ class TreeItem(surface.Surface):
         self._arrow_surface.set_back_color(255,255,255)
         self._arrow_surface.set_location(14,128,2.3)
         self._arrow_surface.set_size(100,20)
-        self._arrow_surface.set_background_from_file("elisa/skins/default_skin/default_pictures/downarrow.png")
+        self._arrow_surface.set_background_from_file("elisa/skins/default_skin/pictures/downarrow.png")
         self.add_surface(self._arrow_surface)
         self._font = font
         self.set_status(0)
