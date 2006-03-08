@@ -56,6 +56,10 @@ class _PlayerManager:
     def refresh(self):
         for p in self.players:
             p.refresh()
+    
+    def close(self):
+         for p in self.players:
+            p.close()       
             
     def get_player(self, uri):
         for p in self.players:

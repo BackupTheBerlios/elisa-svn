@@ -176,6 +176,7 @@ class Application(window.Window):
         """ Close the application. Good idea to save the configuration
         here, since it's probable it has been updated.
         """
+        self._player_manager.close()
         window.Window.close(self)
         self.get_config().write()
         
