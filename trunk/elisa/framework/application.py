@@ -130,12 +130,13 @@ class Application(window.Window):
         """
         self._menu_renderer = menu_renderer.MenuRenderer()
 
-        main_plugins = self.get_plugins()['elisa.plugins']
+        main_plugins = self.get_plugins().get('elisa.plugins',[])
         plugin_names = self.get_config().get_option('plugins', default=[])
         
         # re-order plugins list to match the order in config
         mapped_plugins = dict([ (p.get_name(), p) for p in main_plugins ])
-        self._plugin_tree_list = [ mapped_plugins[name] for name in plugin_names ]
+        self._plugin_tree_list = [ mapped_plugins[name] for name in plugin_names
+                                   if name in mapped_plugins.keys() ]
 
         for tree in self._plugin_tree_list:
             new_item = tree.as_menu_item()
