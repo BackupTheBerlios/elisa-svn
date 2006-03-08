@@ -4,22 +4,24 @@ from elisa.framework import message_bus, common
 
 class DefaultMenuWidget(surface.Surface):
 
-    def __init__(self, menutree_root, name):
+    def __init__(self, root_menuitem_list, name):
         surface.Surface.__init__(self, name)
 
         self._appli = common.get_application()
         self._drawing_next_level = False
         self._drawing_previous_level = False
         self._level_to_draw = None
-        self.hide()
+        self.set_alpha_level(0)
+        self.set_size(500, 100)
         
         self._treelevel_surface_list = []
-        _root_treelevel_surface = treelevel.TreeLevel(menutree_root.get_items(), "treelevel rank 0")
+        _root_treelevel_surface = treelevel.TreeLevel(root_menuitem_list, "treelevel rank 0")
         self._treelevel_surface_list.append(_root_treelevel_surface)
         self._current_level_id = 0
         self.draw_level(_root_treelevel_surface)
         self._y_init = 0
         self.add_surface(_root_treelevel_surface)
+        self.set_initial_location(105.0, 450.0, 2.0)
     
     def get_current_level_id(self):
         return self._current_level_id()

@@ -2,7 +2,7 @@
 from elisa.framework import config, log, menu, message_bus, common
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
-from elisa.boxwidget import window, surface_player, menu_renderer
+from elisa.boxwidget import window, surface_player, menu_renderer, events
 from elisa.player import player
 
 from sets import Set
@@ -35,16 +35,31 @@ class Application(window.Window):
         window.Window.__init__(self)
         self._plugins = {}
         self._plugin_tree_list = []
+        self._root_menuitem_list = []
         self._player_manager = player.PlayerManager()
         
+        self.load_plugins()
+        self.create_menu()
+        self._menu_renderer = menu_renderer.MenuRenderer()
+        self._menu_renderer.init_root_level(self._root_menuitem_list)
+        
+        self._create_background()
+        
+    def _create_background(self):
+        
         self._background_surface = surface_player.SurfacePlayer(None)
-        self._background_surface.set_location(0, 0, 0)
+        self._background_surface.set_location(0, 0, -0.1)
         self._background_surface.set_size(800, 600)
         self._background_surface.set_back_color(0, 0, 0)
         self.add_surface(self._background_surface)
+               
+        self._background_image = self._menu_renderer.get_skin_pictures('BACKGROUND_PICTURE')
         
-        self._menu_renderer = None
-
+        if self._background_image != None:
+            self._background_surface.set_background_from_file(self._background_image)
+            self._background_surface.set_back_color (255, 255, 255)    
+  
+        
     def set_background_texture(self, texture):
         self._background_surface.set_back_color (255, 255, 255)
         self._background_surface.set_texture(texture)
@@ -128,7 +143,6 @@ class Application(window.Window):
     def create_menu(self):
         """Create menu from plugin list
         """
-        self._menu_renderer = menu_renderer.MenuRenderer()
 
         main_plugins = self.get_plugins().get('elisa.plugins',[])
         plugin_names = self.get_config().get_option('plugins', default=[])
@@ -144,7 +158,7 @@ class Application(window.Window):
             #       use pkg_resources to find icon's path
             path = 'elisa/skins/default_skin/pictures/%s.png' % tree.get_name()
             new_item.set_icon_path(path)
-            self._menu_renderer.add_menu_item(new_item)
+            self._root_menuitem_list.append(new_item)
    
     def register_plugin(self, entry_point_name, plugin):
         """ Add the given plugin instance to our internal plugins list.
@@ -162,8 +176,6 @@ class Application(window.Window):
         """ Execute the application. Start main loop.
         """
         self._menu_widget = self._menu_renderer.get_menu_widget()
-        self._menu_widget.set_size(500, 100)
-        self._menu_widget.set_initial_location(105.0, 450.0, 2.0)
         self.add_surface(self._menu_widget)
         
         window.Window.run(self)
@@ -181,3 +193,14 @@ class Application(window.Window):
         window.Window.close(self)
         self.get_config().write()
         
+
+    def on_message(self, receiver, message, sender):
+            
+        if isinstance(message, events.InputEvent):
+            if message.get_simple_event() == events.SE_MENU:
+                if self._menu_widget.visible(True) == True:
+                    self._menu_widget.hide(True)
+                else:
+                    self._menu_widget.show(True)
+                
+        return window.Window.on_message(self, receiver, message, sender)

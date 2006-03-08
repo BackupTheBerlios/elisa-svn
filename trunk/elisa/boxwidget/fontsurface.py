@@ -148,12 +148,12 @@ class FontSurface(object):
         self._logger.debug_verbose_verbose('Font.get_window()', self)
         return self._window
         
-    def hide(self):
+    def hide(self, not_used=None):
         self._logger.debug('Font.hide()', self)
         self._font_impl.hide()
         self._visible = False
         
-    def show(self):
+    def show(self, not_used=None):
         self._logger.debug('Font.show()', self)
         self._font_impl.show()
         self._visible = True

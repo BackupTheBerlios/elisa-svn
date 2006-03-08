@@ -43,7 +43,6 @@ class TreeLevel(surface.Surface):
         #self._right_arrow_surface.set_background_from_file("elisa/skins/default_skin/default_pictures/rightarrow.png")
         #self.add_surface(self._right_arrow_surface)
         
-        self._font = None
         self._font = fontsurface.FontSurface('treelevel font')
         self._font.set_font_size(36)
         self._font.hide()

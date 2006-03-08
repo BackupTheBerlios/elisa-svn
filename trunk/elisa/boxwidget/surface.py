@@ -101,20 +101,14 @@ class Surface(object):
     def create_texture_from_picture(self, path_and_filename):
         if path_and_filename != None: 
             _picture_file = open(path_and_filename)
-            #Alpha is allowed only for png images
-            s = len(path_and_filename)
-            ext = path_and_filename[s-3:s]
-            if ext not in ('PNG','png'):
-                use_alpha=False
-            else:
-                use_alpha=True
+            _buffer = _picture_file.tostring("raw", _picture_file.mode, 0, -1)
             
-            if use_alpha == True:
-                _buffer = _picture_file.tostring("raw", "RGBA", 0, -1)
+            if _picture_file.mode == "RGBA":
+                use_alpha = True
             else:
-                _buffer = _picture_file.tostring("raw", "RGB", 0, -1)
+                use_alpha = False
 
-            if self._texture == None or self.texture.get_size() != (_picture_file.size[0], _picture_file.size[1]):
+            if self._texture == None or self._texture.get_size() != (_picture_file.size[0], _picture_file.size[1]):
                 _texture = texture.Texture()
                 _texture.init_texture(_picture_file.size[0], _picture_file.size[1], _buffer, use_alpha)
             else:

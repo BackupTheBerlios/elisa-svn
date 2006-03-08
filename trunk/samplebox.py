@@ -18,9 +18,7 @@ class BoxApplication(application.Application): pass
 
 if __name__ == '__main__':
     main = BoxApplication()
-    
-    main.load_plugins()
-    main.create_menu()
+
     main.run()
 
     
