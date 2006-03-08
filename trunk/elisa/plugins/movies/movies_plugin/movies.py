@@ -52,17 +52,14 @@ class MoviesTreePlugin(TreePlugin):
         menu_item.add_item(play)
         menu_item.add_item(remove)
 
-    def play_movie(self, surface):
-        menu_item = surface.get_menuitem_data()
-        #parent = menu_item.get_parent()
-        #import pdb; pdb.set_trace()
+    def play_movie(self, menu_item):
         menu_renderer = self.get_application().get_menu_renderer()
+        surface = menu_renderer.get_surface_from_menuitem(menu_item)
         surface.set_background_from_file(menu_item.get_target_path())
         self.get_application().set_background_texture(surface.get_texture())
 
-    def play_parent_movie(self, surface):
+    def play_parent_movie(self, menu_item):
         menu_renderer = self.get_application().get_menu_renderer()
-        menu_item = menu_renderer.get_menuitem_from_surface(surface)
         parent_item = menu_item.get_parent()
         parent_surface = menu_renderer.get_surface_from_menuitem(parent_item)
         self.play_movie(parent_surface)

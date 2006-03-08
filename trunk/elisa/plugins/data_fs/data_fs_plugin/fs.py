@@ -28,32 +28,30 @@ class DataFSPlugin(Plugin):
         """    
         for filename in filenames:
             path = os.path.join(dir_name, filename)
+            path = os.path.abspath(path)
 
             if self._match_hidden(path):
                 continue
 
-            path = os.path.abspath(path)
-            # FIXME: do not work with directory with same name in different level
             if os.path.isdir(path) or self.item_filter(path):
                 item = MenuItem(short_name=os.path.basename(path))
                 if os.path.isdir(path):
                     icon_path = self.folder_icon_path
                 else:
                     icon_path = self.item_icon_path or path
-                    item.set_target_path(path)
                     item.set_action_callback(self.item_action)
                     
+                item.set_target_path(path)
                 item.set_icon_path(icon_path)
 
                 if self.item_filter(path) and self.action_menu:
                     self.action_menu(item)
                 
                 master = self.get_master_plugin()
-                parent = master.get_item_with_name(os.path.basename(dir_name))
+                parent = master.get_item_with_target(os.path.dirname(path))
                 if not parent:
                     parent = master
                 parent.add_item(item)
                     
     def _match_hidden(self, path):
         return re.match(".*/\..*", path)
-    

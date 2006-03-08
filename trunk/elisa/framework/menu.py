@@ -34,24 +34,24 @@ class Mixin:
         index = self._items.index(item)
         del self._items[index]
 
-    def get_item_with_name(self, name):
-        """look for a MenuTree/MenuItem with given name in the
+    def get_item_with_target(self, name):
+        """look for a MenuTree/MenuItem with given target path in the
         children list. This method is recursive
         """
         for item in self.get_items():
-            found = item.get_item_with_name(name)
+            found = item.get_item_with_target(name)
             if not found:
-                if item.get_short_name() == name:
+                if item.get_target_path() == name:
                     found = item
             if found:
                 return found
 
         return None
-
-##     def __repr__(self):
-##         items = self.get_items()
-##         name = self.get_short_name()
-##         return "%s (%s items)" % (name, len(items))
+        
+    def __repr__(self):
+        items = self.get_items()
+        name = self.get_short_name()
+        return "%s (%s items)" % (name, len(items))
 
     def get_tree_from_item(self, parent_item=None, root_level=False):
         """ Create a new MenuTree starting at parent and including all
@@ -186,14 +186,6 @@ class MenuItem(Mixin):
         """helpstring shown on box when item is selected"""        
         return self._help_string
 
-##     def set_picture_path(self, path):
-##         """complete path of picture shown in menu"""        
-##         self._picture_path = path
-
-##     def get_picture_path(self):
-##         """complete path of picture shown in menu"""
-##         return self._picture_path
-
     def set_icon_path(self, path):
         """ """
         self._icon_path = path
@@ -217,6 +209,7 @@ class MenuItem(Mixin):
     def fire_selected(self, *args):
         """message called when menu item is selected"""
         if callable(self.selected_callback):
+            args = args or (self,)
             self.selected_callback(*args)
 
     def set_action_callback(self, callback):
@@ -226,6 +219,7 @@ class MenuItem(Mixin):
     def fire_action(self, *args):
         """message called when menu item is activated"""
         if callable(self.action_callback):
+            args = args or (self,)
             self.action_callback(*args)
         
     def set_unselected_callback(self, callback):
@@ -235,6 +229,7 @@ class MenuItem(Mixin):
     def fire_unselected(self, *args):
         """message called when menu item is unselected"""
         if callable(self.unselected_callback):
+            args = args or (self,)
             self.unselected_callback(*args)
 
 if __name__ == '__main__':

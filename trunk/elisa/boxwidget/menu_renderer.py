@@ -39,11 +39,7 @@ class MenuRenderer(object):
         del self.surface_to_menuitem[surface]
 
     def get_menuitem_from_surface(self, surface):
-        if surface in self.surface_to_menuitem:
-            return self.surface_to_menuitem[surface]
-        return None
+        return self.surface_to_menuitem.get(surface)
         
     def get_surface_from_menuitem(self, menuitem):
-        if menuitem in self._menuitem_to_surface:
-            return self._menuitem_to_surface[menuitem]
-        return None
+        return self._menuitem_to_surface.get(menuitem)

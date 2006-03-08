@@ -36,7 +36,7 @@ class DefaultMenuWidget(surface.Surface):
                 if message.get_simple_event() == events.SE_DOWN:
                     self.select_next_level()
                 if message.get_simple_event() == events.SE_OK:
-                    selected_treeitem_data.fire_action(selected_treeitem_surface)
+                    selected_treeitem_data.fire_action(selected_treeitem_data)
 ##             elif isinstance(message, message_bus.ActionMessage):
 ##                 if sender == _selected_treeitem_data:
 ##                     if message.get_action() == 'SHOW_PICTURE':

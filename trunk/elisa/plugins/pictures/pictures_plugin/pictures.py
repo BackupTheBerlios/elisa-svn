@@ -29,5 +29,8 @@ class PicturesTreePlugin(TreePlugin):
                                           folder_icon_path=folder_image,
                                           item_action=self.show_picture)
 
-    def show_picture(self, surface):
-        self.get_application().set_background_texture(surface.get_texture())
+    def show_picture(self, menu_item):
+        appli = self.get_application()
+        surface = appli.get_menu_renderer().get_surface_from_menuitem(menu_item)
+        #import pdb; pdb.set_trace()
+        appli.set_background_texture(surface.get_texture())
