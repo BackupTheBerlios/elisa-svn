@@ -23,7 +23,11 @@ class Mixin:
             return True
         return False
 
-    def insert_item(self, index, item):
+    def insert_item(self, index, item, parent=None):
+        if not parent:
+            parent = self
+            
+        item.set_parent(parent)        
         self._items.insert(index, item)
         
     def add_item(self, item, parent=None):
@@ -42,6 +46,12 @@ class Mixin:
         index = self._items.index(item)
         del self._items[index]
 
+    def del_item_with_target(self, name):
+        item = self.get_item_with_target(name)
+        if item:
+            self.del_item(item)
+        return item is not None
+
     def get_item_with_target(self, name):
         """look for a MenuTree/MenuItem with given target path in the
         children list. This method is recursive
@@ -56,10 +66,10 @@ class Mixin:
 
         return None
         
-    def __repr__(self):
-        items = self.get_items()
-        name = self.get_short_name()
-        return "%s (%s items)" % (name, len(items))
+##     def __repr__(self):
+##         items = self.get_items()
+##         name = self.get_short_name()
+##         return "%s (%s items)" % (name, len(items))
 
     def get_tree_from_item(self, parent_item=None, root_level=False):
         """ Create a new MenuTree starting at parent and including all
