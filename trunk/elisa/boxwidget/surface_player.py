@@ -1,6 +1,7 @@
 
 from elisa.boxwidget.surface import Surface
 from elisa.player.player import Player
+from elisa.framework import common
 
 class SurfacePlayer(Surface, Player):  
 
@@ -17,7 +18,9 @@ class SurfacePlayer(Surface, Player):
         return (width, height)
     
     def fullscreen(self):
-        pass
+        application = common.get_application()
+        application.set_background_texture(self.get_texture())
+
 
 class MiniSurfacePlayer(SurfacePlayer):
 

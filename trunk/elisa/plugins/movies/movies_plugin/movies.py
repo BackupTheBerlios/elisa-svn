@@ -2,6 +2,7 @@
 from elisa.framework.plugin import IPlugin, TreePlugin, ExtensionPoint
 from elisa.framework.extension_points import IDataAccess
 from elisa.framework.menu import MenuItem
+
 import elisa.utils.misc
 
 class MoviesTreePlugin(TreePlugin):
@@ -38,6 +39,7 @@ class MoviesTreePlugin(TreePlugin):
                                           folder_icon_path=folder_image,
                                           item_icon_path=movie_image,
                                           item_action=self.play_movie,
+                                          item_focus=self.focus_update,
                                           action_menu=self.add_action_menu)
 
     def add_action_menu(self, menu_item):
@@ -56,11 +58,24 @@ class MoviesTreePlugin(TreePlugin):
         menu_renderer = self.get_application().get_menu_renderer()
         surface = menu_renderer.get_surface_from_menuitem(menu_item)
         surface.set_background_from_file(menu_item.get_target_path())
+        #surface.fullscreen()
         self.get_application().set_background_texture(surface.get_texture())
 
     def play_parent_movie(self, menu_item):
         menu_renderer = self.get_application().get_menu_renderer()
         parent_item = menu_item.get_parent()
-        parent_surface = menu_renderer.get_surface_from_menuitem(parent_item)
-        self.play_movie(parent_surface)
-    
+        self.play_movie(parent_item)
+
+    def focus_update(self, menu_item, state):
+        
+        menu_renderer = self.get_application().get_menu_renderer()
+        surface = menu_renderer.get_surface_from_menuitem(menu_item)
+        
+        if surface and surface.background_is_movie():
+            path_and_file_name = surface.get_background_file()
+            manager = self.get_application().get_player_manager()
+            if state:
+                manager.un_mute_player(path_and_file_name)
+            else:
+                manager.mute_player(path_and_file_name)
+        

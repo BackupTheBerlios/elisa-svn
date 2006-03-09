@@ -38,6 +38,9 @@ class TreeItem(surface.Surface):
         
     def set_status(self, in_status):
         self._status = in_status
+
+        menu_item = self.get_menuitem_data()
+        menu_item.fire_focus_callback(menu_item, in_status)
         
         if in_status == 0:
             self.set_alpha_level(35)

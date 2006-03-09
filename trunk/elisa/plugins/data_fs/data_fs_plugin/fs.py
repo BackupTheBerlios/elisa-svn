@@ -9,7 +9,9 @@ class DataFSPlugin(Plugin):
 
     name = 'fs'
 
-    def load_location(self, name, item_filter=None, folder_icon_path=None,
+    hidden_file_pattern = re.compile(".*/\..*")
+
+    def load_location(self, name, item_filter=None, folder_icon_path=None, item_focus=None,
                       item_action=None, item_icon_path=None, action_menu=None):
         if not os.path.isdir(name):
             return
@@ -19,6 +21,7 @@ class DataFSPlugin(Plugin):
         self.item_action = item_action
         self.item_icon_path = item_icon_path
         self.action_menu = action_menu
+        self.item_focus = item_focus
         os.path.walk(name, self._load_sub_directory, None)
 
     def _load_sub_directory(self, app, dir_name, filenames):
@@ -30,7 +33,7 @@ class DataFSPlugin(Plugin):
             path = os.path.join(dir_name, filename)
             path = os.path.abspath(path)
 
-            if self._match_hidden(path):
+            if self.hidden_file_pattern.match(path):
                 continue
 
             if os.path.isdir(path) or self.item_filter(path):
@@ -40,6 +43,7 @@ class DataFSPlugin(Plugin):
                 else:
                     icon_path = self.item_icon_path or path
                     item.set_action_callback(self.item_action)
+                    item.set_focus_callback(self.item_focus)
                     
                 item.set_target_path(path)
                 item.set_icon_path(icon_path)
@@ -52,6 +56,3 @@ class DataFSPlugin(Plugin):
                 if not parent:
                     parent = master
                 parent.add_item(item)
-                    
-    def _match_hidden(self, path):
-        return re.match(".*/\..*", path)

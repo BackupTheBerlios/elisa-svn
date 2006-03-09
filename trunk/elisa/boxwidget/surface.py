@@ -106,6 +106,9 @@ class Surface(object):
             _texture = self.create_texture_from_picture(path_and_file_name)
             self.set_texture(_texture)
             self._background_is_movie = False
+
+    def background_is_movie(self):
+        return self._background_is_movie
     
     def create_texture_from_picture(self, path_and_filename):
         if path_and_filename != None: 

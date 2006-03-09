@@ -129,7 +129,8 @@ class MenuItem(Mixin):
         self.set_selected_callback(None)
         self.set_unselected_callback(None)
         self.set_action_callback(None)
-
+        self.set_focus_callback(None)
+        
     def on_message(self, receiver, message, sender):
         return True
         
@@ -231,6 +232,15 @@ class MenuItem(Mixin):
         if callable(self.unselected_callback):
             args = args or (self,)
             self.unselected_callback(*args)
+
+    def set_focus_callback(self, callback):
+        self.focus_callback = callback
+
+    def fire_focus_callback(self, *args):
+        if callable(self.focus_callback):
+            args = args or (self,)
+            self.focus_callback(*args)
+            
 
 if __name__ == '__main__':
     root = MenuTree()

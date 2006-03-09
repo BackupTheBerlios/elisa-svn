@@ -4,15 +4,9 @@ pygst.require('0.10')
 import gst
 import gobject, sys, os
 from mutex import mutex
+
 from elisa.boxwidget import texture
-
-# XXX: this is crap
-try:
-    from elisa.framework.message_bus import MessageBus
-except ImportError:
-    sys.path.append(os.path.abspath("%s/../../.." % __file__))
-    from elisa.framework.message_bus import MessageBus
-
+from elisa.framework.message_bus import MessageBus
 from elisa.player import events
 from elisa.framework import log
 
@@ -43,26 +37,29 @@ class _PlayerManager:
     def add_player(self, player):
         self.players.append(player)
         self.get_bus().send_message(events.NewPlayerEvent(player))
+
+    def get_players(self):
+        return self.players
         
     def fullscreen(self, player):
         """ Switch the player to fullscreen mode and suspend all other players.
         """
-        for p in self.players:
+        for p in self.get_players():
             if p != player and p.get_state() == p.PLAYING:
                 p.save()
                 p.stop()
         player.fullscreen()
 
     def refresh(self):
-        for p in self.players:
+        for p in self.get_players():
             p.refresh()
     
     def close(self):
-         for p in self.players:
+         for p in self.get_players():
             p.close()       
             
     def get_player(self, uri):
-        for p in self.players:
+        for p in self.get_players():
             if p.get_uri() == uri:
                 return p
         new_p = Player(uri)
@@ -70,11 +67,23 @@ class _PlayerManager:
         return new_p
 
     def uri_is_attached(self, uri):
-        for p in self.players:
+        for p in self.get_players():
             if p.get_uri() == uri:
                 return True
         return False
-                               
+
+    def mute_player(self, uri):
+        player = self.get_player(uri)
+        if len(self.get_players()) > 1:
+            player.mute()
+
+    def un_mute_player(self, uri):
+        player = self.get_player(uri)
+        if len(self.get_players()) > 1:
+            player.un_mute()
+        
+
+    
 def PlayerManager():
     global _player_manager
     if not _player_manager:
@@ -125,11 +134,13 @@ class Player:
         capabilities.
         """
         position, duration = self.get_status()
-
         current_item = self.get_current_item()
+        volume = self.get_volume()
+        
         current_item.set_length(duration)
         current_item.set_status(position)
-
+        current_item.set_volume(volume)
+        
         #current_item.print_status()
 
         if self._texture.is_init()==False:
@@ -275,6 +286,30 @@ class Player:
                                    gst.SEEK_TYPE_SET, location,
                                    gst.SEEK_TYPE_NONE, 0)
 
+    def set_volume(self, volume):
+        item = self.get_current_item()
+        if item:
+            #if not volume:
+            item.save_volume()
+            item.set_volume(volume)
+            self._playbin.set_property('volume', volume)
+
+    def get_volume(self):
+        return self._playbin.get_property('volume')
+
+    def mute(self):
+        """ Mute the sound of the player
+        """
+        #self._playbin.set_property('volume', 0)
+        self.set_volume(0)
+        
+    def un_mute(self):
+        """ Un-Mute the sound of the player
+        """
+        self.set_volume(self.get_current_item().get_saved_volume())
+        #self._playbin.set_property('volume', self.get_current_item().get_saved_volume())
+
+        
     def save(self):
         """ Store informations about the current playing item in some
         instance variables:
@@ -390,6 +425,7 @@ class Playable:
         self._name = name
         self._contains_audio = contains_audio
         self._contains_video = contains_video
+        self._saved_volume = 1.0
         self.set_status(0)
         self.set_length(length)
         
@@ -398,6 +434,21 @@ class Playable:
         
     def get_id(self):
         return id(self)
+
+    def get_volume(self):
+        return self._volume
+
+    def set_volume(self, volume):
+        self._volume = volume
+
+    def save_volume(self):
+        volume = self.get_volume()
+        if volume:
+            self._saved_volume = volume
+
+    def get_saved_volume(self):
+        assert self._saved_volume
+        return self._saved_volume
 
     def get_name(self):
         return self._name
