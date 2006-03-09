@@ -18,6 +18,11 @@ class Mixin:
             self._items = []
         return self._items
     
+    def has_items(self):
+        if len(self._items)>0:
+            return True
+        return False
+        
     def add_item(self, item, parent=None):
         """ Add a new MenuTree/MenuItem in our children list and link
         the item with self

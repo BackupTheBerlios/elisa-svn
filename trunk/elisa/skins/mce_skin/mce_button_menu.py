@@ -2,10 +2,10 @@ from elisa.boxwidget import surface, fontsurface, events
 
 class MCEButtonMenu(surface.Surface):
 
-    def __init__(self, root_menuitem_list, name="mce menu button"):
+    def __init__(self, menuitem_list, name="mce menu button"):
         surface.Surface.__init__(self, name)
-        self._root_menuitem_list = root_menuitem_list
-        self._current_level_id = 0
+        self._menuitem_list = menuitem_list
+        self._current_level_rank = 1
         self._level_count = 0
         self._drawing_next_level = False
         self._drawing_previous_level = False
@@ -27,7 +27,7 @@ class MCEButtonMenu(surface.Surface):
         self.add_surface(self._button)
         
         _y = 0
-        for menuitem in self._root_menuitem_list:
+        for menuitem in self._menuitem_list:
             _ft = fontsurface.FontSurface(menuitem.get_short_name())
             _ft.set_text(menuitem.get_short_name())
             _ft.set_font_size(34)
@@ -48,21 +48,21 @@ class MCEButtonMenu(surface.Surface):
                     self.select_next_item()
                     
     def select_next_item(self):
-        if self._current_level_id +1 < self._level_count and self._drawing_next_level == False and self._drawing_previous_level == False:
+        if self._current_level_rank < self._level_count and self._drawing_next_level == False and self._drawing_previous_level == False:
             self._drawing_next_level = True
-            self._current_level_id += 1
+            self._current_level_rank += 1
     
     def select_previous_item(self):
-        if self._current_level_id  > 0 and self._drawing_next_level == False and self._drawing_previous_level == False:
+        if self._current_level_rank  > 1 and self._drawing_next_level == False and self._drawing_previous_level == False:
             self._drawing_previous_level = True
-            self._current_level_id -= 1
+            self._current_level_rank -= 1
         
     def refresh(self):
         surface.Surface.refresh(self)
         _step_scroll = 10
         _step_hide = 25
         if self._drawing_next_level == True:
-            _ymin = - 50 * self._current_level_id
+            _ymin = - 50 * (self._current_level_rank -1)
             (_x,_y,_z) = self._font_group.get_location()
             if _y > _ymin:
                 #print str(_y) + " min:" + str(_ymin)
@@ -72,8 +72,8 @@ class MCEButtonMenu(surface.Surface):
             else:
                 self._drawing_next_level = False
         elif self._drawing_previous_level == True:
-            if self._current_level_id > 0 : 
-                _ymin = 50 * (self._current_level_id -2)
+            if self._current_level_rank > 1 : 
+                _ymin = 50 * (self._current_level_rank -3)
             else:
                 _ymin = 0
                 
@@ -81,7 +81,7 @@ class MCEButtonMenu(surface.Surface):
             #print str(_y) + " min:" + str(_ymin)
             if _y < _ymin:
                 _y = _y +_step_scroll
-                if _y >= _ymin: _y = - 50 * (self._current_level_id)
+                if _y >= _ymin: _y = - 50 * (self._current_level_rank -1)
                 #print str(_y) + " min:" + str(_ymin)
                 self._font_group.set_location(_x, _y, _z)
             else:
@@ -117,9 +117,12 @@ class MCEButtonMenu(surface.Surface):
                 self.set_location(_x, _y, 0.1)
                 self._animate_show_in_progress = False
                    
-    def animate_hide(self):
+    def animate_before_hide(self):
         self._animate_hide_in_progress = True        
         
-    def animate_show(self):
+    def animate_before_show(self):
         surface.Surface.show(self,True)
         self._animate_show_in_progress = True
+        
+    def get_current_menuitem(self):
+        return self._menuitem_list[self._current_level_rank-1]

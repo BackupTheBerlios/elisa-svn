@@ -1,4 +1,5 @@
 from elisa.skins.mce_skin.mce_button_menu import MCEButtonMenu
+from elisa.skins.mce_skin.mce_browser import MCEBrowser
 from elisa.boxwidget import surface, events
 
 class MCESkin(surface.Surface):
@@ -18,13 +19,19 @@ class MCESkin(surface.Surface):
             
             if isinstance(message, events.InputEvent):
                 if message.get_simple_event() == events.SE_OK:
-                    if self._current_widget_rank < len(self._widget_stack):
-                        self._widget_stack[self._current_widget_rank-1].animate_hide()
-                        self._current_widget_rank += 1
-                        self._widget_stack[self._current_widget_rank-1].animate_show()
+                    _current_widget = self._widget_stack[self._current_widget_rank-1]
+                    _current_menuitem = _current_widget.get_current_menuitem()
+                    if _current_menuitem.has_items():
+                        _new_widget = MCEBrowser(_current_menuitem.get_items())
+                        self._widget_stack[self._current_widget_rank-1].animate_before_hide()
+                        self._widget_stack.append(_new_widget)
+                        self._current_widget_rank +=1
+                        self._widget_stack[self._current_widget_rank-1].animate_before_show()
                 if message.get_simple_event() == events.SE_BACK:
-                    if self._current_widget_rank > 1:
-                        self._widget_stack[self._current_widget_rank-1].animate_hide()
-                        self._current_widget_rank -= 1
-                        self._widget_stack[self._current_widget_rank-1].animate_show()
-                    
+                    if self._current_widget_rank >1:
+                        _previous_widget = self._widget_stack[self._current_widget_rank-1]
+                        _previous_widget.animate_before_hide()
+                        self._widget_stack.remove(_previous_widget)
+                        self._current_widget_rank -=1
+                        self._widget_stack[self._current_widget_rank-1].animate_before_show()
+                        
