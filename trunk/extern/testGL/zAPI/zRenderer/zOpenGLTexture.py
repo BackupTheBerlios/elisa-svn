@@ -48,14 +48,20 @@ class OpenGLTexture(object):
     def get_size(self):
         return (self._width, self._height)
    
-    def get_texture_id(self):
-        self._textureid
+    def get_texture_id(self):        
+        return self._textureid
    
+    def GetFormat(self):
+        return self._format
+        
     def set_texture(self):
         if self._texture_init == True:
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self._textureid)  
     
+    def is_init(self):
+        return self._texture_init
+
     def unset_texture(self):
         if self._texture_init == True:
             glDisable(GL_TEXTURE_2D)      

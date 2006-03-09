@@ -6,8 +6,10 @@ class _Base_Window_Impl(object):
     def refresh(self): pass
 
     def set_back_color(self, red, green, blue): pass
-
-    def set_background_from_file(self, path_and_filename=None): pass
+    
+    def set_texture(self, impl_texture): pass
+    
+    def set_background_from_buffer(self, buffer, width, height, flip = False): pass
         
     def close(self): pass
      
@@ -25,8 +27,6 @@ class _Base_Surface_Impl(object):
     def set_location(self, x, y, z): pass
     
     def set_back_color(self, Red, Green, Blue): pass
-
-    def set_background_from_file(self, path_and_filename=None): pass
     
     def set_alpha_level(self, level): pass
     
@@ -37,8 +37,6 @@ class _Base_Surface_Impl(object):
     def set_texture(self, impl_texture): pass
     
     def set_background_from_buffer(self, buffer, width, height, flip = False): pass
-    
-    def set_texture(self, texture): pass
     
   
 class _Base_EventsManager_Impl(object):

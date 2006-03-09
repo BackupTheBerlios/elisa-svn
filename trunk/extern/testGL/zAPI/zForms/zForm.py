@@ -18,6 +18,7 @@ class Form(zControl.Control):
         self._SortzOderDrawingBool = True
         self.FpsEnable = True
         self._wait = 0
+        self._background_control = None
         
         constants._SetForm(self)
         zControl.Control.__init__(self)
@@ -38,6 +39,12 @@ class Form(zControl.Control):
     
     def _GetRenderer(self):
         return self._Renderer
+    
+    def GetTexture(self):
+        return self._Renderer.GetTexture()
+    
+    def SetTexture(self,t):
+        self._Renderer.SetTexture(t)
         
     def _SortzOderDrawing(self):
         self._SortzOderDrawingBool = True
@@ -115,6 +122,9 @@ class Form(zControl.Control):
             self._ControlCollection.remove(ctrl)
         self._SortzOderDrawingBool = True
         ctrl._SetForm(None)
+    
+    def SetBackgroundControl(self, control):
+        self._background_control = control
         
     def Render(self):
         self.Draw()

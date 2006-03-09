@@ -23,11 +23,14 @@ class _testGL_Window_Impl(base_impl._Base_Window_Impl):
     def refresh(self):
         self._window_native.Refresh()
 
-    def set_back_color(self, red, green, blue):
+    def set_back_color(self, Red, Green, Blue):
         self._window_native.SetBackColor(Red, Green, Blue)
 
-    def set_background_from_file(self, path_and_file_name=None):
-        self._window_native.SetBackgroundImageFromFile(path_and_file_name)
+    def set_texture(self, impl_texture):
+        self._window_native.SetTexture(impl_texture.get_native_surface()) 
+        
+    def set_background_from_buffer(self, buffer, width, height, flip = False):
+        self._window_native.SetBackgroundImageFromBuffer(buffer, width, height, Flip=flip)
         
     def close(self):
         self._window_native.DisplayStats()
@@ -35,9 +38,7 @@ class _testGL_Window_Impl(base_impl._Base_Window_Impl):
     def add_surface(self, impl_surface):
         self._logger.debug('_testGL_Window_Impl.add_surface()', self)
         self._window_native.AddControl(impl_surface.get_native_surface())
-        #(_tx, _ty, _tz) = in_surface.GetAbsoluteLocation()
-        #self._surface_native.SetLocation(_tx, _ty, _tz)
-
+        
     def remove_surface(self, impl_surface):
         self._window_native.RemoveControl(impl_surface.get_native_surface())
 
@@ -60,9 +61,6 @@ class _testGL_Surface_Impl(base_impl._Base_Surface_Impl):
     
     def set_back_color(self, Red, Green, Blue):
         self._surface_native.SetBackColor(Red, Green, Blue)
-
-    def set_background_from_file(self, path_and_filename=None):
-        self._surface_native.SetBackgroundImageFromFile(path_and_filename, True)
         
     def set_alpha_level(self, level):
         self._surface_native.SetAlpha(level*2.55)
@@ -73,9 +71,6 @@ class _testGL_Surface_Impl(base_impl._Base_Surface_Impl):
 
     def show(self):
         self._surface_native.Show()
-        
-    def set_texture(self, impl_texture):
-        self._surface_native.set_texture( impl_surface.get_native_surface())  
         
     def set_background_from_buffer(self, buffer, width, height, flip = False):
         self._surface_native.SetBackgroundImageFromBuffer(buffer, width, height, Flip=flip)

@@ -3,7 +3,6 @@ from elisa.boxwidget import texture
 from elisa.player.player import Player
 from elisa.framework.log import Logger
 from elisa.framework.message_bus import MessageBus
-from Image import *
 from elisa.framework import common
 
 import elisa.utils.misc
@@ -103,31 +102,13 @@ class Surface(object):
             self.set_texture(p.get_texture())
             self._background_is_movie = True
         else:
-            _texture = self.create_texture_from_picture(path_and_file_name)
+            _texture = texture.Texture()
+            _texture.init_texture_from_picture(path_and_file_name)
             self.set_texture(_texture)
             self._background_is_movie = False
 
     def background_is_movie(self):
         return self._background_is_movie
-    
-    def create_texture_from_picture(self, path_and_filename):
-        if path_and_filename != None: 
-            _picture_file = open(path_and_filename)
-            _buffer = _picture_file.tostring("raw", _picture_file.mode, 0, -1)
-            
-            if _picture_file.mode == "RGBA":
-                use_alpha = True
-            else:
-                use_alpha = False
-
-            if self._texture == None or self._texture.get_size() != (_picture_file.size[0], _picture_file.size[1]):
-                _texture = texture.Texture()
-                _texture.init_texture(_picture_file.size[0], _picture_file.size[1], _buffer, use_alpha)
-            else:
-                self._texture.set_buffer(_ImageBuffer)
-                _texture = self._texture
-                
-        return _texture
         
     def set_background_from_buffer(self, buffer, width, height, flip):
          self._surface_impl.set_background_from_buffer(buffer, width, height, flip)

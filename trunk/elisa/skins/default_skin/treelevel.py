@@ -53,14 +53,8 @@ class TreeLevel(surface.Surface):
         
         _i = 10
         for item in self._menuitem_list:
-            s = treeitem.TreeItem(item, self._font)
+            s = treeitem.TreeItem(item, self._font, True)
             self._appli.get_menu_renderer().add_menuitem_surface(item, s)
-            if self._appli.get_player_manager().uri_is_attached(item.get_target_path()) == True:
-                #Movie is playing
-                p = self._appli.get_player_manager().get_player(item.get_target_path())
-                s.set_texture(p.get_texture())
-            else:
-                s.set_background_from_file(item.get_icon_path())
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
@@ -70,8 +64,8 @@ class TreeLevel(surface.Surface):
 
         if self._surface_items != []:
             current_itemsurface = self._surface_items[self._current_rank]
-            current_itemdata = current_itemsurface.get_menuitem_data()
-            current_itemsurface.set_status(1)
+            current_itemdata = current_itemsurface.get_menuitem()
+            current_itemsurface.set_focus(True)
 
     def close(self):
         for item in self._menuitem_list:
@@ -85,7 +79,7 @@ class TreeLevel(surface.Surface):
         """return item surface from menuitem object in current surface only
         """
         for surface_item in self._surface_items:
-            if surface_item.get_menuitem_data() == menuitem:
+            if surface_item.get_menuitem() == menuitem:
                 return surface_item
         return None
             
@@ -115,13 +109,13 @@ class TreeLevel(surface.Surface):
     def select_next_item(self):
         if self._current_rank < len(self._surface_items) - 1:
            itemsurface = self._surface_items[self._current_rank]
-           itemsurface.set_status(0)
+           itemsurface.set_focus(False)
            #itemdata = itemsurface.get_menu_item_data()
            #itemdata.call_unselected_callback()
            
            self._current_rank += 1
            itemsurface = self._surface_items[self._current_rank]
-           itemsurface.set_status(1)
+           itemsurface.set_focus(True)
            #itemdata = itemsurface.get_menu_item_data()
            #itemdata.call_selected_callback()
            
@@ -134,13 +128,13 @@ class TreeLevel(surface.Surface):
     def select_previous_item(self):
         if self._current_rank > 0:
             itemsurface = self._surface_items[self._current_rank]
-            itemsurface.set_status(0)
+            itemsurface.set_focus(False)
             #itemdata = itemsurface.get_menu_item_data()
             #itemdata.call_unselected_callback()
            
             self._current_rank -= 1
             itemsurface = self._surface_items[self._current_rank]
-            itemsurface.set_status(1)
+            itemsurface.set_focus(True)
             #itemdata = itemsurface.get_menu_item_data()
             #itemdata.call_selected_callback()
             

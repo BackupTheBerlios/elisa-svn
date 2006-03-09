@@ -47,22 +47,15 @@ class Application(window.Window):
         
     def _create_background(self):
         
-        self._background_surface = surface_player.SurfacePlayer(None)
-        self._background_surface.set_location(0, 0, -0.1)
-        self._background_surface.set_size(800, 600)
-        self._background_surface.set_back_color(0, 0, 0)
-        self.add_surface(self._background_surface)
-               
-        self._background_image = self._menu_renderer.get_skin_pictures('BACKGROUND_PICTURE')
-        
+        self._background_image = self._menu_renderer.get_skin_pictures('BACKGROUND_PICTURE')       
         if self._background_image != None:
-            self._background_surface.set_background_from_file(self._background_image)
-            self._background_surface.set_back_color (255, 255, 255)    
+            self.set_background_from_file(self._background_image)
+            self.set_back_color(255, 255, 255)
   
         
     def set_background_texture(self, texture):
-        self._background_surface.set_back_color (255, 255, 255)
-        self._background_surface.set_texture(texture)
+        self.set_back_color(255, 255, 255)
+        self.set_texture(texture)
 
     def get_menu_renderer(self):
         return self._menu_renderer

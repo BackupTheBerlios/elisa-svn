@@ -23,15 +23,17 @@ class MCESkin(surface.Surface):
                     _current_menuitem = _current_widget.get_current_menuitem()
                     if _current_menuitem.has_items():
                         _new_widget = MCEBrowser(_current_menuitem.get_items())
-                        self._widget_stack[self._current_widget_rank-1].animate_before_hide()
+                        #self._widget_stack[self._current_widget_rank-1].animate_before_hide()
                         self._widget_stack.append(_new_widget)
+                        self.add_surface(_new_widget)
                         self._current_widget_rank +=1
-                        self._widget_stack[self._current_widget_rank-1].animate_before_show()
+                        _new_widget.animate_before_hide()
                 if message.get_simple_event() == events.SE_BACK:
                     if self._current_widget_rank >1:
                         _previous_widget = self._widget_stack[self._current_widget_rank-1]
                         _previous_widget.animate_before_hide()
                         self._widget_stack.remove(_previous_widget)
+                        self.remove_surface(_previous_widget)
                         self._current_widget_rank -=1
                         self._widget_stack[self._current_widget_rank-1].animate_before_show()
                         

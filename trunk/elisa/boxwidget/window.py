@@ -1,7 +1,8 @@
-from elisa.boxwidget import surface, eventsmanager, events
+from elisa.boxwidget import surface, eventsmanager, events, texture
 from elisa.boxwidget.bindings import testgl_impl
 from elisa.framework.log import Logger
 from elisa.framework.message_bus import MessageBus
+import elisa.utils.misc
 
 from twisted.internet import reactor, task
 
@@ -21,6 +22,8 @@ class Window(object):
         self._Fps = 50
         self._surface_list = []
         self._background_image_path = None
+        self._background_is_movie = False
+        self._texture = None
     
     def _get_window_impl(self):
         self._logger.debug('Window.(_get_window_impl)', self)
@@ -102,8 +105,46 @@ class Window(object):
 
     def set_background_from_file(self, path_and_file_name=None):
         """
-        set window background image
+        set widget background image
         """
-        self._logger.debug('Surface.set_background_from_file(' + str(path_and_file_name) + ')', self)
+        self._logger.debug('Window.set_background_from_file()', self)
         self._background_image_path = path_and_file_name
-        self._window_impl.set_background_from_file(path_and_file_name)
+               
+        if elisa.utils.misc.file_is_movie(path_and_file_name):
+            p = self._appli.get_player_manager().get_player(path_and_file_name)
+            p.play()
+            self.set_texture(p.get_texture())
+            self._background_is_movie = True
+        else:
+            _texture = texture.Texture()
+            _texture.init_texture_from_picture(path_and_file_name)
+            self.set_texture(_texture)
+            self._background_is_movie = False
+
+    def background_is_movie(self):
+        return self._background_is_movie
+        
+    def set_background_from_buffer(self, buffer, width, height, flip):
+         self._window_impl.set_background_from_buffer(buffer, width, height, flip)
+    
+    def get_background_file(self):
+        """
+        return path and filename of background image
+        """
+        self._logger.debug('Window.get_background_file()', self)
+        return self._background_image_path
+        
+    def set_back_color(self, red, green, blue):
+        """
+        set widget backcolor
+        """
+        self._logger.debug('Window.set_back_color(()', self)
+        self._window_impl.set_back_color(red, green, blue)
+        
+    def get_texture(self):
+        return self._texture
+        
+    def set_texture(self, texture):
+        self._texture = texture
+        if texture != None:
+            self._window_impl.set_texture(texture._get_surface_impl())  

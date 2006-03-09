@@ -7,7 +7,11 @@ from extern.testGL.zAPI.zRenderer import zOpenGLSurface
 class OpenGLRenderer(zBaseClass.RendererBase):
     
     def __init__(self):
-        self._BackgroundSurface = None
+        self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
+        self._BackgroundSurface.SetSize(2.0, 2.0)
+        self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
+        self._BackgroundSurface.SetBackColor(255.0, 255.0, 255.0)
+        
         self._CameraZposition = -500.0
         self._AspectRatio = 1.0;
         self._width, self._height = constants.GetWindowSize()
@@ -67,21 +71,20 @@ class OpenGLRenderer(zBaseClass.RendererBase):
             glMatrixMode(GL_MODELVIEW)
             glPopMatrix() 
     
+    def SetTexture(self, t):
+        self._BackgroundSurface.SetTexture(t)
+        self._DrawBackground = True
+    
+    def GetTexture(self):
+        return self._BackgroundSurface.GetTexture()
+        
     def SetBackColor(self, Red, Green, Blue):
         zBaseClass.RendererBase.SetBackColor(self, Red, Green, Blue)
         glClearColor(Red, Green, Blue, 0.0)
         
     def SetBackgroundImageFromFile(self, PathAndFileName):
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, PathAndFileName)
-        if self._BackgroundSurface == None:
-            self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
-            self._BackgroundSurface.SetSize(2.0, 2.0)
-            self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
-            self._BackgroundSurface.SetBackColor(255.0, 255.0, 255.0)
         self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
-        
-        if PathAndFileName == None:
-            self._DrawBackground = False
-        else:
-            self._DrawBackground = True
+        self._DrawBackground =True
+
 

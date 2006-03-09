@@ -18,7 +18,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         self._screenwidth, self._screenheight = constants.GetWindowSize()
         self._ApplyCoordinateTrans = ApplyCoordinateTrans
         self._renderer = None
-        self._texture = None
+        self._texture = zOpenGLTexture.OpenGLTexture()
         
     def SetBackgroundImageFromFile(self, FileName, UseAlpha=False):
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, FileName, UseAlpha=False)
@@ -37,22 +37,29 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
                 _format = GL_RGB
                 _ImageBuffer = _BackgroundImage.tostring("raw", "RGB", 0, -1)
 
-            if self._texture == None or self.texture.get_size() != (_BackgroundImage.size[0], _BackgroundImage.size[1]):
-                self._texture = zOpenGLTexture.OpenGLTexture()
-                self._texture.init_texture(_BackgroundImage.size[0], _BackgroundImage.size[1], _format, _ImageBuffer)
-            else:
-                self._texture.set_buffer(_ImageBuffer)
 
-    def SetBackgroundImageFromBuffer(self, buffer, width, height, UseAlpha=False):
-        if self._texture == None or self._texture.get_size() != (width, height):
-            if UseAlpha == True:
-                _format = GL_RGBA
-            else:
-                _format = GL_RGB
-            self._texture = zOpenGLTexture.OpenGLTexture()
-            self._texture.init_texture(width, height, _format, buffer)
+        self.set_texture_buffer(_BackgroundImage.size[0], _BackgroundImage.size[1], _format, _ImageBuffer)
+
+
+    def set_texture_buffer(self,width, height, _format, _buffer):
+        if self._texture.is_init() == True and self._texture.get_size() != (width, height):
+            self._texture = zOpenGLTexture.OpenGLTexture() 
+            
+        if self._texture.GetFormat() != _format:
+            self._texture = zOpenGLTexture.OpenGLTexture() 
+            
+        if self._texture.is_init() == False:
+            self._texture.init_texture(width, height, _format, None)
+    
+        self._texture.set_buffer(_buffer)
+        
+    def SetBackgroundImageFromBuffer(self, _buffer, width, height, UseAlpha=False):
+
+        if UseAlpha == True:
+            _format = GL_RGBA
         else:
-            self._texture.set_buffer(buffer)
+            _format = GL_RGB
+        self.set_texture_buffer(width, height, _format, _buffer)
     
     def SetTextureOrder(self, order):
         if order == 1 or order == 0:
