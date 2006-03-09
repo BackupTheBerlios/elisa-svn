@@ -53,7 +53,6 @@ class TreeLevel(surface.Surface):
         _i = 10
         for item in self._menuitem_list:
             s = treeitem.TreeItem(item, self._font, True)
-            self._appli.get_menu_renderer().add_menuitem_surface(item, s)
             s.set_size(128, 128)
             s.set_location(_i, -12, 2.2)
             _i += 150
@@ -67,8 +66,8 @@ class TreeLevel(surface.Surface):
             current_itemsurface.set_focus(True)
 
     def close(self):
-        for item in self._menuitem_list:
-            self._appli.get_menu_renderer().remove_menuitem(item)
+        for s in self._surface_items:
+            self.remove_surface(s)
         surface.Surface.close(self)
         
     def get_menuitem_list(self):

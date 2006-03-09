@@ -29,24 +29,12 @@ class DefaultMenuWidget(surface.Surface):
     def on_message(self, receiver, message, sender):
         self._logger.debug('Tree.on_event(' + str(message) + ')', self)
         if self.visible(True) and not self._drawing_next_level and not self._drawing_previous_level :
-            selected_treeitem_surface = self.get_current_level_surface().get_selected_item()
-            selected_treeitem_data = selected_treeitem_surface.get_menuitem()
             
             if isinstance(message, events.InputEvent):
                 if message.get_simple_event() == events.SE_UP:
                     self.select_previous_level()
                 if message.get_simple_event() == events.SE_DOWN:
-                    self.select_next_level()
-                if message.get_simple_event() == events.SE_OK:
-                    selected_treeitem_data.fire_action(selected_treeitem_data)
-##             elif isinstance(message, message_bus.ActionMessage):
-##                 if sender == _selected_treeitem_data:
-##                     if message.get_action() == 'SHOW_PICTURE':
-##                         self._appli.set_background_from_surface(_selected_treeitem_surface)
-##                     if message.get_action() == 'SHOW_MOVIE': pass
-##                         #
-##                         #self._appli.set_background_from_surface(_selected_treeitem_surface)
-                                    
+                    self.select_next_level()                            
                     
         return surface.Surface.on_message(self, receiver, message, sender)
         

@@ -1,4 +1,4 @@
-from elisa.boxwidget import surface
+from elisa.boxwidget import surface, events
 from elisa.framework import common
 
 class TreeItem(surface.Surface): 
@@ -9,6 +9,7 @@ class TreeItem(surface.Surface):
         self._focus = False
         self._menuitem = menuitem
         self._enable_arrow = enable_arrow
+        self._appli.get_menu_renderer().add_menuitem_surface(menuitem, self)
         
         if enable_arrow == True:
             self._arrow_surface = surface.Surface(self._menuitem.get_short_name() + str(' arrow'))
@@ -29,7 +30,13 @@ class TreeItem(surface.Surface):
             self.set_texture(p.get_texture())
         else:
             self.set_background_from_file(menuitem.get_icon_path())
-            
+    
+    def on_removed(self):
+        surface.Surface.on_removed(self)
+        self._appli.get_menu_renderer().remove_menuitem(self._menuitem)
+        print "removed"
+        
+                
     def show_label(self):
         if self._font != None and self.visible()==True:
             self._font.show()
@@ -79,3 +86,11 @@ class TreeItem(surface.Surface):
         if self._focus==False:
             level = level * 0.40
         surface.Surface.set_alpha_level(self, level, apply_to_child)
+        
+    def on_message(self, receiver, message, sender):
+        if self.visible(True) and self.has_focus():
+            if isinstance(message, events.InputEvent):
+                if message.get_simple_event() == events.SE_OK:
+                    self._menuitem.fire_action(self._menuitem)
+                    
+        return surface.Surface.on_message(self, receiver, message, sender)

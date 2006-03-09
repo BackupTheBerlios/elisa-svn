@@ -59,7 +59,7 @@ class MCEBrowser(surface.Surface):
                     self.set_alpha_level(0, True)             
             else:
                 self.set_alpha_level(0, True)
-                self.set_location(_x, 350, 0.1)
+                self.set_location(_x, _y, 350)
                 self._animate_hide_in_progress = False
                 surface.Surface.hide(self,True)
              
