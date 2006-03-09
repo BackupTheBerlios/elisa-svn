@@ -35,6 +35,8 @@ class FontSurface(object):
         return " " * deep + "- %s (0 items)" % (self._name)
         
     def remove_surface(self, surface): pass
+    
+    def on_removed(self): pass
        
     def _get_child_surface(self):
         return []

@@ -224,6 +224,7 @@ class Surface(object):
         self._logger.debug('Surface.remove_surface(' + str(surface) + ')', self)
         if surface in self._get_child_surface():
             self._surface_list.remove(surface)
+            surface.on_removed()
         
         _mainwindow = self.get_window()
         if _mainwindow != None:
@@ -234,6 +235,8 @@ class Surface(object):
         _child = surface._get_child_surface()[:]
         for s in _child:
             surface.remove_surface(s)
+    
+    def on_removed(self): pass
     
     def _get_child_surface(self):
         self._logger.debug_verbose('Surface._get_child_surface()', self)
