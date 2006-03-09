@@ -12,6 +12,7 @@ class MCESkin(surface.Surface):
         self._widget_stack.append(MCEButtonMenu(root_menuitem_list))
         self._current_widget_rank = 1
         self.add_surface(self._widget_stack[0])
+        self._previous_widget = None
         
     def on_message(self, receiver, message, sender):
         self._logger.debug('MCESkin.on_message(' + str(message) + ')', self)
@@ -22,18 +23,22 @@ class MCESkin(surface.Surface):
                     _current_widget = self._widget_stack[self._current_widget_rank-1]
                     _current_menuitem = _current_widget.get_current_menuitem()
                     if _current_menuitem.has_items():
+                        if self._previous_widget != None:
+                            self.remove_surface(self._previous_widget)
                         _new_widget = MCEBrowser(_current_menuitem.get_items())
-                        #self._widget_stack[self._current_widget_rank-1].animate_before_hide()
+                        self._widget_stack[self._current_widget_rank-1].animate_before_hide()
                         self._widget_stack.append(_new_widget)
                         self.add_surface(_new_widget)
                         self._current_widget_rank +=1
-                        _new_widget.animate_before_hide()
+                        _new_widget.animate_before_show()
                 if message.get_simple_event() == events.SE_BACK:
                     if self._current_widget_rank >1:
-                        _previous_widget = self._widget_stack[self._current_widget_rank-1]
-                        _previous_widget.animate_before_hide()
-                        self._widget_stack.remove(_previous_widget)
-                        self.remove_surface(_previous_widget)
+                        if self._previous_widget != None:
+                            self.remove_surface(self._previous_widget)
+                        self._previous_widget = self._widget_stack[self._current_widget_rank-1]
+                        self._previous_widget.animate_before_hide()
+                        self._widget_stack.remove(self._previous_widget)
                         self._current_widget_rank -=1
+                        self._previous_widget.animate_before_hide()
                         self._widget_stack[self._current_widget_rank-1].animate_before_show()
                         

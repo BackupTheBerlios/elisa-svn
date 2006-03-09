@@ -28,7 +28,6 @@ class Surface(object):
         self._width = 100
         self._height = 100
         self._alphalevel = 100
-        self.set_alpha_level(self._alphalevel)
         self._background_image_path = None
         self._window = None
         self._visible = True
@@ -218,6 +217,9 @@ class Surface(object):
         for s in surface._get_child_surface():
             surface.add_surface(s)
 
+    def get_surface_list(self):
+        return self._surface_list
+        
     def remove_surface(self, surface):
         self._logger.debug('Surface.remove_surface(' + str(surface) + ')', self)
         if surface in self._get_child_surface():

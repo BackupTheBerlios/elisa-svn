@@ -62,7 +62,7 @@ class TreeItem(surface.Surface):
         menu_item.fire_focus_callback(menu_item, focus)
         
         if focus == False:
-            self.set_alpha_level(35)
+            self.set_alpha_level(100)
             self.hide_down_arrow()
             self.hide_label()
         else:
@@ -70,3 +70,8 @@ class TreeItem(surface.Surface):
             if self._menuitem.get_items() != []: 
                 self.show_down_arrow()
             self.show_label()
+
+    def set_alpha_level(self, level, apply_to_child=False):
+        if self._focus==False:
+            level = level * 0.40
+        surface.Surface.set_alpha_level(self, level, apply_to_child)
