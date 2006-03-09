@@ -36,10 +36,14 @@ class TreeItem(surface.Surface):
             (_x,_y,_z) = self.get_location()
             self._font.set_text(self._menuitem.get_short_name())
             (_xf,_yf,_zf) = self._font.get_size()
-            self._font.set_location(_x + 64 - _xf/2, _y + 88, 2.4)
+            (_xs,_ys) = self.get_size()
+            self._font.set_location((_xs - _xf)/2, _ys - _yf , 2.4)
+            self.add_surface(self._font)
             
     def hide_label(self):
-        if self._font != None: self._font.hide()
+        if self._font != None:
+            self._font.hide()
+            self.remove_surface(self._font)
 
     def show_down_arrow(self):
         if self._enable_arrow == True:

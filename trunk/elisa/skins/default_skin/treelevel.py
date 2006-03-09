@@ -46,7 +46,6 @@ class TreeLevel(surface.Surface):
         self._font = fontsurface.FontSurface('treelevel font')
         self._font.set_font_size(36)
         self._font.hide()
-        self._items_surface.add_surface(self._font)
         
         self._move_items_offset = 0
         self._fist_item = 0

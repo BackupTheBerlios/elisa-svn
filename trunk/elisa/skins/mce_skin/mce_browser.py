@@ -6,9 +6,9 @@ class MCEBrowser(surface.Surface):
     def __init__(self, menuitem_list, name="mce browser"):
         surface.Surface.__init__(self, name)
         self._menuitem_list = menuitem_list
-        self._current_level_rank = 1
+        self._current_item_rank = 1
         self.set_size(0.0, 0.0)
-        self.set_location(5.0,10.0,-350)
+        self.set_location(15.0,15.0,-350)
         self._animate_hide_in_progress = False
         self._animate_show_in_progress = False
         
@@ -49,9 +49,9 @@ class MCEBrowser(surface.Surface):
         elif self._animate_hide_in_progress == True:
             (_x,_y,_z) = self.get_location()
             _alpha = self.get_alpha_level()
-            _z -= _step_hide
+            _z += _step_hide
             _alpha -= 10
-            if _z > -350:
+            if _z < 350:
                 self.set_location(_x, _y, _z)
                 if _alpha > 0:
                     self.set_alpha_level(_alpha, True)
@@ -59,7 +59,7 @@ class MCEBrowser(surface.Surface):
                     self.set_alpha_level(0, True)             
             else:
                 self.set_alpha_level(0, True)
-                self.set_location(_x, -400, 0.1)
+                self.set_location(_x, 350, 0.1)
                 self._animate_hide_in_progress = False
                 surface.Surface.hide(self,True)
              
@@ -71,5 +71,26 @@ class MCEBrowser(surface.Surface):
         self._animate_show_in_progress = True
         
     def get_current_menuitem(self):
-        return self._menuitem_list[self._current_level_rank-1]
+        return self._menuitem_list[self._current_item_rank-1]
         
+    def on_message(self, receiver, message, sender):
+        if self.visible()==True:
+            if isinstance(message, events.InputEvent):
+                if message.get_simple_event() == events.SE_LEFT:
+                    self.select_previous_item()
+                if message.get_simple_event() == events.SE_RIGHT:
+                    self.select_next_item()
+            
+        return surface.Surface.on_message(self, receiver, message, sender)
+   
+    def select_next_item(self):
+        if self._current_item_rank < len(self.get_surface_list()):
+            self.get_surface_list()[self._current_item_rank-1].set_focus(False)
+            self._current_item_rank += 1
+            self.get_surface_list()[self._current_item_rank-1].set_focus(True)
+            
+    def select_previous_item(self):
+        if self._current_item_rank > 1:
+            self.get_surface_list()[self._current_item_rank-1].set_focus(False)
+            self._current_item_rank -= 1
+            self.get_surface_list()[self._current_item_rank-1].set_focus(True)

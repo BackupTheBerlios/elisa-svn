@@ -7,8 +7,8 @@ class MCEButtonMenu(surface.Surface):
         self._menuitem_list = menuitem_list
         self._current_level_rank = 1
         self._level_count = 0
-        self._drawing_next_level = False
-        self._drawing_previous_level = False
+        self._select_next_item = False
+        self._select_previous_item = False
         self._animate_hide_in_progress = False
         self._animate_show_in_progress = False
         
@@ -39,7 +39,7 @@ class MCEButtonMenu(surface.Surface):
             
     def on_message(self, receiver, message, sender):
         self._logger.debug('Tree.on_event(' + str(message) + ')', self)
-        if self.visible(True) and not self._drawing_next_level and not self._drawing_previous_level:
+        if self.visible(True) and not self._select_next_item and not self._select_previous_item:
             
             if isinstance(message, events.InputEvent):
                 if message.get_simple_event() == events.SE_UP:
@@ -48,20 +48,20 @@ class MCEButtonMenu(surface.Surface):
                     self.select_next_item()
                     
     def select_next_item(self):
-        if self._current_level_rank < self._level_count and self._drawing_next_level == False and self._drawing_previous_level == False:
-            self._drawing_next_level = True
+        if self._current_level_rank < self._level_count and self._select_next_item == False and self._select_previous_item == False:
+            self._select_next_item = True
             self._current_level_rank += 1
     
     def select_previous_item(self):
-        if self._current_level_rank  > 1 and self._drawing_next_level == False and self._drawing_previous_level == False:
-            self._drawing_previous_level = True
+        if self._current_level_rank  > 1 and self._select_next_item == False and self._select_previous_item == False:
+            self._select_previous_item = True
             self._current_level_rank -= 1
         
     def refresh(self):
         surface.Surface.refresh(self)
         _step_scroll = 10
         _step_hide = 25
-        if self._drawing_next_level == True:
+        if self._select_next_item == True:
             _ymin = - 50 * (self._current_level_rank -1)
             (_x,_y,_z) = self._font_group.get_location()
             if _y > _ymin:
@@ -70,8 +70,8 @@ class MCEButtonMenu(surface.Surface):
                 if _y <= _ymin: _y = _ymin
                 self._font_group.set_location(_x, _y, _z)
             else:
-                self._drawing_next_level = False
-        elif self._drawing_previous_level == True:
+                self._select_next_item = False
+        elif self._select_previous_item == True:
             if self._current_level_rank > 1 : 
                 _ymin = 50 * (self._current_level_rank -3)
             else:
@@ -85,7 +85,7 @@ class MCEButtonMenu(surface.Surface):
                 #print str(_y) + " min:" + str(_ymin)
                 self._font_group.set_location(_x, _y, _z)
             else:
-                self._drawing_previous_level = False
+                self._select_previous_item = False
         elif self._animate_hide_in_progress == True:
             (_x,_y,_z) = self.get_location()
             _alpha = self.get_alpha_level()
