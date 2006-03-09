@@ -12,6 +12,7 @@ class OpenGLTexture(object):
         self._YTextureRatio = 1
         self._texture_init = False
         self._buffer_flip = False
+        self._apply_ratio = False
     
     def set_flip_buffer(self, flip):    
         self._buffer_flip = flip
@@ -42,8 +43,21 @@ class OpenGLTexture(object):
             self.set_buffer(buffer)
         self._texture_init = True
    
-    def get_ratio(self):
+    def get_memory_ratio_used(self):
         return (self._XTextureRatio ,self._YTextureRatio)
+    
+    def apply_aspect_ratio(self, apply_ratio):
+        self._apply_ratio = apply_ratio
+    
+    def get_apply_aspect_ratio(self):
+        if None not in (self._width , self._height):
+            return self._apply_ratio
+        return None
+        
+    def get_aspect_ratio(self):
+        if None not in (self._width , self._height):
+            return self._width / float(self._height)
+        return None
         
     def get_size(self):
         return (self._width, self._height)

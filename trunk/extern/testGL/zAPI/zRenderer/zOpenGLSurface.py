@@ -78,7 +78,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         (_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
         if self._texture != None:
             self._texture.set_texture()
-            (_XTextureRatio, _YTextureRatio) = self._texture.get_ratio()
+            (_XTextureRatio, _YTextureRatio) = self._texture.get_memory_ratio_used()
             if self._texture.get_flip_buffer() == False:
                 self._TextureOrder = 0
             else:
@@ -86,32 +86,47 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
 
         XTextureOffsetPercent = 0.0
         YTextureOffsetPercent = 0.0
+        _YAspectRatioOffset = 0.0
+        _XAspectRatioOffset = 0.0
         
         XTextureOffset = -XTextureOffsetPercent * _XTextureRatio / 100.0
-        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0      
+        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0 
         
+        if self._texture.get_apply_aspect_ratio()==True:
+            _aspect_ratio = self._texture.get_aspect_ratio()
+            #print ">%s for %s x %s , r= %s"%(_aspect_ratio, self._GLheight, self._GLwidth , self._GLheight / float(_aspect_ratio))
+            if _aspect_ratio!= None:
+                _good_height = self._GLwidth / float(_aspect_ratio)
+                if _good_height <= self._GLheight:
+                    _YAspectRatioOffset = (_YTextureRatio * abs(self._GLheight)) / float(_good_height) - _YTextureRatio
+                else:
+                    _good_width = self._GLheight * float(_aspect_ratio)
+                    _XAspectRatioOffset = (_XTextureRatio * abs(self._GLwidth)) / float(_good_width) - _XTextureRatio
+
+        
+         
         #FIXME : use lists
         if self._TextureOrder == 1:
             #Texture for normal coordinate system
             glBegin(GL_QUADS)
-            glTexCoord2f(_XTextureRatio+XTextureOffset,YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset+_XAspectRatioOffset,YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)
             glTexCoord2f(XTextureOffset,YTextureOffset)
             glVertex3f(0.0, 0.0, 0.0)
-            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset)
+            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset+_YAspectRatioOffset)
             glVertex3f(0.0, 1.0, 0.0)
-            glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset+_XAspectRatioOffset,_YTextureRatio+YTextureOffset+_YAspectRatioOffset)
             glVertex3f(1.0, 1.0, 0.0)            glEnd()
         else:
             #Texture for Videos    
             glBegin(GL_QUADS)
-            glTexCoord2f(_XTextureRatio+XTextureOffset,YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset+_XAspectRatioOffset,YTextureOffset)
             glVertex3f(1.0, 1.0, 0.0)
             glTexCoord2f(XTextureOffset,YTextureOffset)
             glVertex3f(0.0, 1.0, 0.0)
-            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset)
+            glTexCoord2f(XTextureOffset,_YTextureRatio+YTextureOffset+_YAspectRatioOffset)
             glVertex3f(0.0, 0.0, 0.0) 
-            glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
+            glTexCoord2f(_XTextureRatio+XTextureOffset+_XAspectRatioOffset,_YTextureRatio+YTextureOffset+_YAspectRatioOffset)
             glVertex3f(1.0, 0.0, 0.0)            glEnd() 
         
         if self._texture != None :
