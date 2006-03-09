@@ -40,13 +40,14 @@ class MyClass(zForm.Form):
         #self.AddControl(self._font2)
 
         self._ctl2 = zVideo.Video()
-        self._ctl2.SetSize(300, 500)
+        self._ctl2.SetSize(500, 200)
         self._ctl2.SetText("ctl2")
         self._ctl2.SetLocation(0.0, 0.0, 0.0)
         self._ctl2.SetBackColor(255, 255, 255)
         self._ctl2.SetURI("file:///home/yoyo/temp/nemo-fr.avi")
         self._ctl2.Play()
         self.AddControl(self._ctl2)
+        self._ctl2.GetTexture().apply_aspect_ratio(True)
         
         #self._ctl = zPictureBox.PictureBox()
         #self._ctl.SetSize(300, 40)

@@ -17,6 +17,7 @@ class TreeItem(surface.Surface):
             self._arrow_surface.set_location(14,128,2.3)
             self._arrow_surface.set_size(100,20)
             self._arrow_surface.set_background_from_file("elisa/skins/default_skin/pictures/downarrow.png")
+            #self._arrow_surface.get_texture().set_aspect_ratio(False)
             self.add_surface(self._arrow_surface)
         else:
             self._arrow_surface = None
@@ -34,9 +35,8 @@ class TreeItem(surface.Surface):
     def on_removed(self):
         surface.Surface.on_removed(self)
         self._appli.get_menu_renderer().remove_menuitem(self._menuitem)
-        print "removed"
-        
-                
+
+                       
     def show_label(self):
         if self._font != None and self.visible()==True:
             self._font.show()

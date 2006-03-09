@@ -43,3 +43,6 @@ class Texture(object):
         if self._texture_init == True:
             return self._texture_impl.get_size()
         return None
+
+    def set_aspect_ratio(self, respect_aspect_ratio):
+        self._texture_impl.set_aspect_ratio(respect_aspect_ratio)

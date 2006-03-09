@@ -181,3 +181,6 @@ class _testGL_Texture_Impl(object):
         
     def get_size(self):
         return self._surface_native.get_size()
+        
+    def set_aspect_ratio(self, respect_aspect_ratio):
+        self._surface_native.apply_aspect_ratio(respect_aspect_ratio)

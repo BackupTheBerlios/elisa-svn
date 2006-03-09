@@ -8,7 +8,7 @@ from elisa.framework.menu import MenuTree
 class MenuRenderer(object):
 
     def __init__(self, skin='mce'):
-        self._skin = skin
+        self._skin = 'e'
     
     def init_root_level(self, root_menuitems_list):
         self._root_menuitem_list = root_menuitems_list
@@ -36,10 +36,9 @@ class MenuRenderer(object):
         self.surface_to_menuitem[surface] = menuitem
         
     def remove_menuitem(self, menuitem):
-        surface = self._menuitem_to_surface.get(menuitem)
-        if surface:
-            del self._menuitem_to_surface[menuitem]
-            del self.surface_to_menuitem[surface]
+        surface = self._menuitem_to_surface[menuitem]
+        del self._menuitem_to_surface[menuitem]
+        del self.surface_to_menuitem[surface]
 
     def get_menuitem_from_surface(self, surface):
         return self.surface_to_menuitem.get(surface)

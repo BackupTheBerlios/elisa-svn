@@ -17,6 +17,7 @@ class TreeLevel(surface.Surface):
         self._current_rank = 0
         self._back_image = surface.Surface('treelevel backimage')
         self._back_image.set_background_from_file("extern/testGL/themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG")
+        #self._back_image.get_texture().set_aspect_ratio(False)
         self._back_image.set_size(550,40)
         self._back_image.set_location(20,30,2.1)
         self.add_surface(self._back_image)

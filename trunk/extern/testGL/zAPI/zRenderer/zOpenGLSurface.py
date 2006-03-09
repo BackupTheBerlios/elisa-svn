@@ -92,6 +92,7 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         XTextureOffset = -XTextureOffsetPercent * _XTextureRatio / 100.0
         YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0 
         
+        #FIXME : move this calcul in texture class and do it only one time
         if self._texture.get_apply_aspect_ratio()==True:
             _aspect_ratio = self._texture.get_aspect_ratio()
             #print ">%s for %s x %s , r= %s"%(_aspect_ratio, self._GLheight, self._GLwidth , self._GLheight / float(_aspect_ratio))
@@ -99,12 +100,14 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
                 _good_height = self._GLwidth / float(_aspect_ratio)
                 if _good_height <= self._GLheight:
                     _YAspectRatioOffset = (_YTextureRatio * abs(self._GLheight)) / float(_good_height) - _YTextureRatio
+                    _GLpixel_YTextureOffset = (abs(self._GLheight) - _good_height) / float(2)
+                    YTextureOffset -= (_GLpixel_YTextureOffset * float(_YTextureRatio) ) / float(_good_height)
                 else:
                     _good_width = self._GLheight * float(_aspect_ratio)
                     _XAspectRatioOffset = (_XTextureRatio * abs(self._GLwidth)) / float(_good_width) - _XTextureRatio
+                    _GLpixel_XTextureOffset = (abs(self._GLwidth) - _good_width) / float(2)
+                    XTextureOffset -= (_GLpixel_XTextureOffset * float(_XTextureRatio) ) / float(_good_width)
 
-        
-         
         #FIXME : use lists
         if self._TextureOrder == 1:
             #Texture for normal coordinate system

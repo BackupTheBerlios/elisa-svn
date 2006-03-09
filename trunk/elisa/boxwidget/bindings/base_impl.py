@@ -73,3 +73,5 @@ class _Base_Texture_Impl(object):
     def set_flip_buffer(self, flip): pass
     
     def get_size(self): pass
+    
+    def set_aspect_ratio(self, respect_aspect_ratio):pass
