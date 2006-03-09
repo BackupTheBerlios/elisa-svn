@@ -28,7 +28,8 @@ class Surface(object):
         self._z = 0
         self._width = 100
         self._height = 100
-        self._alphalevel = 0
+        self._alphalevel = 100
+        self.set_alpha_level(self._alphalevel)
         self._background_image_path = None
         self._window = None
         self._visible = True
@@ -73,14 +74,22 @@ class Surface(object):
         self._logger.debug('Surface._get_surface_impl()', self)
         return self._surface_impl
 
-    def set_alpha_level(self, level):
+    def set_alpha_level(self, level, apply_to_child=False):
         """
         set the alpha level in percent of the widget [0 to 100%] of opacity
         """
         self._logger.debug('Surface.set_alpha_level(' + str(level) + ')', self)
         self._alphalevel = level
         self._surface_impl.set_alpha_level(level)
+        
+        if apply_to_child == True:
+            for s in self._surface_list:
+                s.set_alpha_level(level, apply_to_child)
+            
 
+    def get_alpha_level(self):
+        return self._alphalevel
+        
     def set_background_from_file(self, path_and_file_name=None):
         """
         set widget background image

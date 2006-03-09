@@ -117,6 +117,8 @@ class _testGL_EventsManager_Impl(base_impl._Base_EventsManager_Impl):
                 return events.InputEvent(events.DEV_KEYBOARD, events.KEY_SPACE, events.SE_MENU)
             if pyevent.key == pygame.K_ESCAPE:
                 return events.InputEvent(events.DEV_KEYBOARD, events.KEY_ESCAPE, events.SE_QUIT)
+            if pyevent.key == pygame.K_BACKSPACE:
+                return events.InputEvent(events.DEV_KEYBOARD, events.KEY_BACKSPACE, events.SE_BACK)
                 
         return None
 

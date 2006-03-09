@@ -55,7 +55,7 @@ class FontSurface(object):
         self._logger.debug('Font._get_surface_impl()', self)
         return self._font_impl
 
-    def set_alpha_level(self, level):
+    def set_alpha_level(self, level, not_used):
         """
         set the alpha level in percent of the widget [0 to 100%] of opacity
         """

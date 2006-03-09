@@ -1,7 +1,7 @@
 from elisa.skins.default_skin.default_menu_widget import DefaultMenuWidget
 from elisa.skins.default_skin import default_skin_pictures
 from elisa.skins.mce_skin import mce_skin_pictures
-from elisa.skins.mce_skin.mce_button_menu import MCEButtonMenu
+from elisa.skins.mce_skin.mce_skin import MCESkin
 from elisa.skins.default_skin.treeitem import TreeItem
 from elisa.framework.menu import MenuTree
 
@@ -20,7 +20,7 @@ class MenuRenderer(object):
         
         if self._skin == 'mce':
             self._skin_pictures = mce_skin_pictures.MCESkinPictures()
-            self._menu_widget = MCEButtonMenu(self._root_menuitem_list)
+            self._menu_widget = MCESkin(self._root_menuitem_list)
         else:
             self._skin_pictures = default_skin_pictures.DefaultSkinPictures()
             self._menu_widget = DefaultMenuWidget(self._root_menuitem_list, "main menu renderer")
