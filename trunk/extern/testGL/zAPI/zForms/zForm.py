@@ -50,7 +50,7 @@ class Form(zControl.Control):
         self._SortzOderDrawingBool = True
                 
     def SetBackColor(self, Red, Green, Blue):
-        #zControl.Control.SetBackColor(self, Red, Green, Blue)
+        zControl.Control.SetBackColor(self, Red, Green, Blue)
         self._Renderer.SetBackColor(Red, Green, Blue)
     
     def SetBackgroundImageFromFile(self, PathAndFileName, UseAlpha=False):

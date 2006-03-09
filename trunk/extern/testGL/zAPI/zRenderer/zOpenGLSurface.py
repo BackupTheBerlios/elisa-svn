@@ -74,14 +74,8 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         #FIXME cache result.
         r,g,b,a = self.GetBackColorWithAlpha()
         glColorf(r/255.0, g/255.0, b/255.0, a/255.0)
-          
-        self.draw_quad()
         
-        glPopMatrix()
-    
-    def draw_quad(self):
-
-	(_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
+        (_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
         if self._texture != None:
             self._texture.set_texture()
             (_XTextureRatio, _YTextureRatio) = self._texture.get_ratio()
@@ -94,9 +88,9 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         YTextureOffsetPercent = 0.0
         
         XTextureOffset = -XTextureOffsetPercent * _XTextureRatio / 100.0
-        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0    
-
-	#FIXME : use lists
+        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0      
+        
+        #FIXME : use lists
         if self._TextureOrder == 1:
             #Texture for normal coordinate system
             glBegin(GL_QUADS)
@@ -119,11 +113,12 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             glVertex3f(0.0, 0.0, 0.0) 
             glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)            glEnd() 
-	
-	if self._texture != None :
+        
+        if self._texture != None :
             self._texture.unset_texture()
-
-
+            
+        glPopMatrix()
+        
     def SetSize(self, Width, Height):
         zBaseClass.SurfaceBase.SetSize(self, Width, Height)
         if self._ApplyCoordinateTrans == True:

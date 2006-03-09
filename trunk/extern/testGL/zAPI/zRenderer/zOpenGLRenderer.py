@@ -9,7 +9,7 @@ class OpenGLRenderer(zBaseClass.RendererBase):
     def __init__(self):
         self._BackgroundSurface = zOpenGLSurface.OpenGLSurface(False)
         self._BackgroundSurface.SetSize(2.0, 2.0)
-        self._BackgroundSurface.SetLocation(-1.0, 1.0, 1.0)
+        self._BackgroundSurface.SetLocation(-1.0, 1.0, 0.999999)
         self._BackgroundSurface.SetBackColor(255.0, 255.0, 255.0)
         
         self._CameraZposition = -500.0
@@ -64,7 +64,7 @@ class OpenGLRenderer(zBaseClass.RendererBase):
             glPushMatrix()
             glLoadIdentity()
             
-            self._BackgroundSurface.draw_quad()           
+            self._BackgroundSurface.Render()           
             
             glPopMatrix()
             glMatrixMode(GL_MODELVIEW)
@@ -83,7 +83,6 @@ class OpenGLRenderer(zBaseClass.RendererBase):
         
     def SetBackgroundImageFromFile(self, PathAndFileName):
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, PathAndFileName)
-	print PathAndFileName
         self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
         self._DrawBackground =True
 
