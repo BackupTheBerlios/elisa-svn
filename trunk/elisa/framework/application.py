@@ -40,7 +40,10 @@ class Application(window.Window):
         
         self.load_plugins()
         self.create_menu()
-        self._menu_renderer = menu_renderer.MenuRenderer()
+
+
+        skin = config.get_option('skin',default='default')
+        self._menu_renderer = menu_renderer.MenuRenderer(skin)
         self._menu_renderer.init_root_level(self._root_menuitem_list)
         
         self._create_background()
