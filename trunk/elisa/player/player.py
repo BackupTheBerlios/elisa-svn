@@ -71,18 +71,11 @@ class _PlayerManager:
             if p.get_uri() == uri:
                 return True
         return False
-
-    def mute_player(self, uri):
-        player = self.get_player(uri)
-        if len(self.get_players()) > 1:
-            player.mute()
-
-    def un_mute_player(self, uri):
-        player = self.get_player(uri)
-        if len(self.get_players()) > 1:
-            player.un_mute()
         
-
+    def mute_all_except(self, player):
+        for p in self.get_players():
+            if p != player:
+                p.mute()
     
 def PlayerManager():
     global _player_manager
@@ -428,6 +421,7 @@ class Playable:
         self._saved_volume = 1.0
         self.set_status(0)
         self.set_length(length)
+        self.set_volume(1.0)
         
     def __repr__(self):
         return "%s (%s)" % (self.get_name(), self.get_uri())
@@ -447,7 +441,6 @@ class Playable:
             self._saved_volume = volume
 
     def get_saved_volume(self):
-        assert self._saved_volume
         return self._saved_volume
 
     def get_name(self):

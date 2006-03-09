@@ -39,7 +39,7 @@ class MoviesTreePlugin(TreePlugin):
                                           folder_icon_path=folder_image,
                                           item_icon_path=movie_image,
                                           item_action=self.play_movie,
-                                          item_focus=self.focus_update,
+                                          #item_focus=self.focus_update,
                                           action_menu=self.add_action_menu)
 
     def add_action_menu(self, menu_item):
@@ -56,26 +56,25 @@ class MoviesTreePlugin(TreePlugin):
 
     def play_movie(self, menu_item):
         menu_renderer = self.get_application().get_menu_renderer()
+
+        # display video on menu item
         surface = menu_renderer.get_surface_from_menuitem(menu_item)
         surface.set_background_from_file(menu_item.get_target_path())
+
+        # Go full screen
         #surface.fullscreen()
         self.get_application().set_background_texture(surface.get_texture())
+
+
+        # mute all other playing menu items
+        manager = self.get_application().get_player_manager()
+        player = manager.get_player(surface.get_background_file())
+        manager.mute_all_except(player)
+
+        player.un_mute()
 
     def play_parent_movie(self, menu_item):
         menu_renderer = self.get_application().get_menu_renderer()
         parent_item = menu_item.get_parent()
         self.play_movie(parent_item)
-
-    def focus_update(self, menu_item, state):
-        
-        menu_renderer = self.get_application().get_menu_renderer()
-        surface = menu_renderer.get_surface_from_menuitem(menu_item)
-        
-        if surface and surface.background_is_movie():
-            path_and_file_name = surface.get_background_file()
-            manager = self.get_application().get_player_manager()
-            if state:
-                manager.un_mute_player(path_and_file_name)
-            else:
-                manager.mute_player(path_and_file_name)
         
