@@ -37,20 +37,18 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
                 _format = GL_RGB
                 _ImageBuffer = _BackgroundImage.tostring("raw", "RGB", 0, -1)
 
-
         self.set_texture_buffer(_BackgroundImage.size[0], _BackgroundImage.size[1], _format, _ImageBuffer)
 
 
     def set_texture_buffer(self,width, height, _format, _buffer):
-        if self._texture.is_init() == True and self._texture.get_size() != (width, height):
-            self._texture = zOpenGLTexture.OpenGLTexture() 
-            
-        if self._texture.GetFormat() != _format:
-            self._texture = zOpenGLTexture.OpenGLTexture() 
+        if self._texture.is_init() == True and \
+		( self._texture.get_size() != (width, height) or self._texture.GetFormat() != _format):
+            self._texture = zOpenGLTexture.OpenGLTexture()  
             
         if self._texture.is_init() == False:
+
             self._texture.init_texture(width, height, _format, None)
-    
+
         self._texture.set_buffer(_buffer)
         
     def SetBackgroundImageFromBuffer(self, _buffer, width, height, UseAlpha=False):
@@ -76,8 +74,14 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         #FIXME cache result.
         r,g,b,a = self.GetBackColorWithAlpha()
         glColorf(r/255.0, g/255.0, b/255.0, a/255.0)
+          
+        self.draw_quad()
         
-        (_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
+        glPopMatrix()
+    
+    def draw_quad(self):
+
+	(_XTextureRatio, _YTextureRatio) = (1.0, 1.0)    
         if self._texture != None:
             self._texture.set_texture()
             (_XTextureRatio, _YTextureRatio) = self._texture.get_ratio()
@@ -90,9 +94,9 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
         YTextureOffsetPercent = 0.0
         
         XTextureOffset = -XTextureOffsetPercent * _XTextureRatio / 100.0
-        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0      
-        
-        #FIXME : use lists
+        YTextureOffset = -YTextureOffsetPercent * _YTextureRatio / 100.0    
+
+	#FIXME : use lists
         if self._TextureOrder == 1:
             #Texture for normal coordinate system
             glBegin(GL_QUADS)
@@ -115,12 +119,11 @@ class OpenGLSurface(zBaseClass.SurfaceBase):
             glVertex3f(0.0, 0.0, 0.0) 
             glTexCoord2f(_XTextureRatio+XTextureOffset,_YTextureRatio+YTextureOffset)
             glVertex3f(1.0, 0.0, 0.0)            glEnd() 
-        
-        if self._texture != None :
+	
+	if self._texture != None :
             self._texture.unset_texture()
-            
-        glPopMatrix()
-        
+
+
     def SetSize(self, Width, Height):
         zBaseClass.SurfaceBase.SetSize(self, Width, Height)
         if self._ApplyCoordinateTrans == True:

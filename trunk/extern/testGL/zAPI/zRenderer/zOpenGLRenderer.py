@@ -57,7 +57,6 @@ class OpenGLRenderer(zBaseClass.RendererBase):
          
     def DrawBackground(self) :
         if self._DrawBackground == True:
-            
             glPushMatrix()
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
@@ -65,7 +64,7 @@ class OpenGLRenderer(zBaseClass.RendererBase):
             glPushMatrix()
             glLoadIdentity()
             
-            self._BackgroundSurface.Render()           
+            self._BackgroundSurface.draw_quad()           
             
             glPopMatrix()
             glMatrixMode(GL_MODELVIEW)
@@ -80,10 +79,11 @@ class OpenGLRenderer(zBaseClass.RendererBase):
         
     def SetBackColor(self, Red, Green, Blue):
         zBaseClass.RendererBase.SetBackColor(self, Red, Green, Blue)
-        glClearColor(Red, Green, Blue, 0.0)
+        #glClearColor(Red, Green, Blue, 0.0)
         
     def SetBackgroundImageFromFile(self, PathAndFileName):
         zBaseClass.SurfaceBase.SetBackgroundImageFromFile(self, PathAndFileName)
+	print PathAndFileName
         self._BackgroundSurface.SetBackgroundImageFromFile(PathAndFileName)
         self._DrawBackground =True
 

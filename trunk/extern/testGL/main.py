@@ -48,13 +48,12 @@ class MyClass(zForm.Form):
         #self._ctl2.Play()
         #self.AddControl(self._ctl2)
         
-        self._ctl = zPictureBox.PictureBox()
-        self._ctl.SetSize(300, 40)
-        self._ctl.SetText("ctl")
-        self._ctl.SetLocation(120.0, 80.0, 2.0)
-        self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
+        #self._ctl = zPictureBox.PictureBox()
+        #self._ctl.SetSize(300, 40)
+        #self._ctl.SetText("ctl")
+        #self._ctl.SetLocation(120.0, 80.0, 2.0)
+        #self._ctl.SetBackgroundImageFromFile("themes/mce/COMMON.BUTTON.LEFT.FOCUS.PNG", True)
         #self.AddControl(self._ctl)
-        #self._ctl.set_background_from_surface(self._ctl2)
 
         #self._ctl3 = zVideo.Video()
         #self._ctl3.SetSize(640, 352)
@@ -68,12 +67,12 @@ class MyClass(zForm.Form):
         #self.AddControl(self._ctl3)
         #self._ctl3.Show()
         
-        self.SetBackColor(1.0,1.0, 1.0)
-        #self.SetBackgroundImageFromFile("themes/mce/COMMON.BACKGROUND.PNG")
-        t = self._ctl.GetTexture()
-        print t.get_texture_id()
-        self.SetTexture(t)
-        print self.GetTexture().get_texture_id()
+        self.SetBackColor(0.0,1.0, 1.0)
+        self.SetBackgroundImageFromFile("themes/mce/COMMON.BACKGROUND.PNG")
+        #t = self._ctl.GetTexture()
+        #print t.get_texture_id()
+        #self.SetTexture(t)
+        #print self.GetTexture().get_texture_id()
         
 if __name__ == '__main__': 
     
