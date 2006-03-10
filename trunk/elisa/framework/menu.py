@@ -133,6 +133,7 @@ class MenuItem(Mixin):
     """
     Manipulate menu item element
     """
+
     
     def __init__(self, parent=None, short_name="None"):
         self._bus = message_bus.MessageBus()
@@ -143,14 +144,17 @@ class MenuItem(Mixin):
         self.set_help_string("")
         self.set_icon_path(None)
         self.set_target_path(None)
-        #self.set_picture_path(None)
-        self.set_selected_callback(None)
-        self.set_unselected_callback(None)
-        self.set_action_callback(None)
-        self.set_focus_callback(None)
-        
+        self.callbacks = {'selected': None,
+                          'unselected': None,
+                          'action': None,
+                          'focus': None}
+
     def on_message(self, receiver, message, sender):
         return True
+
+    def __repr__(self):
+        return "<%s instance at 0x%x : %s>" % (self.__class__.__name__,
+                                               id(self), self.get_target_path())
         
     def pretty_print(self):
         """ Textual representation of the item """
@@ -221,43 +225,41 @@ class MenuItem(Mixin):
         """ """
         return self._target_path
 
+    def fire_callback(self, name, *args):
+        callback = self.callbacks.get(name)
+        if callback and callable(callback):
+            args = args or (self,)
+            callback(*args)
+
     def set_selected_callback(self, callback):
         """message called when menu item is selected"""
-        self.selected_callback = callback
+        self.callbacks['selected'] = callback
         
     def fire_selected(self, *args):
         """message called when menu item is selected"""
-        if callable(self.selected_callback):
-            args = args or (self,)
-            self.selected_callback(*args)
+        self.fire_callback('selected', *args)
 
     def set_action_callback(self, callback):
         """callback called when menu item is activated"""
-        self.action_callback = callback
+        self.callbacks['action'] = callback
         
     def fire_action(self, *args):
         """message called when menu item is activated"""
-        if callable(self.action_callback):
-            args = args or (self,)
-            self.action_callback(*args)
+        self.fire_callback('action', *args)
         
     def set_unselected_callback(self, callback):
         """message called when menu item is unselected"""
-        self.unselected_callback = callback
+        self.callbacks['unselected'] = callback
         
     def fire_unselected(self, *args):
         """message called when menu item is unselected"""
-        if callable(self.unselected_callback):
-            args = args or (self,)
-            self.unselected_callback(*args)
+        self.fire_callback('unselected', *args)
 
     def set_focus_callback(self, callback):
-        self.focus_callback = callback
+        self.callbacks['focus'] = callback
 
-    def fire_focus_callback(self, *args):
-        if callable(self.focus_callback):
-            args = args or (self,)
-            self.focus_callback(*args)
+    def fire_focus(self, *args):
+        self.fire_callback('focus', *args)
             
 
 if __name__ == '__main__':
