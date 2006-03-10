@@ -2,7 +2,7 @@
 from elisa.framework import config, log, menu, message_bus, common
 from elisa.framework.plugin import InterfaceOmission, Plugin
 from elisa.utils import exception_hook
-from elisa.boxwidget import window, surface_player, menu_renderer, events
+from elisa.boxwidget import window, surface_player, menu_renderer, events, dock
 from elisa.player import player
 
 from sets import Set
@@ -37,6 +37,12 @@ class Application(window.Window):
         self._plugin_tree_list = []
         self._root_menuitem_list = []
         self._player_manager = player.PlayerManager()
+
+        self._player_manager.set_dock(dock.Dock())
+        _dock = self._player_manager.get_dock()
+        _dock.hide(recursive=True)
+        self.add_surface(_dock)
+
         
         self.load_plugins()
         self.create_menu()

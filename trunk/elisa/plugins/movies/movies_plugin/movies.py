@@ -92,6 +92,10 @@ class MoviesTreePlugin(TreePlugin):
 
         player.un_mute()
 
+        _dock = manager.get_dock()
+        _dock.add_item(self.pause)
+        _dock.show(recursive=True)
+
 ##         # XXX: this is crap!
 ##         if menu_item.del_item_with_target("play"):
 ##             menu_item.insert_item(0, self.seekb)

@@ -38,6 +38,12 @@ class _PlayerManager:
         self.players.append(player)
         self.get_bus().send_message(events.NewPlayerEvent(player))
 
+    def set_dock(self, dock):
+        self._dock = dock
+
+    def get_dock(self):
+        return self._dock
+
     def get_players(self):
         return self.players
         
