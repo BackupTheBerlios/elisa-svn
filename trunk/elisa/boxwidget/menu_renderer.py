@@ -8,7 +8,7 @@ from elisa.framework.menu import MenuTree
 class MenuRenderer(object):
 
     def __init__(self, skin='mce'):
-        self._skin = 'e'
+        self._skin = skin
     
     def init_root_level(self, root_menuitems_list):
         self._root_menuitem_list = root_menuitems_list
