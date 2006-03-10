@@ -88,14 +88,16 @@ class MoviesTreePlugin(TreePlugin):
         player = manager.get_player(surface.get_background_file())
         manager.mute_all_except(player)
 
+        self.logger.info("Playing movie: %s" % player.get_uri())
+
         player.un_mute()
 
-        # XXX: this is crap!
-        if menu_item.del_item_with_target("play"):
-            menu_item.insert_item(0, self.seekb)
-            menu_item.insert_item(1, self.pause)
-            menu_item.insert_item(2, self.seekf)
-            menu_item.insert_item(3, self.stop)
+##         # XXX: this is crap!
+##         if menu_item.del_item_with_target("play"):
+##             menu_item.insert_item(0, self.seekb)
+##             menu_item.insert_item(1, self.pause)
+##             menu_item.insert_item(2, self.seekf)
+##             menu_item.insert_item(3, self.stop)
 
     def play_parent_movie(self, menu_item):
         self.play_movie(menu_item.get_parent())

@@ -34,3 +34,4 @@ class PicturesTreePlugin(TreePlugin):
         surface = appli.get_menu_renderer().get_surface_from_menuitem(menu_item)
         #import pdb; pdb.set_trace()
         appli.set_background_texture(surface.get_texture())
+        self.logger.info('Showing picture %s' % surface.get_background_file())
