@@ -61,7 +61,7 @@ class Surface(object):
         called if new event is fire
         if return False, event will not fired to next event
         """
-        self._logger.debug('Surface.on_message(' + str(message) + ')', self)
+        self._logger.debug('Surface.on_message')
         return True
     
     def close(self):
@@ -292,4 +292,4 @@ class Surface(object):
         
     def __repr__(self):
         #FIXME str(self) make recursive call
-        return self._name #+ str(self)
+        return "<%s instance at 0x%x : %s>" % (self.__class__.__name__, id(self),self._name) #+ str(self)
