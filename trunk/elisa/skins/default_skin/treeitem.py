@@ -33,6 +33,7 @@ class TreeItem(surface.Surface):
             self.set_background_from_file(menuitem.get_icon_path())
     
     def on_removed(self):
+        self.set_focus(False)
         surface.Surface.on_removed(self)
         self._appli.get_menu_renderer().remove_menuitem(self._menuitem)
 
@@ -70,7 +71,7 @@ class TreeItem(surface.Surface):
         self._focus = focus
 
         menu_item = self.get_menuitem()
-        menu_item.fire_focus_callback(menu_item, focus)
+        menu_item.fire_focus(menu_item, focus)
         
         if focus == False:
             self.set_alpha_level(100)
@@ -90,7 +91,7 @@ class TreeItem(surface.Surface):
     def on_message(self, receiver, message, sender):
         if self.visible(True) and self.has_focus():
             if isinstance(message, events.InputEvent):
-                if message.get_simple_event() == events.SE_OK:
+                if message.get_simple_event() == events.SE_OK and self.has_focus():
                     self._menuitem.fire_action(self._menuitem)
                     
         return surface.Surface.on_message(self, receiver, message, sender)

@@ -1,5 +1,4 @@
 import copy
-from elisa.framework import message_bus
 
 class Mixin:
     def set_short_name(self, name):
@@ -136,8 +135,6 @@ class MenuItem(Mixin):
 
     
     def __init__(self, parent=None, short_name="None"):
-        self._bus = message_bus.MessageBus()
-        self._bus.register(self, self.on_message)
         self._items = []
         self.set_parent(parent)
         self.set_short_name(short_name)
@@ -148,9 +145,6 @@ class MenuItem(Mixin):
                           'unselected': None,
                           'action': None,
                           'focus': None}
-
-    def on_message(self, receiver, message, sender):
-        return True
 
     def __repr__(self):
         return "<%s instance at 0x%x : %s>" % (self.__class__.__name__,
