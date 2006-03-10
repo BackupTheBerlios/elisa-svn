@@ -85,6 +85,8 @@ class Plugin(object):
 
     default_config = {}
     name = "default"
+
+    logger = log.Logger()
     
     def __init__(self, application):
         """
@@ -92,7 +94,6 @@ class Plugin(object):
         """
         self.set_application(application)
         self.set_master_plugin(None)
-        self.logger = log.Logger()
         self.load_config()
 
     def set_application(self, app):

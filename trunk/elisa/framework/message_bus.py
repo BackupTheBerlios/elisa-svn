@@ -74,19 +74,6 @@ def MessageBus():
 
 class Message(object): pass
 
-class ActionMessage(Message):
-
-    def __init__(self, action, data):
-        Message.__init__(self)
-        self._action = action
-        self._data = data
-        
-    def get_action(self):
-        return self._action
-        
-    def get_data(self):
-        return self._data
-
 
 if __name__ == '__main__':
     

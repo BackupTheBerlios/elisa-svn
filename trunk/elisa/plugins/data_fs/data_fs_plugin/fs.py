@@ -1,6 +1,7 @@
 from elisa.framework.plugin import Plugin
 from elisa.framework.extension_points import IDataAccess
 from elisa.framework.menu import MenuTree, MenuItem
+
 import os, re
 
 class DataFSPlugin(Plugin):
@@ -15,7 +16,8 @@ class DataFSPlugin(Plugin):
                       item_action=None, item_icon_path=None, action_menu=None):
         if not os.path.isdir(name):
             return
-        
+
+        self.logger.info("Loading filesystem location : %s" % name)
         self.item_filter = item_filter
         self.folder_icon_path = folder_icon_path
         self.item_action = item_action
@@ -23,7 +25,7 @@ class DataFSPlugin(Plugin):
         self.action_menu = action_menu
         self.item_focus = item_focus
         os.path.walk(name, self._load_sub_directory, None)
-
+        
     def _load_sub_directory(self, app, dir_name, filenames):
         """
         Create the tree menu for a given directory full name
