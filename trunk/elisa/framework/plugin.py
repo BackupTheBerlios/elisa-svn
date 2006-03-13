@@ -24,10 +24,9 @@ class IPlugin:
     """
 
 
-class ExtensionPoint(property):
+class ExtensionPoint(object):
 
     def __init__(self, interface):
-        property.__init__(self)
         self.interface = interface
 
     def _get_cached_extensions(self):
